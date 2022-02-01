@@ -1,0 +1,66 @@
+.font-size-setting{
+    width: 80%;
+    height: 2rem;
+    margin: 0 auto;
+    position: relative;
+}
+/* .font-size-setting::before{
+    content: " ";
+    display: block;
+    height: 2px;
+    width: attr(data-width);
+    transform: translateY(1rem);
+    background-color: dodgerblue;
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+} */
+.progress-line{
+    position: absolute;
+    box-sizing: content-box;
+    height: 2px;
+    width: 50%;
+    margin-top: 1rem;
+    background-color: dodgerblue;
+    z-index: 1;
+}
+.general-setting-items{
+    padding-top: .5rem;
+    margin-top: 1rem;
+    width: 100%;
+    padding-bottom: 1rem;
+}
+.general-setting-items>span{
+    color: dodgerblue;
+    font-size: 1.2rem;
+    width: 90%;
+    margin: 0 auto;
+    margin-bottom: 1rem;
+    display: block;
+}
+.introduce{
+    margin: 0rem auto;
+    width: 80%;
+    display: flex;
+    justify-content: space-between;
+}
+.introduce span{
+    color: silver;
+}
+.keyboard-setting>form>div{
+    display: flex;
+    height: 4rem;
+    margin: 1rem;
+    align-items: center;
+}
+.keyboard-setting>form>div span:nth-child(2){
+    color: silver;
+}
+.keyboard-introduce{
+    display: flex;
+    flex-direction: column;
+    margin-left: 4rem;
+}
+.shadow-bottom{
+    box-shadow: 0 1px 3px silver;
+}

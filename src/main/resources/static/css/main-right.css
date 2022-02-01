@@ -1,0 +1,225 @@
+
+/* 右侧消息栏 */
+.right-info{
+    max-width: 323px;
+    transition: all 0.5s ease;
+    opacity: 0;
+    overflow: hidden;
+    position: relative;
+    transition: all 0.5s;
+    display: flex;
+}
+.ordinary{
+    position: relative;
+    width: 0;
+    overflow: hidden;
+    transition: all 0.5s;
+    opacity: 0;
+}
+.statistics-close{
+    height: 5%;
+}
+.statistics-close ion-icon{
+    height: 2rem;
+    width: 2rem;
+    line-height: 2rem;
+    text-align: center;
+    border-radius: 50%;
+    margin-left: 1rem;
+}
+.statistics-close ion-icon:hover{
+    background-color: rgb(240, 239, 239);
+}
+
+.file-info,
+.video-info,
+.music-info{
+    width: 0;
+    overflow: hidden;
+}
+.file-info-items{
+    display: flex;
+    cursor: pointer;
+}
+.file-info-items:hover{
+    background-color: #bbb;
+}
+.file-info-items-img{
+    width: 5rem;
+    height: 5rem;
+    text-align: center;
+    line-height: 5rem;
+    font-size: 2rem;
+    margin: .5rem 1rem;
+    background-color: lightskyblue;
+    overflow: hidden;
+}
+.file-info-items-img img{
+    height: 100%;
+}
+.file-info-items-introduce{
+    margin: 1rem 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+.file-info-items-title h4{
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 12rem;
+    text-overflow: ellipsis;
+}
+.statistics-info{
+    height: 100vh;
+    width: 0;
+    transition: all 0.5s;
+    overflow: hidden;
+}
+.statistics-frame{
+    /* padding-top: 2rem; */
+    height: 95%;
+    /* padding-left: .5rem; */
+    overflow-y: scroll;
+}
+.statistics-frame::-webkit-scrollbar{
+    width: 6px;
+}
+.statistics-frame::-webkit-scrollbar-thumb{
+    border-radius: 1rem;
+    background-color: silver;
+}
+.statistics-frame::-webkit-scrollbar-track{
+    border-radius: 1rem;
+}
+.video-info-items{
+    display: inline-block;
+    width: 6rem;
+    height: 6rem;
+    overflow: hidden;
+    position: relative;
+}
+.video-info-items img{
+    height: 100%;
+    cursor: pointer;
+}
+.video-info .statistics-frame{
+    margin-left: .5rem;
+}
+.duration{
+    font-size: .5rem;
+    border-radius: .2rem;
+    height: 1rem;
+    color: white;
+    position: absolute;
+    background-color: rgba(30, 144, 255, .15);
+    bottom: .1rem;
+    left: .1rem;
+    pointer-events: none;
+}
+.duration div{
+    display: inline;
+}
+.music-info-items{
+    display: flex;
+    padding: .5rem 0;
+}
+.music-icon{
+    width: 3rem;
+    height: 3rem;
+    background-color: rgb(30, 144, 255,.5);
+    position: relative;
+    font-size: 2rem;
+    border-radius: 50%;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    cursor: pointer;
+}
+.music-icon:hover{
+    background-color: dodgerblue;
+}
+.music-info-introduce h5{
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 13rem;
+    margin-top: .3rem;
+    overflow: hidden;
+}
+.music-info-introduce span{
+    font-size: .3rem;
+}
+@media only screen and (max-width:1320px) {
+    .right-info{
+        flex-grow: 0;
+        display: none;
+    }
+}
+.bottom-line{
+    border-bottom: 1px solid silver;
+}
+.big-portrait{
+    width: 5rem;
+    height: 5rem;
+    margin: 0 1rem 0 0;
+}
+.left-contact-img{
+    width: 100%;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+}
+.contact-name span{
+    font-size: .7rem;
+}
+.introduction{
+    display: flex;
+}
+.icon,
+.edit-items div,
+.statistics-items div{
+    /* margin-top: 1rem; */
+    font-size: 1.5rem;
+    width: 20%;
+    position: relative;
+}
+.icon{
+    margin-top: 1rem;
+}
+.ion-icon-center{
+    position: relative;
+}
+.search ion-icon,
+.ion-icon-center ion-icon,
+.music-icon ion-icon,
+.ordinary ion-icon,
+.statistics-info .file-info-items ion-icon{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+.introduction-info span{
+    display: block;
+}
+.introduction-info span:nth-child(2){
+    font-size: .7rem;
+}
+.introduction-info div{
+    margin: 1rem 0;
+}
+.edit-items span,
+.statistics-items span{
+    margin: 1rem 0;
+    display: block;
+    line-height: 1rem;
+}
+.edit-items,
+.statistics-items{
+    display: flex;
+    width: 100%;
+    height: 3rem;
+    position: relative;
+}
+.edit-items:hover,
+.statistics-items:hover{
+    background-color: #bbb;
+}
