@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/main-left.css">
+    <link rel="stylesheet" href="./css/main-middle.css">
+    <link rel="stylesheet" href="./css/main-right.css">
+    <link rel="stylesheet" href="./css/input.css">
+    <link rel="stylesheet" href="./css/folder.css">
+    <link rel="stylesheet" href="./css/uploadimg.css">
+    <link rel="stylesheet" href="./css/general-setting.css">
+    <!-- <link href="https://cdn.bootcdn.net/ajax/libs/cropperjs/2.0.0-alpha.2/cropper.css" rel="stylesheet"> -->
+    <script src="./js/riff.js"></script>
+    <script src="./js/main-left.js"></script>
+    <script src="./js/circle-tailoring.js"></script>
+    <!-- 图片裁剪 -->
+    <!-- <script src="https://cdn.bootcdn.net/ajax/libs/cropperjs/2.0.0-alpha.2/cropper.js"></script> -->
+    <title>首页</title>
+</head>
+
+<body>
+    <div class="main-flex">
+        <div class="left-nav">
+            <div id="left-nav-main">
+                <div class="search">
+                    <div class="setting-switch">
+                        <div class="search-left riff" id="setting-btn">
+                            <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+                        </div>
+                        <div class="search-left riff" id="search-close-btn">
+                            <ion-icon name="arrow-back-outline"></ion-icon>
+                        </div>
+                    </div>
+                    <div class="search-main">
+                        <div class="search-icon">
+                            <ion-icon name="search-outline"></ion-icon>
+                        </div>
+                        <input type="search" placeholder="搜索" id="left-search" autocomplete="off">
+                        <div class="close riff">
+                            <ion-icon name="add-outline"></ion-icon>
+                        </div>
+                    </div>
+                    <div class="search-right">
+                        <ion-icon name="chevron-back-outline"></ion-icon>
+                    </div>
+                </div>
+                <div id="hidden" class="shadow">
+                    <div class="hidden-items">
+                        <div class="hidden-items-icon ion-icon-center">
+                            <ion-icon name="moon-outline"></ion-icon>
+                        </div>
+                        <div class="hidden-items-context">
+                            <span>夜间模式</span>
+                        </div>
+                        <div class="switch" id="darkModel">
+                            <div class="switch-btn" id="dark"></div>
+                        </div>
+                    </div>
+                    <div class="hidden-items">
+                        <div class="hidden-items-icon ion-icon-center">
+                            <ion-icon name="settings-outline"></ion-icon>
+                        </div>
+                        <div class="hidden-items-context">
+                            <span>设置</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="classify">
+                    <div class="list">
+                        <div class="frame">
+                            <div class="title">
+                                所有
+                            </div>
+                            <div class="unread">
+                                <ion-icon name="alert-outline"></ion-icon>
+                            </div>
+                        </div>
+                        <div class="frame">
+                            <div class="title">
+                                通讯录
+                            </div>
+                            <div class="unread">
+                                <ion-icon name="alert-outline"></ion-icon>
+                            </div>
+                        </div>
+                        <div class="frame">
+                            <div class="title">
+                                群组
+                            </div>
+                            <div class="unread">
+                                <ion-icon name="alert-outline"></ion-icon>
+                            </div>
+                        </div>
+                        <div class="frame">
+                            <div class="title">
+                                同事
+                            </div>
+                            <div class="unread">
+                                <ion-icon name="alert-outline"></ion-icon>
+                            </div>
+                        </div>
+                        <div class="frame">
+                            <div class="title">
+                                同事
+                            </div>
+                            <div class="unread">
+                                <ion-icon name="alert-outline"></ion-icon>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="search-list unactive">
+                        <div class="search-frame">
+                            <div class="title">
+                                联系人
+                            </div>
+                        </div>
+                        <div class="search-frame">
+                            <div class="title">
+                                文件
+                            </div>
+                        </div>
+                        <div class="search-frame">
+                            <div class="title">
+                                照片
+                            </div>
+                        </div>
+                        <div class="search-frame">
+                            <div class="title">
+                                视频
+                            </div>
+                        </div>
+                        <div class="search-frame">
+                            <div class="title">
+                                音频
+                            </div>
+                        </div>
+                    </div>
+                    <div id="slider"></div>
+                </div>
+                <div class="line"></div>
+                <div class="contact" id="scroll">
+                    <div class="contact-list">
+                        <div class="contact-items ">
+                            <div class="portrait">
+                                <img src="./image/1.jpeg" alt="">
+                            </div>
+                            <div class="info">
+                                <div class="contact-info">
+                                    <div class="first-info">
+                                        <h3>联系人名字</h3>
+                                        <ion-icon name="notifications-outline"></ion-icon>
+                                        <ion-icon name="notifications-off-outline"></ion-icon>
+                                    </div>
+                                    <div class="second-info">hello world!!!fhdasfhiuasdhifuhsadiufhisuadhf</div>
+                                </div>
+                            </div>
+                            <div class="hint">
+                                <div class="hint-time">11:10</div>
+                                <div class="unread-num-frame">
+                                    <div class="unread-num">
+                                        13211123
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="contact-items ">
+                            <div class="portrait">
+                                <img src="./image/1.jpeg" alt="">
+                            </div>
+                            <div class="info">
+                                <div class="contact-info">
+                                    <div class="first-info">
+                                        <h3>联系人名字</h3>
+                                        <ion-icon name="notifications-off-outline"></ion-icon>
+                                    </div>
+                                    <div class="second-info">hello world!!!</div>
+                                </div>
+                            </div>
+                            <div class="hint">
+                                <div class="hint-time">11:10</div>
+                                <div class="unread-num-frame">
+                                    <div class="unread-num">
+                                        13211123
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="contact-items ">
+                            <div class="portrait">
+                                <img src="./image/1.jpeg" alt="">
+                            </div>
+                            <div class="info">
+                                <div class="contact-info">
+                                    <div class="first-info">
+                                        <h3>联系人名字</h3>
+                                        <ion-icon name="notifications-off-outline"></ion-icon>
+                                    </div>
+                                    <div class="second-info">hello world!!!</div>
+                                </div>
+                            </div>
+                            <div class="hint">
+                                <div class="hint-time">11:10</div>
+                                <div class="unread-num-frame">
+                                    <div class="unread-num">
+                                        13211123
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="contact-list">
+                        <div class="contact-items ">
+                            <div class="portrait">
+                                <img src="./image/1.jpeg" alt="">
+                            </div>
+                            <div class="info">
+                                <div class="contact-info">
+                                    <div class="first-info">
+                                        <h3>联系人名字</h3>
+                                        <ion-icon name="notifications-outline"></ion-icon>
+                                        <ion-icon name="notifications-off-outline"></ion-icon>
+                                    </div>
+                                    <div class="second-info">通讯录</div>
+                                </div>
+                            </div>
+                            <div class="hint">
+                                <div class="hint-time">11:10</div>
+                                <div class="unread-num-frame">
+                                    <div class="unread-num">
+                                        13211123
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="contact-items ">
+                            <div class="portrait">
+                                <img src="./image/1.jpeg" alt="">
+                            </div>
+                            <div class="info">
+                                <div class="contact-info">
+                                    <div class="first-info">
+                                        <h3>联系人名字</h3>
+                                        <ion-icon name="notifications-off-outline"></ion-icon>
+                                    </div>
+                                    <div class="second-info">hello world!!!</div>
+                                </div>
+                            </div>
+                            <div class="hint">
+                                <div class="hint-time">11:10</div>
+                                <div class="unread-num-frame">
+                                    <div class="unread-num">
+                                        13211123
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="contact-items ">
+                            <div class="portrait">
+                                <img src="./image/1.jpeg" alt="">
+                            </div>
+                            <div class="info">
+                                <div class="contact-info">
+                                    <div class="first-info">
+                                        <h3>联系人名字</h3>
+                                        <ion-icon name="notifications-off-outline"></ion-icon>
+                                    </div>
+                                    <div class="second-info">hello world!!!</div>
+                                </div>
+                            </div>
+                            <div class="hint">
+                                <div class="hint-time">11:10</div>
+                                <div class="unread-num-frame">
+                                    <div class="unread-num">
+                                        13211123
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="contact-items ">
+                            <div class="portrait">
+                                <img src="./image/1.jpeg" alt="">
+                            </div>
+                            <div class="info">
+                                <div class="contact-info">
+                                    <div class="first-info">
+                                        <h3>联系人名字</h3>
+                                        <ion-icon name="notifications-off-outline"></ion-icon>
+                                    </div>
+                                    <div class="second-info">hello world!!!</div>
+                                </div>
+                            </div>
+                            <div class="hint">
+                                <div class="hint-time">11:10</div>
+                                <div class="unread-num-frame">
+                                    <div class="unread-num">
+                                        13211123
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="contact-list">
+                    </div>
+                    <div class="contact-list">
+                        <div class="contact-items ">
+                            <div class="portrait">
+                                <img src="./image/1.jpeg" alt="">
+                            </div>
+                            <div class="info">
+                                <div class="contact-info">
+                                    <div class="first-info">
+                                        <h3>同事</h3>
+                                        <ion-icon name="notifications-outline"></ion-icon>
+                                        <ion-icon name="notifications-off-outline"></ion-icon>
+                                    </div>
+                                    <div class="second-info">通讯录</div>
+                                </div>
+                            </div>
+                            <div class="hint">
+                                <div class="hint-time">11:10</div>
+                                <div class="unread-num-frame">
+                                    <div class="unread-num">
+                                        13211123
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="contact-list">
+                        <div class="contact-items ">
+                            <div class="portrait">
+                                <img src="./image/1.jpeg" alt="">
+                            </div>
+                            <div class="info">
+                                <div class="contact-info">
+                                    <div class="first-info">
+                                        <h3>同事</h3>
+                                        <ion-icon name="notifications-outline"></ion-icon>
+                                        <ion-icon name="notifications-off-outline"></ion-icon>
+                                    </div>
+                                    <div class="second-info">通讯录</div>
+                                </div>
+                            </div>
+                            <div class="hint">
+                                <div class="hint-time">11:10</div>
+                                <div class="unread-num-frame">
+                                    <div class="unread-num">
+                                        13211123
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="search-result-list">
+                        <div class="search-result-items">
+                            1
+                        </div>
+                    </div>
+                    <div class="search-result-list">
+                        <div class="search-result-items">
+                            2
+                        </div>
+                    </div>
+                    <div class="search-result-list">
+                        <div class="search-result-items">
+                            3
+                        </div>
+                    </div>
+                    <div class="search-result-list">
+                        <div class="search-result-items">
+                            4
+                        </div>
+                    </div>
+                    <div class="search-result-list">
+                        <div class="search-result-items">
+                            5
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 隐藏页面 -->
+            <div id="user-setting">
+                <div class="hidden-head">
+                    <div class="hidden-head-close ion-icon-center riff">
+                        <ion-icon name="arrow-back-outline"></ion-icon>
+                    </div>
+                    <div class="hidden-head-title">
+                        <h4>设置</h4>
+                    </div>
+                    <div class="hidden-head-setting riff">
+                        <div class="ion-icon-center">
+                            <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="user-img">
+                        <img src="./image/1.jpeg" alt="">
+                    </div>
+                    <div id="user-name">
+                        <h4>用户名字</h4>
+                    </div>
+                    <div id="user-phone-number">
+                        <span>+86 130 1939 2276</span>
+                    </div>
+                </div>
+                <div id="user-setting-info">
+                    <div class="user-setting-info-items">
+                        <div class="ion-icon-center">
+                            <ion-icon name="pencil-outline"></ion-icon>
+                        </div>
+                        <div>
+                            <span>编辑信息</span>
+                        </div>
+                    </div>
+                    <div class="user-setting-info-items">
+                        <div class="ion-icon-center">
+                            <ion-icon name="folder-outline"></ion-icon>
+                        </div>
+                        <div>
+                            <span>联系人分类</span>
+                        </div>
+                    </div>
+                    <div class="user-setting-info-items">
+                        <div class="ion-icon-center">
+                            <ion-icon name="settings-outline"></ion-icon>
+                        </div>
+                        <div>
+                            <span>通用设置</span>
+                        </div>
+                    </div>
+                    <div class="user-setting-info-items">
+                        <div class="ion-icon-center">
+                            <ion-icon name="language-outline"></ion-icon>
+                        </div>
+                        <div>
+                            <span>语言</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 设置的隐藏页面 -->
+            <div class="user-setting-hidden">
+                <div class="hidden-head">
+                    <div class="user-setting-close ion-icon-center riff">
+                        <ion-icon name="arrow-back-outline"></ion-icon>
+                    </div>
+                    <div class="hidden-head-title">
+                        <h4>编辑信息</h4>
+                    </div>
+                </div>
+                <div>
+                    <div class="user-img" id="image-input">
+                        <img src="./image/1.jpeg" alt="">
+                    </div>
+                    <div class="ion-icon-center transparent-camera">
+                        <form action="" method="post" enctype="multipart/form-data">
+                            <ion-icon name="camera-outline"></ion-icon>
+                            <input id="image-input-frame" type="file" accept="image/*" hidden>
+                            <input id="image-send" type="submit" hidden>
+                        </form>
+                    </div>
+                </div>
+                <div id="user-real-name">
+                    <form action="" method="post">
+                        <div class="input-group">
+                            <input type="text" id="Name" required>
+                            <div class="underline"></div>
+                            <label for="Name">姓</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="LastName" required>
+                            <div class="underline"></div>
+                            <label for="LastName">名</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="UserName" required>
+                            <div class="underline"></div>
+                            <label for="UserName">昵称</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="submit" class="btn" value="提交">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="user-setting-hidden">
+                <div class="hidden-head">
+                    <div class="user-setting-close ion-icon-center riff">
+                        <ion-icon name="arrow-back-outline"></ion-icon>
+                    </div>
+                    <div class="hidden-head-title">
+                        <h4>联系人分类</h4>
+                    </div>
+                </div>
+                <div>
+                    <div class="bg-img ion-icon-center">
+                        <ion-icon name="folder-outline"></ion-icon>
+                    </div>
+                    <div id="add-folder">
+                        <div class="ion-icon-center">
+                            <ion-icon name="add-outline"></ion-icon>
+                        </div>
+                        <span>添加</span>
+                    </div>
+                </div>
+                <div id="folder" class="contact">
+                    <div class="folder-title">
+                        <span>分类</span>
+                    </div>
+                    <div class="folder-items">
+                        <div class="classify-name">
+                            <span>所有</span>
+                        </div>
+                        <div class="classify-statistics">
+                            <span>3人</span>
+                        </div>
+                    </div>
+                    <div class="folder-items">
+                        <div class="classify-name">
+                            <span>通讯录</span>
+                        </div>
+                        <div class="classify-statistics">
+                            <span>4人</span>
+                        </div>
+                    </div>
+                    <div class="folder-items">
+                        <div class="classify-name">
+                            <span>群组</span>
+                        </div>
+                        <div class="classify-statistics">
+                            <span>0</span>
+                        </div>
+                    </div>
+                    <div class="folder-items">
+                        <div class="classify-name">
+                            <span>同事</span>
+                        </div>
+                        <div class="classify-statistics">
+                            <span>1人</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="user-setting-hidden">
+                <div class="hidden-head">
+                    <div class="user-setting-close ion-icon-center riff">
+                        <ion-icon name="arrow-back-outline"></ion-icon>
+                    </div>
+                    <div class="hidden-head-title">
+                        <h4>通用设置</h4>
+                    </div>
+                </div>
+                <div class="general-setting" style="align-items: flex-start;margin-top: 0;">
+                    <div class="general-setting-items shadow-bottom">
+                        <span>设置</span>
+                        <div class="introduce">
+                            <label for="font-size-range">字体大小</label>
+                            <span>16</span>
+                        </div>
+                        <div class="font-size-setting">
+                            <div class="progress-line"></div>
+                            <input id="font-size-range" type="range" step="1" min="12" max="20">
+                        </div>
+                    </div>
+                    <div class="general-setting-items shadow-bottom">
+                        <span>键盘</span>
+                        <div class="keyboard-setting">
+                            <form action="" method="post">
+                                <div id="send-by-enter">
+                                    <input type="radio" class="input-radio" name="sendByEnter" id="sendByEnter" checked>
+                                    <label for="sendByEnter"></label>
+                                    <div class="keyboard-introduce">
+                                        <span>Enter发送</span>
+                                        <span>通过Shift+Enter发送新的一行</span>
+                                    </div>
+                                </div>
+                                <div id="send-by-ctrl-enter">
+                                    <input type="radio" class="input-radio" name="sendByEnter" id="sendByCtrlEnter">
+                                    <label for="sendByCtrlEnter"></label>
+                                    <div class="keyboard-introduce">
+                                        <span>Ctrl+Enter发送</span>
+                                        <span>通过Enter发送新的一行</span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- 主题的选择 -->
+                    <!-- <div class="chat-bg shadow-bottom">
+                        <form action="" method="post">
+                            <input type="radio" name="theme" id="">
+                            <input type="file" name="theme" id="">
+                        </form>
+                    </div> -->
+                </div>
+            </div>
+            <script src="./js/general-setting.js"></script>
+            <div id="folder-operation">
+                <div class="hidden-head">
+                    <div id="folder-setting-close" class="ion-icon-center">
+                        <ion-icon name="arrow-back-outline"></ion-icon>
+                    </div>
+                    <div class="hidden-head-title">
+                        <h4>添加分类</h4>
+                    </div>
+                    <div class="folder-setting ion-icon-center">
+                        <ion-icon name="checkmark-outline"></ion-icon>
+                        <!-- 删除 -->
+                        <!-- <ion-icon name="trash-outline"></ion-icon> -->
+                    </div>
+                </div>
+                <div class="bg-img-bg">
+                    <div class="bg-img ion-icon-center">
+                        <ion-icon name="folder-open-outline"></ion-icon>
+                    </div>
+                </div>
+                <div class="folder-form">
+                    <form action="" method="post">
+                        <input type="hidden" name="_method" value="put">
+                        <div class="input-shadow">
+                            <div class="input-group">
+                                <input type="text" id="newFolderName" required>
+                                <div class="underline"></div>
+                                <label for="newFolderName">新分类名称</label>
+                            </div>
+                        </div>
+                        <div class="blank"></div>
+                        <div id="folder-contact-add">
+                            <div class="folder-contact-title">
+                                <span>成员</span>
+                            </div>
+                            <div id="folder-contact-add-btn">
+                                <div class="add-btn-icon ion-icon-center">
+                                    <ion-icon name="add-outline"></ion-icon>
+                                </div>
+                                <span>添加成员</span>
+                            </div>
+                            <div class="folder-contact-list">
+                                <div class="folder-contact-items">
+                                    <div class="portrait small-2">
+                                        <img src="./image/1.jpeg" alt="">
+                                    </div>
+                                    <span>联系人名字</span>
+                                    <div class="small-2 ion-icon-center">
+                                        <ion-icon name="trash-outline"></ion-icon>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input id="submit-new-folder" type="submit" hidden>
+                    </form>
+                </div>
+            </div>
+            <div id="select-mumbers">
+                <div class="hidden-head">
+                    <div class="select-setting-close ion-icon-center">
+                        <ion-icon name="arrow-back-outline"></ion-icon>
+                    </div>
+                    <div class="hidden-head-title">
+                        <h4>添加联系人</h4>
+                    </div>
+                    <div class="select-setting ion-icon-center">
+                        <ion-icon name="checkmark-outline"></ion-icon>
+                    </div>
+                </div>
+                <form action="" method="get">
+                    <div class="select-list">
+                        <div class="select-mumbers-items">
+                            <div class="portrait small-3">
+                                <img src="./image/1.jpeg" alt="">
+                            </div>
+                            <label>联系人名字fsdfhsdkfksdjfk</label>
+                            <input class="checkbox-mumbers" type="checkbox">
+                        </div>
+                    </div>
+                    <input id="select-submit" type="submit" hidden>
+                </form>
+            </div>
+        </div>
+        <div class="middle-chat">
+            <div class="top">
+                <div class="left-nav-expand">
+                    <ion-icon name="chevron-forward-outline"></ion-icon>
+                </div>
+                <!-- 展示联系人的置顶信息 -->
+                <div class="top-items">
+                    <span>联系人名字</span>
+                </div>
+                <!-- 管理媒体 -->
+                <div class="top-items">
+                    123
+                </div>
+                <div class="icon-common bell riff">
+                    <ion-icon name="notifications-outline"></ion-icon>
+                </div>
+                <div class="icon-common bell riff mute">
+                    <ion-icon name="notifications-off-outline"></ion-icon>
+                </div>
+                <div class="icon-common right-close riff">
+                    <ion-icon name="arrow-forward-outline"></ion-icon>
+                </div>
+            </div>
+            <div class="reminder">
+                <span id="prompt" class="shadow">请选择一个好友聊天</span>
+            </div>
+            <!-- 展示聊天信息 -->
+            <div id="chat-main">
+                <!-- 对方信息 -->
+                <div class="info-items">
+                    <div class="portrait chat-info-img shadow">
+                        <img src="./image/1.jpeg" alt="">
+                    </div>
+                    <div class="chat-info-main shadow">
+                        <p>对方华盛顿和覅u水分的防护手段回复和反抗集散地和反馈i还是对回复i说大话打发士大夫十分fsdhaiofhjaiodshfkuashfh都发卡号是可见的回复会计师大后方但是</p>
+                        <div class="current-time">
+                            <span>12:55</span>
+                        </div>
+                    </div>
+                    <div class="share riff">
+                        <ion-icon name="arrow-redo-outline"></ion-icon>
+                    </div>
+                </div>
+                <!-- 自己信息 -->
+                <div class="user-info-items info-items">
+                    <div class="share riff">
+                        <ion-icon name="arrow-redo-outline"></ion-icon>
+                    </div>
+                    <div class="chat-info-main shadow">
+                        <p>
+                            对方华盛顿和覅u
+                            对方华盛顿和覅u水分的防护手段回复和反抗集散地和反
+                            馈i还是对回复i说大话打发士大夫十分fsdhaiofhu
+                            对方华盛顿和覅u水分的防护手段回复和反抗集散地和反
+                            馈i还是对回复i说大话打发士大夫十分fsdhaiofhu
+                            对方华盛顿和覅u水分的防护手段回复和反抗集散地和反
+                            馈i还是对回复i说大话打发士大夫十分fsdhaiofhu
+                            对方华盛顿和覅u水分的防护手段回复和反抗集散地和反
+                            馈i还是对回复i说大话打发士大夫十分fsdhaiofhu
+                            对方华盛顿和覅u水分的防护手段回复和反抗集散地和反
+                            馈i还是对回复i说大话打发士大夫十分fsdhaiofh
+                        </p>
+                        <div class="current-time">
+                            <span>12:55</span>
+                        </div>
+                    </div>
+                    <div class="portrait chat-info-img shadow">
+                        <img src="./image/1.jpeg" alt="">
+                    </div>
+                </div>
+            </div>
+            <!-- 输入框 -->
+            <div class="input-frame">
+                <div class="input-frame-left shadow">
+                    <div class="riff" id="emotion">
+                        <ion-icon name="happy-outline"></ion-icon>
+                    </div>
+                    <input type="text" placeholder="消息">
+                    <div class="riff" id="send-file">
+                        <ion-icon name="attach-outline"></ion-icon>
+                    </div>
+                </div>
+                <div class="input-frame-right shadow riff">
+                    <ion-icon name="mic-outline"></ion-icon>
+                </div>
+            </div>
+        </div>
+        <div class="right-info">
+            <div class="ordinary">
+                <div class="left-contact-img bottom-line">
+                    <div class="portrait big-portrait">
+                        <img src="./image/1.jpeg" alt="">
+                    </div>
+                    <div class="contact-name">
+                        <h3>联系人名字</h3>
+                        <span>很久没有上线</span>
+                    </div>
+                </div>
+                <div class="introduction bottom-line">
+                    <div class="icon">
+                        <ion-icon name="information-circle-outline"></ion-icon>
+                    </div>
+                    <!-- 邮箱或者电话号码 -->
+                    <div class="introduction-info">
+                        <div>
+                            <span id="contact-phone">13019392276</span>
+                            <span id="contact-hint-info">电话</span>
+                        </div>
+                        <div>
+                            <span id="id">$cxn</span>
+                            <span>联系人id</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="statistics bottom-line">
+                    <div class="statistics-items">
+                        <div>
+                            <ion-icon name="folder-outline"></ion-icon>
+                        </div>
+                        <span>文件</span>
+                    </div>
+                    <div class="statistics-items">
+                        <div>
+                            <ion-icon name="image-outline"></ion-icon>
+                        </div>
+                        <span>照片</span>
+                    </div>
+                    <div class="statistics-items">
+                        <div>
+                            <ion-icon name="videocam-outline"></ion-icon>
+                        </div>
+                        <span>视频</span>
+                    </div>
+                    <div class="statistics-items">
+                        <div>
+                            <ion-icon name="pulse-outline"></ion-icon>
+                        </div>
+                        <span>音频</span>
+                    </div>
+                </div>
+                <div class="edit-contact">
+                    <div class="edit-items">
+                        <div>
+                            <ion-icon name="paper-plane-outline"></ion-icon>
+                        </div>
+                        <span>分享联系人信息</span>
+                    </div>
+                    <div class="edit-items">
+                        <div>
+                            <ion-icon name="options-outline"></ion-icon>
+                        </div>
+                        <span>编辑联系人信息</span>
+                    </div>
+                    <div class="edit-items">
+                        <div>
+                            <ion-icon name="trash-outline"></ion-icon>
+                        </div>
+                        <span>删除联系人</span>
+                    </div>
+                    <div class="edit-items">
+                        <div>
+                            <ion-icon name="trash-outline"></ion-icon>
+                        </div>
+                        <span>删除聊天内容</span>
+                    </div>
+                    <div class="edit-items">
+                        <div>
+                            <ion-icon name="heart-dislike-outline"></ion-icon>
+                        </div>
+                        <span>拉黑联系人</span>
+                    </div>
+                </div>
+            </div>
+            <div class="statistics-info file-info">
+                <div class="statistics-close">
+                    <ion-icon class="statistics-close-icon" name="arrow-forward-outline"></ion-icon>
+                </div>
+                <div class="statistics-frame">
+                    <div class="file-info-items">
+                        <div class="file-info-items-img">
+                            <span>yml</span>
+                        </div>
+                        <div class="file-info-items-introduce">
+                            <div class="file-info-items-title">
+                                <h4>文件标题fdsafasdfasdd3123</h4>
+                            </div>
+                            <div class="file-info-items-size">
+                                <span>100KB</span>
+                            </div>
+                            <div class="file-info-items-time">
+                                <span>2022/1/20 16:33</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-info-items">
+                        <div class="file-info-items-img">
+                            <span>yml</span>
+                        </div>
+                        <div class="file-info-items-introduce">
+                            <div class="file-info-items-title">
+                                <h4>文件标题fdsafasdfasdd3123</h4>
+                            </div>
+                            <div class="file-info-items-size">
+                                <span>100KB</span>
+                            </div>
+                            <div class="file-info-items-time">
+                                <span>2022/1/20 16:33</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-info-items">
+                        <div class="file-info-items-img">
+                            <span>yml</span>
+                        </div>
+                        <div class="file-info-items-introduce">
+                            <div class="file-info-items-title">
+                                <h4>文件标题fdsafasdfasdd3123</h4>
+                            </div>
+                            <div class="file-info-items-size">
+                                <span>100KB</span>
+                            </div>
+                            <div class="file-info-items-time">
+                                <span>2022/1/20 16:33</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-info-items">
+                        <div class="file-info-items-img">
+                            <span>yml</span>
+                        </div>
+                        <div class="file-info-items-introduce">
+                            <div class="file-info-items-title">
+                                <h4>文件标题fdsafasdfasdd3123</h4>
+                            </div>
+                            <div class="file-info-items-size">
+                                <span>100KB</span>
+                            </div>
+                            <div class="file-info-items-time">
+                                <span>2022/1/20 16:33</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-info-items">
+                        <div class="file-info-items-img">
+                            <span>yml</span>
+                        </div>
+                        <div class="file-info-items-introduce">
+                            <div class="file-info-items-title">
+                                <h4>文件标题fdsafasdfasdd3123</h4>
+                            </div>
+                            <div class="file-info-items-size">
+                                <span>100KB</span>
+                            </div>
+                            <div class="file-info-items-time">
+                                <span>2022/1/20 16:33</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-info-items">
+                        <div class="file-info-items-img">
+                            <span>yml</span>
+                        </div>
+                        <div class="file-info-items-introduce">
+                            <div class="file-info-items-title">
+                                <h4>文件标题fdsafasdfasdd3123</h4>
+                            </div>
+                            <div class="file-info-items-size">
+                                <span>100KB</span>
+                            </div>
+                            <div class="file-info-items-time">
+                                <span>2022/1/20 16:33</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-info-items">
+                        <div class="file-info-items-img">
+                            <span>yml</span>
+                        </div>
+                        <div class="file-info-items-introduce">
+                            <div class="file-info-items-title">
+                                <h4>文件标题fdsafasdfasdd3123</h4>
+                            </div>
+                            <div class="file-info-items-size">
+                                <span>100KB</span>
+                            </div>
+                            <div class="file-info-items-time">
+                                <span>2022/1/20 16:33</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-info-items">
+                        <div class="file-info-items-img">
+                            <span>yml</span>
+                        </div>
+                        <div class="file-info-items-introduce">
+                            <div class="file-info-items-title">
+                                <h4>文件标题fdsafasdfasdd3123</h4>
+                            </div>
+                            <div class="file-info-items-size">
+                                <span>100KB</span>
+                            </div>
+                            <div class="file-info-items-time">
+                                <span>2022/1/20 16:33</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-info-items">
+                        <div class="file-info-items-img">
+                            <span>yml</span>
+                        </div>
+                        <div class="file-info-items-introduce">
+                            <div class="file-info-items-title">
+                                <h4>文件标题fdsafasdfasdd3123</h4>
+                            </div>
+                            <div class="file-info-items-size">
+                                <span>100KB</span>
+                            </div>
+                            <div class="file-info-items-time">
+                                <span>2022/1/20 16:33</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-info-items">
+                        <div class="file-info-items-img">
+                            <span>yml</span>
+                        </div>
+                        <div class="file-info-items-introduce">
+                            <div class="file-info-items-title">
+                                <h4>文件标题fdsafasdfasdd3123</h4>
+                            </div>
+                            <div class="file-info-items-size">
+                                <span>100KB</span>
+                            </div>
+                            <div class="file-info-items-time">
+                                <span>2022/1/20 16:33</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-info-items">
+                        <div class="file-info-items-img">
+                            <span>yml</span>
+                        </div>
+                        <div class="file-info-items-introduce">
+                            <div class="file-info-items-title">
+                                <h4>文件标题fdsafasdfasdd3123</h4>
+                            </div>
+                            <div class="file-info-items-size">
+                                <span>100KB</span>
+                            </div>
+                            <div class="file-info-items-time">
+                                <span>2022/1/20 16:33</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-info-items">
+                        <div class="file-info-items-img">
+                            <span>yml</span>
+                        </div>
+                        <div class="file-info-items-introduce">
+                            <div class="file-info-items-title">
+                                <h4>文件标题fdsafasdfasdd3123</h4>
+                            </div>
+                            <div class="file-info-items-size">
+                                <span>100KB</span>
+                            </div>
+                            <div class="file-info-items-time">
+                                <span>2022/1/20 16:33</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="statistics-info photo-info">
+                <div class="statistics-close">
+                    <ion-icon class="statistics-close-icon" name="arrow-forward-outline"></ion-icon>
+                </div>
+                <div class="statistics-frame">
+                    <div class="file-info-items">
+                        <div class="file-info-items-img">
+                            <img src="./image/1.jpeg" alt="">
+                        </div>
+                        <div class="file-info-items-introduce">
+                            <div class="file-info-items-title">
+                                <h4>文件标题fdsafasdfasdd3123</h4>
+                            </div>
+                            <div class="file-info-items-size">
+                                <span>100KB</span>
+                            </div>
+                            <div class="file-info-items-time">
+                                <span>2022/1/20 16:33</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-info-items">
+                        <div class="file-info-items-img">
+                            <img src="./image/1.jpeg" alt="">
+                        </div>
+                        <div class="file-info-items-introduce">
+                            <div class="file-info-items-title">
+                                <h4>文件标题fdsafasdfasdd3123</h4>
+                            </div>
+                            <div class="file-info-items-size">
+                                <span>100KB</span>
+                            </div>
+                            <div class="file-info-items-time">
+                                <span>2022/1/20 16:33</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-info-items">
+                        <div class="file-info-items-img">
+                            <img src="./image/1.jpeg" alt="">
+                        </div>
+                        <div class="file-info-items-introduce">
+                            <div class="file-info-items-title">
+                                <h4>文件标题fdsafasdfasdd3123</h4>
+                            </div>
+                            <div class="file-info-items-size">
+                                <span>100KB</span>
+                            </div>
+                            <div class="file-info-items-time">
+                                <span>2022/1/20 16:33</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-info-items">
+                        <div class="file-info-items-img">
+                            <img src="./image/1.jpeg" alt="">
+                        </div>
+                        <div class="file-info-items-introduce">
+                            <div class="file-info-items-title">
+                                <h4>文件标题fdsafasdfasdd3123</h4>
+                            </div>
+                            <div class="file-info-items-size">
+                                <span>100KB</span>
+                            </div>
+                            <div class="file-info-items-time">
+                                <span>2022/1/20 16:33</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-info-items">
+                        <div class="file-info-items-img">
+                            <img src="./image/1.jpeg" alt="">
+                        </div>
+                        <div class="file-info-items-introduce">
+                            <div class="file-info-items-title">
+                                <h4>文件标题fdsafasdfasdd3123</h4>
+                            </div>
+                            <div class="file-info-items-size">
+                                <span>100KB</span>
+                            </div>
+                            <div class="file-info-items-time">
+                                <span>2022/1/20 16:33</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-info-items">
+                        <div class="file-info-items-img">
+                            <img src="./image/1.jpeg" alt="">
+                        </div>
+                        <div class="file-info-items-introduce">
+                            <div class="file-info-items-title">
+                                <h4>文件标题fdsafasdfasdd3123</h4>
+                            </div>
+                            <div class="file-info-items-size">
+                                <span>100KB</span>
+                            </div>
+                            <div class="file-info-items-time">
+                                <span>2022/1/20 16:33</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-info-items">
+                        <div class="file-info-items-img">
+                            <img src="./image/1.jpeg" alt="">
+                        </div>
+                        <div class="file-info-items-introduce">
+                            <div class="file-info-items-title">
+                                <h4>文件标题fdsafasdfasdd3123</h4>
+                            </div>
+                            <div class="file-info-items-size">
+                                <span>100KB</span>
+                            </div>
+                            <div class="file-info-items-time">
+                                <span>2022/1/20 16:33</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-info-items">
+                        <div class="file-info-items-img">
+                            <img src="./image/1.jpeg" alt="">
+                        </div>
+                        <div class="file-info-items-introduce">
+                            <div class="file-info-items-title">
+                                <h4>文件标题fdsafasdfasdd3123</h4>
+                            </div>
+                            <div class="file-info-items-size">
+                                <span>100KB</span>
+                            </div>
+                            <div class="file-info-items-time">
+                                <span>2022/1/20 16:33</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-info-items">
+                        <div class="file-info-items-img">
+                            <img src="./image/1.jpeg" alt="">
+                        </div>
+                        <div class="file-info-items-introduce">
+                            <div class="file-info-items-title">
+                                <h4>文件标题fdsafasdfasdd3123</h4>
+                            </div>
+                            <div class="file-info-items-size">
+                                <span>100KB</span>
+                            </div>
+                            <div class="file-info-items-time">
+                                <span>2022/1/20 16:33</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="statistics-info video-info">
+                <div class="statistics-close">
+                    <ion-icon class="statistics-close-icon" name="arrow-forward-outline"></ion-icon>
+                </div>
+                <div class="statistics-frame">
+                    <div class="video-info-items">
+                        <div class="duration">
+                            <div>
+                                <ion-icon name="caret-forward-outline"></ion-icon>
+                                <span>12:39</span>
+                            </div>
+                        </div>
+                        <img src="./image/1.jpeg" alt="">
+                    </div>
+                    <div class="video-info-items">
+                        <div class="duration">
+                            <div>
+                                <ion-icon name="caret-forward-outline"></ion-icon>
+                                <span>12:39</span>
+                            </div>
+                        </div>
+                        <img src="./image/1.jpeg" alt="">
+                    </div>
+                    <div class="video-info-items">
+                        <div class="duration">
+                            <div>
+                                <ion-icon name="caret-forward-outline"></ion-icon>
+                                <span>12:39</span>
+                            </div>
+                        </div>
+                        <img src="./image/1.jpeg" alt="">
+                    </div>
+                    <div class="video-info-items">
+                        <div class="duration">
+                            <div>
+                                <ion-icon name="caret-forward-outline"></ion-icon>
+                                <span>12:39</span>
+                            </div>
+                        </div>
+                        <img src="./image/1.jpeg" alt="">
+                    </div>
+                    <div class="video-info-items">
+                        <div class="duration">
+                            <div>
+                                <ion-icon name="caret-forward-outline"></ion-icon>
+                                <span>12:39</span>
+                            </div>
+                        </div>
+                        <img src="./image/1.jpeg" alt="">
+                    </div>
+                    <div class="video-info-items">
+                        <div class="duration">
+                            <div>
+                                <ion-icon name="caret-forward-outline"></ion-icon>
+                                <span>12:39</span>
+                            </div>
+                        </div>
+                        <img src="./image/1.jpeg" alt="">
+                    </div>
+                    <div class="video-info-items">
+                        <div class="duration">
+                            <div>
+                                <ion-icon name="caret-forward-outline"></ion-icon>
+                                <span>12:39</span>
+                            </div>
+                        </div>
+                        <img src="./image/1.jpeg" alt="">
+                    </div>
+                    <div class="video-info-items">
+                        <div class="duration">
+                            <div>
+                                <ion-icon name="caret-forward-outline"></ion-icon>
+                                <span>12:39</span>
+                            </div>
+                        </div>
+                        <img src="./image/1.jpeg" alt="">
+                    </div>
+                    <div class="video-info-items">
+                        <div class="duration">
+                            <div>
+                                <ion-icon name="caret-forward-outline"></ion-icon>
+                                <span>12:39</span>
+                            </div>
+                        </div>
+                        <img src="./image/1.jpeg" alt="">
+                    </div>
+                    <div class="video-info-items">
+                        <div class="duration">
+                            <div>
+                                <ion-icon name="caret-forward-outline"></ion-icon>
+                                <span>12:39</span>
+                            </div>
+                        </div>
+                        <img src="./image/1.jpeg" alt="">
+                    </div>
+                    <div class="video-info-items">
+                        <div class="duration">
+                            <div>
+                                <ion-icon name="caret-forward-outline"></ion-icon>
+                                <span>12:39</span>
+                            </div>
+                        </div>
+                        <img src="./image/1.jpeg" alt="">
+                    </div>
+                    <div class="video-info-items">
+                        <div class="duration">
+                            <div>
+                                <ion-icon name="caret-forward-outline"></ion-icon>
+                                <span>12:39</span>
+                            </div>
+                        </div>
+                        <img src="./image/1.jpeg" alt="">
+                    </div>
+                    <div class="video-info-items">
+                        <div class="duration">
+                            <div>
+                                <ion-icon name="caret-forward-outline"></ion-icon>
+                                <span>12:39</span>
+                            </div>
+                        </div>
+                        <img src="./image/1.jpeg" alt="">
+                    </div>
+                    <div class="video-info-items">
+                        <div class="duration">
+                            <div>
+                                <ion-icon name="caret-forward-outline"></ion-icon>
+                                <span>12:39</span>
+                            </div>
+                        </div>
+                        <img src="./image/1.jpeg" alt="">
+                    </div>
+                    <div class="video-info-items">
+                        <div class="duration">
+                            <div>
+                                <ion-icon name="caret-forward-outline"></ion-icon>
+                                <span>12:39</span>
+                            </div>
+                        </div>
+                        <img src="./image/1.jpeg" alt="">
+                    </div>
+                    <div class="video-info-items">
+                        <div class="duration">
+                            <div>
+                                <ion-icon name="caret-forward-outline"></ion-icon>
+                                <span>12:39</span>
+                            </div>
+                        </div>
+                        <img src="./image/1.jpeg" alt="">
+                    </div>
+                    <div class="video-info-items">
+                        <div class="duration">
+                            <div>
+                                <ion-icon name="caret-forward-outline"></ion-icon>
+                                <span>12:39</span>
+                            </div>
+                        </div>
+                        <img src="./image/1.jpeg" alt="">
+                    </div>
+                    <div class="video-info-items">
+                        <div class="duration">
+                            <div>
+                                <ion-icon name="caret-forward-outline"></ion-icon>
+                                <span>12:39</span>
+                            </div>
+                        </div>
+                        <img src="./image/1.jpeg" alt="">
+                    </div>
+                </div>
+            </div>
+            <div class="statistics-info music-info">
+                <div class="statistics-close">
+                    <ion-icon class="statistics-close-icon" name="arrow-forward-outline"></ion-icon>
+                </div>
+                <div class="statistics-frame">
+                    <div class="music-info-items">
+                        <div class="music-icon">
+                            <ion-icon name="caret-forward-outline"></ion-icon>
+                        </div>
+                        <div class="music-info-introduce">
+                            <h5>音乐标题hiudhfiuhasdiuhfiousdfsadfsdfsd</h5>
+                            <span>时长</span>
+                            <span>大小</span>
+                        </div>
+                    </div>
+                    <div class="music-info-items">
+                        <div class="music-icon">
+                            <ion-icon name="caret-forward-outline"></ion-icon>
+                        </div>
+                        <div class="music-info-introduce">
+                            <h5>音乐标题</h5>
+                            <span>时长</span>
+                            <span>大小</span>
+                        </div>
+                    </div>
+                    <div class="music-info-items">
+                        <div class="music-icon">
+                            <ion-icon name="caret-forward-outline"></ion-icon>
+                        </div>
+                        <div class="music-info-introduce">
+                            <h5>音乐标题</h5>
+                            <span>时长</span>
+                            <span>大小</span>
+                        </div>
+                    </div>
+                    <div class="music-info-items">
+                        <div class="music-icon">
+                            <ion-icon name="caret-forward-outline"></ion-icon>
+                        </div>
+                        <div class="music-info-introduce">
+                            <h5>音乐标题</h5>
+                            <span>时长</span>
+                            <span>大小</span>
+                        </div>
+                    </div>
+                    <div class="music-info-items">
+                        <div class="music-icon">
+                            <ion-icon name="caret-forward-outline"></ion-icon>
+                        </div>
+                        <div class="music-info-introduce">
+                            <h5>音乐标题</h5>
+                            <span>时长</span>
+                            <span>大小</span>
+                        </div>
+                    </div>
+                    <div class="music-info-items">
+                        <div class="music-icon">
+                            <ion-icon name="caret-forward-outline"></ion-icon>
+                        </div>
+                        <div class="music-info-introduce">
+                            <h5>音乐标题</h5>
+                            <span>时长</span>
+                            <span>大小</span>
+                        </div>
+                    </div>
+                    <div class="music-info-items">
+                        <div class="music-icon">
+                            <ion-icon name="caret-forward-outline"></ion-icon>
+                        </div>
+                        <div class="music-info-introduce">
+                            <h5>音乐标题</h5>
+                            <span>时长</span>
+                            <span>大小</span>
+                        </div>
+                    </div>
+                    <div class="music-info-items">
+                        <div class="music-icon">
+                            <ion-icon name="caret-forward-outline"></ion-icon>
+                        </div>
+                        <div class="music-info-introduce">
+                            <h5>音乐标题</h5>
+                            <span>时长</span>
+                            <span>大小</span>
+                        </div>
+                    </div>
+                    <div class="music-info-items">
+                        <div class="music-icon">
+                            <ion-icon name="caret-forward-outline"></ion-icon>
+                        </div>
+                        <div class="music-info-introduce">
+                            <h5>音乐标题</h5>
+                            <span>时长</span>
+                            <span>大小</span>
+                        </div>
+                    </div>
+                    <div class="music-info-items">
+                        <div class="music-icon">
+                            <ion-icon name="caret-forward-outline"></ion-icon>
+                        </div>
+                        <div class="music-info-introduce">
+                            <h5>音乐标题</h5>
+                            <span>时长</span>
+                            <span>大小</span>
+                        </div>
+                    </div>
+                    <div class="music-info-items">
+                        <div class="music-icon">
+                            <ion-icon name="caret-forward-outline"></ion-icon>
+                        </div>
+                        <div class="music-info-introduce">
+                            <h5>音乐标题</h5>
+                            <span>时长</span>
+                            <span>大小</span>
+                        </div>
+                    </div>
+                    <div class="music-info-items">
+                        <div class="music-icon">
+                            <ion-icon name="caret-forward-outline"></ion-icon>
+                        </div>
+                        <div class="music-info-introduce">
+                            <h5>音乐标题</h5>
+                            <span>时长</span>
+                            <span>大小</span>
+                        </div>
+                    </div>
+                    <div class="music-info-items">
+                        <div class="music-icon">
+                            <ion-icon name="caret-forward-outline"></ion-icon>
+                        </div>
+                        <div class="music-info-introduce">
+                            <h5>音乐标题</h5>
+                            <span>时长</span>
+                            <span>大小</span>
+                        </div>
+                    </div>
+                    <div class="music-info-items">
+                        <div class="music-icon">
+                            <ion-icon name="caret-forward-outline"></ion-icon>
+                        </div>
+                        <div class="music-info-introduce">
+                            <h5>音乐标题</h5>
+                            <span>时长</span>
+                            <span>大小</span>
+                        </div>
+                    </div>
+                    <div class="music-info-items">
+                        <div class="music-icon">
+                            <ion-icon name="caret-forward-outline"></ion-icon>
+                        </div>
+                        <div class="music-info-introduce">
+                            <h5>音乐标题</h5>
+                            <span>时长</span>
+                            <span>大小</span>
+                        </div>
+                    </div>
+                    <div class="music-info-items">
+                        <div class="music-icon">
+                            <ion-icon name="caret-forward-outline"></ion-icon>
+                        </div>
+                        <div class="music-info-introduce">
+                            <h5>音乐标题</h5>
+                            <span>时长</span>
+                            <span>大小</span>
+                        </div>
+                    </div>
+                    <div class="music-info-items">
+                        <div class="music-icon">
+                            <ion-icon name="caret-forward-outline"></ion-icon>
+                        </div>
+                        <div class="music-info-introduce">
+                            <h5>音乐标题</h5>
+                            <span>时长</span>
+                            <span>大小</span>
+                        </div>
+                    </div>
+                    <div class="music-info-items">
+                        <div class="music-icon">
+                            <ion-icon name="caret-forward-outline"></ion-icon>
+                        </div>
+                        <div class="music-info-introduce">
+                            <h5>音乐标题</h5>
+                            <span>时长</span>
+                            <span>大小</span>
+                        </div>
+                    </div>
+                    <div class="music-info-items">
+                        <div class="music-icon">
+                            <ion-icon name="caret-forward-outline"></ion-icon>
+                        </div>
+                        <div class="music-info-introduce">
+                            <h5>音乐标题</h5>
+                            <span>时长</span>
+                            <span>大小</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="up-load">
+        <div class="img-frame shadow">
+            <div class="img-frame-head">
+                <div class="ion-icon-center" id="upload-close">
+                    <ion-icon name="close-outline"></ion-icon>
+                </div>
+                <span>选择</span>
+            </div>
+            <div class="img-show">
+                <!-- <canvas id="preview-img-canvas"></canvas> -->
+                <img id="preview-img" src="" alt="">
+            </div>
+            <div class="submit ion-icon-center shadow">
+                <ion-icon name="checkmark-outline"></ion-icon>
+            </div>
+        </div>
+    </div>
+    <div class="create-chat-folder">
+        <div class="img-frame shadow" style="width: 200px;">
+            <h3>移除联系人分组</h3><br>
+            <p>你确定要删除这个联系人分组吗？你的联系人分组将被删除</p>
+            <div class="options">
+                <div class="cancel">
+                    取消
+                </div>
+                <div class="ok">
+                    确定
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="./js/add-folder.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script>
+
+    </script>
+</body>
+
+</html>

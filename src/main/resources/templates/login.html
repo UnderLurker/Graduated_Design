@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/common.css">
+    <link rel="stylesheet" href="./css/input.css">
+    <link rel="stylesheet" href="./css/register.css">
+    <title>登录</title>
+</head>
+<body>
+    <div class="flex-box" style="height: 20rem;">
+        <!-- 登录方式选择 -->
+        <div class="login-way">
+            <ul>
+                <li>
+                    <span>邮箱登录</span>
+                    <div id="slider"></div>
+                </li>
+                <li>
+                    <span>手机登录</span>
+                </li>
+                <li>
+                    <span>刷脸登录</span>
+                </li>
+            </ul>
+        </div>
+        <div class="register-main">
+            <!-- 邮箱登录 -->
+            <form action="#" method="post">
+                <div class="input-group">
+                    <input type="text" id="UserName" required>
+                    <div class="underline"></div>
+                    <label for="UserName">姓名</label>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="UserEmail" aria-describedby="emailHelp" required>
+                    <div class="underline"></div>
+                    <label for="UserEmail">邮箱</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="UserPasswordFirst" required>
+                    <div class="underline"></div>
+                    <label for="UserPasswordFirst">密码</label>
+                </div>
+                <div class="input-group">
+                    <button type="submit" class="btn">登录</button>
+                </div>
+                <a class="login" href="register.html">返回注册</a>
+            </form>
+            <!-- 手机登录 -->
+            <form action="#" method="post">
+                <div class="input-group">
+                    <input type="text" id="UserNamePhone" required>
+                    <div class="underline"></div>
+                    <label for="UserName">姓名</label>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="UserPhone" required>
+                    <div class="underline"></div>
+                    <label for="UserPhone">手机号</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="UserPasswordFirstPhone" required>
+                    <div class="underline"></div>
+                    <label for="UserPasswordFirst">密码</label>
+                </div>
+                <div class="input-group">
+                    <button type="submit" class="btn">登录</button>
+                </div>
+                <a class="login" href="register.html">返回注册</a>
+            </form>
+            <!-- 刷脸登录 -->
+            <form action="#" method="post">
+                <div class="input-group">
+                    <input type="text" id="UserNameFace" required>
+                    <div class="underline"></div>
+                    <label for="UserName">刷脸</label>
+                </div>
+                <div class="input-group">
+                    <button type="submit" class="btn">登录</button>
+                </div>
+                <a class="login" href="register.html">返回注册</a>
+            </form>
+        </div>
+    </div>
+    <script>
+        var active=0;
+        var li=document.getElementsByTagName('li');
+        var form=document.getElementsByTagName('form');
+        let initLeft=li[0].getBoundingClientRect().left;
+        for(var i=0;i<li.length;i++){
+            li[i].onclick=function(){
+                for(var j=0;j<li.length;j++){
+                    if(li[j]==this) break;
+                }
+                if(j==active) return;
+
+                let left=this.getBoundingClientRect().left;
+                let slider=document.getElementById('slider');
+                this.style.color="dodgerblue";
+                li[active].style.color="silver";
+                slider.style.left=left-initLeft+"px";
+
+                //展开表单
+                form[active].style.width="0";
+                form[j].style.width="100%";
+
+                active=j;
+            }
+        }
+    </script>
+</body>
+</html>

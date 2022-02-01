@@ -4,6 +4,10 @@ spring:
     url: jdbc:mysql://localhost:3306/bookstore
     username: root
     password: 123
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true

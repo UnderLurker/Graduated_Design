@@ -1,27 +1,49 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/register.css">
+    <link rel="stylesheet" href="./css/login.css">
+    <link rel="stylesheet" href="./css/common.css">
+    <title>首页</title>
 </head>
 <body>
-<table>
-  <tr>
-    <th>bid</th>
-    <th>bname</th>
-    <th>price</th>
-    <th>author</th>
-    <th>image</th>
-    <th>cid</th>
-  </tr>
-  <tr th:each="book : ${list}">
-    <td th:text="${book.bid}"></td>
-    <td th:text="${book.bname}"></td>
-    <td th:text="${book.price}"></td>
-    <td th:text="${book.author}"></td>
-    <td th:text="${book.image}"></td>
-    <td th:text="${book.cid}"></td>
-  </tr>
-</table>
+    <div class="headline">
+        你的旅程从这里开始
+    </div>
+    <div class="menu">
+        <div class="toggle">
+            <ion-icon name="add-outline"></ion-icon>
+        </div>
+        <li style="--i:0;">
+            <a href="./login.html">
+                <!-- 登录 -->
+                <ion-icon name="enter-outline"></ion-icon>
+            </a>
+        </li>
+        <li style="--i:1;">
+            <a href="#">
+                <!-- 登出 -->
+                <ion-icon name="exit-outline"></ion-icon>
+            </a>
+        </li>
+        <li style="--i:2;">
+            <a href="register.html">
+                <!-- 注册 -->
+                <ion-icon name="person-add-outline"></ion-icon>
+            </a>
+        </li>
+    </div>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script>
+        let toggle=document.querySelector('.toggle');
+        let menu=document.querySelector('.menu');
+        toggle.onclick=function(){
+            menu.classList.toggle('active');
+        }
+    </script>
 </body>
 </html>
