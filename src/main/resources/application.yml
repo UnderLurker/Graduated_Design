@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/bookstore
+    url: jdbc:mysql://localhost:3306/graduated_design_database
     username: root
     password: 123
   mvc:

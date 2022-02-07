@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
@@ -12,7 +12,7 @@
 </head>
 
 <body>
-    <div class="flex-box">
+    <div class="flex-box" id="app">
         <!-- 注册方式选择 -->
         <div class="register-way">
             <ul>
@@ -31,56 +31,58 @@
         
         <div class="register-main">
             <!-- 邮箱注册 -->
-            <form action="#" method="post">
+            <form action="/emailRegister" method="post">
                 <div class="input-group">
-                    <input type="text" id="UserName" required>
+                    <input type="text" id="UserName" name="name" maxLength="50" required>
                     <div class="underline"></div>
                     <label for="UserName">姓名</label>
                 </div>
                 <div class="input-group">
-                    <input type="text" id="UserEmail" aria-describedby="emailHelp" required>
+                    <input type="text" id="UserEmail" name="email" aria-describedby="emailHelp" required>
                     <div class="underline"></div>
                     <label for="UserEmail">邮箱</label>
                 </div>
                 <div class="input-group">
-                    <input type="password" id="UserPasswordFirst" required>
+                    <input type="password" id="UserPasswordFirst" name="password" maxLength="20" required>
                     <div class="underline"></div>
                     <label for="UserPasswordFirst">密码</label>
                 </div>
                 <div class="input-group">
-                    <input type="password" id="UserPasswordSecond" required>
+                    <input type="password" id="UserPasswordSecond" name="passwordConfirm" maxLength="20" required>
                     <div class="underline"></div>
                     <label for="UserPasswordSecond">确认密码</label>
                 </div>
-                <div class="input-group">
-                    <button type="submit" class="btn">注册</button>
+                <span>{{Message.emailMessage}}</span>
+                <div class="input-group" style="padding-top: 1rem;">
+                    <button type="submit" class="btn" @click="emailRegister">注册</button>
                 </div>
                 <a class="login" href="login.html">返回登录</a>
             </form>
             <!-- 手机注册 -->
-            <form action="#" method="post">
+            <form action="/phoneRegister" method="post">
                 <div class="input-group">
-                    <input type="text" id="UserNamePhone" required>
+                    <input type="text" id="UserNamePhone" name="name" maxLength="50" required>
                     <div class="underline"></div>
                     <label for="UserName">姓名</label>
                 </div>
                 <div class="input-group">
-                    <input type="text" id="UserPhone" required>
+                    <input type="text" id="UserPhone" name="phone" required>
                     <div class="underline"></div>
                     <label for="UserPhone">手机号</label>
                 </div>
                 <div class="input-group">
-                    <input type="password" id="UserPasswordFirstPhone" required>
+                    <input type="password" id="UserPasswordFirstPhone" name="password" maxLength="20" required>
                     <div class="underline"></div>
                     <label for="UserPasswordFirst">密码</label>
                 </div>
                 <div class="input-group">
-                    <input type="password" id="UserPasswordSecondPhone" required>
+                    <input type="password" id="UserPasswordSecondPhone" name="passwordConfirm" maxLength="20" required>
                     <div class="underline"></div>
                     <label for="UserPasswordSecond">确认密码</label>
                 </div>
-                <div class="input-group">
-                    <button type="submit" class="btn">注册</button>
+                <span>{{Message.phoneMessage}}}</span>
+                <div class="input-group" style="padding-top: 1rem;">
+                    <button type="submit" class="btn" @click="phoneRegister">注册</button>
                 </div>
                 <a class="login" href="login.html">返回登录</a>
             </form>
@@ -91,25 +93,96 @@
                     <div class="underline"></div>
                     <label for="UserName">刷脸</label>
                 </div>
-                <div class="input-group">
+                <span>{{Message.faceMessage}}</span>
+                <div class="input-group" style="padding-top: 1rem;">
                     <button type="submit" class="btn">注册</button>
                 </div>
                 <a class="login" href="login.html">返回登录</a>
             </form>
         </div>
     </div>
+    <script src="./js/vue.js"></script>
+    <script src="./js/axios.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
     <script>
-        var active=0;
-        var li=document.getElementsByTagName('li');
-        var form=document.getElementsByTagName('form');
+        function sendData(url,data,num){
+            axios({
+                url:url,
+                method:'post',
+                data:data,
+                headers: {
+                    'Content-Type': "application/json;charset=UTF-8",
+                },
+            }).then((res)=>{
+                let data=res.data;
+                if(data.email==null&&data.phone==null&&data.face==null){
+                    $(window).attr('location','/login.html');
+                }
+                else{
+                    Vue.set(vue.Message,'emailMessage',data.email);
+                    Vue.set(vue.Message,'phoneMessage',data.phone);
+                    Vue.set(vue.Message,'faceMessage',data.face);
+                    $('form > span:eq('+num+')').css('width','100%');
+                }
+            });
+        }
+
+        let vue=new Vue({
+            el:"#app",
+            data(){
+                return {
+                    Message:{
+                        emailMessage:'报错',
+                        phoneMessage:'报错',
+                        faceMessage:'报错'
+                    }
+                }
+            },
+            methods: {
+                emailRegister:function (e) {
+                    let data={
+                        name:$('#UserName').val(),
+                        email:$('#UserEmail').val(),
+                        password:$('#UserPasswordFirst').val(),
+                        passwordConfirm:$('#UserPasswordSecond').val()
+                    }
+                    sendData('/emailRegister',data,0);
+                    e.preventDefault();
+                },
+                phoneRegister:function (e) {
+                    let data={
+                        name:$('#UserNamePhone').val(),
+                        phone:$('#UserPhone').val(),
+                        password:$('#UserPasswordFirst').val(),
+                        passwordConfirm:$('#UserPasswordSecond').val()
+                    }
+                    sendData('/phoneRegister',data,1);
+                    e.preventDefault();
+                }
+            },
+            created:{
+                // this.errorEmailMsg=session
+            }
+        });
+
+        let active=0;
+        let li=document.getElementsByTagName('li');
+        let form=document.getElementsByTagName('form');
         let initLeft=li[0].getBoundingClientRect().left;
-        for(var i=0;i<li.length;i++){
+        for(let i=0;i<li.length;i++){
             li[i].onclick=function(){
-                for(var j=0;j<li.length;j++){
+                let j=0;
+                for(j=0;j<li.length;j++){
                     if(li[j]==this) break;
                 }
                 if(j==active) return;
-
+                if(active==0||active==1){
+                    let input=document.getElementsByTagName('input');
+                    for(let i=active*4;i<(active+1)*4;i++){
+                        input[i].value="";
+                    }
+                    $('form > span:eq('+active+')').css('width','0%');
+                }
                 let left=this.getBoundingClientRect().left;
                 let slider=document.getElementById('slider');
                 this.style.color="dodgerblue";

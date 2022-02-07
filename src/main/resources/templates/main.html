@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
@@ -22,7 +22,7 @@
 </head>
 
 <body>
-    <div class="main-flex">
+    <div class="main-flex" id="app">
         <div class="left-nav">
             <div id="left-nav-main">
                 <div class="search">
@@ -458,7 +458,7 @@
                         <img src="./image/1.jpeg" alt="">
                     </div>
                     <div class="ion-icon-center transparent-camera">
-                        <form action="" method="post" enctype="multipart/form-data">
+                        <form action="/user/headportrait" method="post" enctype="multipart/form-data">
                             <ion-icon name="camera-outline"></ion-icon>
                             <input id="image-input-frame" type="file" accept="image/*" hidden>
                             <input id="image-send" type="submit" hidden>
@@ -466,24 +466,24 @@
                     </div>
                 </div>
                 <div id="user-real-name">
-                    <form action="" method="post">
+                    <form action="/changeInfo" method="post">
                         <div class="input-group">
-                            <input type="text" id="Name" required>
+                            <input type="text" id="Name" name="name" th:value="${session.user.name}" required>
                             <div class="underline"></div>
-                            <label for="Name">姓</label>
+                            <label for="Name">姓名</label>
                         </div>
                         <div class="input-group">
-                            <input type="text" id="LastName" required>
-                            <div class="underline"></div>
-                            <label for="LastName">名</label>
-                        </div>
-                        <div class="input-group">
-                            <input type="text" id="UserName" required>
+                            <input type="text" id="UserName" name="nickname" th:value="${session.user.nickname}" required>
                             <div class="underline"></div>
                             <label for="UserName">昵称</label>
                         </div>
                         <div class="input-group">
-                            <input type="submit" class="btn" value="提交">
+                            <input type="text" id="UserGender" name="gender" th:value="${session.user.gender}" required>
+                            <div class="underline"></div>
+                            <label for="UserName">性别</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="submit" class="btn" value="提交" @click="changeInfo">
                         </div>
                     </form>
                 </div>
@@ -1583,7 +1583,6 @@
                 <span>选择</span>
             </div>
             <div class="img-show">
-                <!-- <canvas id="preview-img-canvas"></canvas> -->
                 <img id="preview-img" src="" alt="">
             </div>
             <div class="submit ion-icon-center shadow">
@@ -1608,8 +1607,39 @@
     <script src="./js/add-folder.js"></script>
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="./js/vue.js"></script>
+    <script src="./js/axios.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
     <script>
-
+        new Vue({
+            el:"#app",
+            methods:{
+                changeInfo:function (e){
+                    let userName=$('#Name').val();
+                    let nickName=$('#UserName').val();
+                    axios({
+                        //请求地址
+                        url:"/changeInfo",
+                        //请求类型
+                        method:'post',
+                        // URl传递参数
+                        // params:{id:2},//get请求时用
+                        data:{
+                            // name:userName,
+                            // nickname:nickName
+                        },//post请求时用
+                        //自定义请求头
+                        // headers:{'x-Requested-With':'XMLHttpRequest'},
+                        //设置超时时间
+                        timeout:5000,
+                    }).then(function (response){
+                        let data=response.data;
+                        console.log(data);
+                    });
+                    e.preventDefault();
+                }
+            }
+        });
     </script>
 </body>
 
