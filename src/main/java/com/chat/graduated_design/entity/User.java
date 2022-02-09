@@ -18,6 +18,8 @@ public class User {
     //用户电话号
     private String phone=null;
     private String nickname;
+    private boolean active=false;
+
     private static Integer count=1;
 
     public static Integer getCount() {
@@ -27,4 +29,5 @@ public class User {
     public static void setCount(Integer count) {
         User.count = count;
     }
+
 }

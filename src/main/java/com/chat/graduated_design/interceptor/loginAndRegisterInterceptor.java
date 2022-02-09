@@ -1,9 +1,5 @@
 package com.chat.graduated_design.interceptor;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.chat.graduated_design.entity.User;
-import com.chat.graduated_design.service.impl.userServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -13,21 +9,22 @@ import javax.servlet.http.HttpSession;
 
 /**
  * @program: Graduated_Design
- * @description: 拦截main.html的请求
+ * @description: 注册和登录页面的拦截器
  * @author: 常笑男
- * @create: 2022-02-06 11:22
+ * @create: 2022-02-09 10:16
  **/
-public class mainInterceptor implements HandlerInterceptor {
-
+public class loginAndRegisterInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session=request.getSession();
         Object user=session.getAttribute("user");
         if(user!=null){
+            response.sendRedirect("/main.html");
+            return false;
+        }
+        else {
             return true;
         }
-        response.sendRedirect("/login.html");
-        return false;
     }
 
     @Override

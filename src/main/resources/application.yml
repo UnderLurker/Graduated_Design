@@ -8,6 +8,33 @@ spring:
     hiddenmethod:
       filter:
         enabled: true
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 300MB
+      max-request-size: 300MB
+  mail:
+    default-encoding: UTF-8
+    #发送邮件的账户
+    # 授权码（获取方式前文已描述）
+    username: 1481167030@qq.com
+    password: wnrwumwmmgllhhdj
+    host: smtp.qq.com
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true
+mail:
+  from: 1481167030@qq.com
+  activeSubject: 账户激活
+  forgetCodeSubject: 忘记密码
+  activeContent:
+  preActiveContent: <h3>请点击下面的链接激活你的账号</h3><br><a href="http://localhost:8080/user/active/
+  subActiveContent: /">点击这里激活你的账户</a>
+  forgetCodeContent: ""
+
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true

@@ -10,7 +10,7 @@
     <title>登录</title>
 </head>
 <body>
-    <div class="flex-box" style="height: 20rem;" id="login">
+    <div class="flex-box" style="height: 21rem;" id="login">
         <!-- 登录方式选择 -->
         <div class="login-way">
             <ul>
@@ -26,7 +26,7 @@
                 </li>
             </ul>
         </div>
-        <div class="register-main">
+        <div class="register-main" style="height: 51%">
             <!-- 邮箱登录 -->
             <form action="/emaillogin" method="post">
                 <div class="input-group">
@@ -44,11 +44,6 @@
                     <div class="underline"></div>
                     <label for="UserPasswordFirst">密码</label>
                 </div>
-                <span>{{Message.emailMessage}}</span>
-                <div class="input-group" style="padding-top: 1rem;">
-                    <button type="submit" class="btn" @click="emaillogin">登录</button>
-                </div>
-                <a class="login" href="register.html">返回注册</a>
             </form>
             <!-- 手机登录 -->
             <form action="/phonelogin" method="post">
@@ -67,11 +62,6 @@
                     <div class="underline"></div>
                     <label for="UserPasswordFirst">密码</label>
                 </div>
-                <span>{{Message.phoneMessage}}</span>
-                <div class="input-group" style="padding-top: 1rem;">
-                    <button type="submit" class="btn" @click="phonelogin">登录</button>
-                </div>
-                <a class="login" href="register.html">返回注册</a>
             </form>
             <!-- 刷脸登录 -->
             <form action="#" method="post">
@@ -80,19 +70,25 @@
                     <div class="underline"></div>
                     <label for="UserName">刷脸</label>
                 </div>
-                <span>{{Message.faceMessage}}</span>
-                <div class="input-group" style="padding-top: 1rem;">
-                    <button type="submit" class="btn">登录</button>
-                </div>
-                <a class="login" href="register.html">返回注册</a>
             </form>
         </div>
+        <span>{{Message.message}}</span>
+        <div class="input-group" style="padding-top: 1rem;">
+            <button type="submit" class="btn" @click="login">登录</button>
+        </div>
+        <div style="text-align: center;margin-top: -.5rem">
+            <a class="login" href="register.html">返回注册</a>
+            |
+            <a class="login" href="forgetCode.html">忘记密码</a>
+        </div>
+
     </div>
     <script src="./js/vue.js"></script>
     <script src="./js/axios.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
     <script>
-        function sendData(url,data,num){
+        let active=0;
+        function sendData(data,url){
             axios({
                 url:url,
                 method:'post',
@@ -106,10 +102,10 @@
                     $(window).attr('location','/main.html');
                 }
                 else{
-                    Vue.set(vue.Message,'emailMessage',data.email);
-                    Vue.set(vue.Message,'phoneMessage',data.phone);
-                    Vue.set(vue.Message,'faceMessage',data.face);
-                    $('form > span:eq('+num+')').css('width','100%');
+                    if(data.email!=null) Vue.set(vue.Message,'message',''+data.email);
+                    else if(data.phone!=null) Vue.set(vue.Message,'message',''+data.phone);
+                    else if(data.face!=null) Vue.set(vue.Message,'message',''+data.face);
+                    $('.flex-box > span').css('width','100%');
                 }
             });
         }
@@ -118,34 +114,38 @@
             data(){
                 return {
                     Message:{
-                        emailMessage:'报错',
-                        phoneMessage:'报错',
-                        faceMessage:'报错'
+                        message:"报错",
+                    },
+                    url:{
+                        emailUrl:'/emaillogin',
+                        phoneUrl:'/phonelogin',
+                        faceUrl:'/facelogin'
                     }
                 }
             },
             methods: {
-                emaillogin:function (e) {
-                    let data={
-                        name:$('#UserName').val(),
-                        email:$('#UserEmail').val(),
-                        password:$('#UserPasswordFirst').val()
+                login:function (e) {
+                    let data=null;
+                    if(active==0){
+                        data={
+                            name:$('#UserName').val(),
+                            email:$('#UserEmail').val(),
+                            password:$('#UserPasswordFirst').val()
+                        }
+                        sendData(data,vue.url.emailUrl);
                     }
-                    sendData('/emaillogin',data,0);
+                    else if(active==1){
+                        data={
+                            name:$('#UserNamePhone').val(),
+                            phone:$('#UserPhone').val(),
+                            password:$('#UserPasswordFirst').val()
+                        }
+                        sendData(data,vue.url.phoneUrl);
+                    }
                     e.preventDefault();
                 },
-                phonelogin:function (e) {
-                    let data={
-                        name:$('#UserNamePhone').val(),
-                        phone:$('#UserPhone').val(),
-                        password:$('#UserPasswordFirst').val()
-                    }
-                    sendData('/phonelogin',data,1);
-                    e.preventDefault();
-                }
             },
         });
-        let active=0;
         let li=document.getElementsByTagName('li');
         let form=document.getElementsByTagName('form');
         let initLeft=li[0].getBoundingClientRect().left;
@@ -161,7 +161,7 @@
                     for(let i=active*3;i<(active+1)*3;i++){
                         input[i].value="";
                     }
-                    $('form > span:eq('+active+')').css('width','0%');
+                    $('.flex-box > span').css('width','0%');
                 }
                 let left=this.getBoundingClientRect().left;
                 let slider=document.getElementById('slider');

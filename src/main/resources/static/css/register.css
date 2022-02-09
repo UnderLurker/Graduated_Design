@@ -34,7 +34,7 @@ ul div{
     transition: all .5s ease;
 }
 .register-main{
-    height: 90%;
+    height: 62%;
     display: flex;
     overflow: hidden;
 }
@@ -48,7 +48,7 @@ ul div{
     width: 100%;
     display: block;
 }
-.register-main span{
+.flex-box>span{
     width: 0%;
     height: 2rem;
     line-height: 2rem;

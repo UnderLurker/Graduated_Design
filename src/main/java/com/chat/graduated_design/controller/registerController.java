@@ -12,12 +12,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
+import com.chat.graduated_design.entity.mailUtil.impl.MailActiveImpl;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @program: Graduated_Design
@@ -29,6 +28,8 @@ import java.util.Map;
 public class registerController {
     @Autowired
     private userServiceImpl userService;
+    @Autowired
+    private MailActiveImpl activeUtil;
     ErrorMessage errorMessage=new ErrorMessage();
 
 
@@ -63,11 +64,7 @@ public class registerController {
         if(errorMessage.getEmail()==null){
             userService.save(saveUser);
             User.setCount(User.getCount()+1);
-            try {
-                response.sendRedirect("/login.html");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            activeUtil.sendMimeMailWithId(user.getEmail(),saveUser.getId());
         }
         return errorMessage;
     }

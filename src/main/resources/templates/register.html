@@ -29,7 +29,7 @@
             </ul>
         </div>
         
-        <div class="register-main">
+        <div class="register-main" style="margin-bottom: -1rem">
             <!-- 邮箱注册 -->
             <form action="/emailRegister" method="post">
                 <div class="input-group">
@@ -52,11 +52,6 @@
                     <div class="underline"></div>
                     <label for="UserPasswordSecond">确认密码</label>
                 </div>
-                <span>{{Message.emailMessage}}</span>
-                <div class="input-group" style="padding-top: 1rem;">
-                    <button type="submit" class="btn" @click="emailRegister">注册</button>
-                </div>
-                <a class="login" href="login.html">返回登录</a>
             </form>
             <!-- 手机注册 -->
             <form action="/phoneRegister" method="post">
@@ -80,11 +75,6 @@
                     <div class="underline"></div>
                     <label for="UserPasswordSecond">确认密码</label>
                 </div>
-                <span>{{Message.phoneMessage}}}</span>
-                <div class="input-group" style="padding-top: 1rem;">
-                    <button type="submit" class="btn" @click="phoneRegister">注册</button>
-                </div>
-                <a class="login" href="login.html">返回登录</a>
             </form>
             <!-- 刷脸注册 -->
             <form action="#" method="post">
@@ -93,19 +83,22 @@
                     <div class="underline"></div>
                     <label for="UserName">刷脸</label>
                 </div>
-                <span>{{Message.faceMessage}}</span>
-                <div class="input-group" style="padding-top: 1rem;">
-                    <button type="submit" class="btn">注册</button>
-                </div>
-                <a class="login" href="login.html">返回登录</a>
             </form>
+        </div>
+        <span>{{Message.message}}</span>
+        <div class="input-group" style="padding-top: 1rem;">
+            <button class="btn" @click="Register">注册</button>
+        </div>
+        <div style="text-align: center">
+            <a class="login" href="login.html">返回登录</a>
         </div>
     </div>
     <script src="./js/vue.js"></script>
     <script src="./js/axios.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
     <script>
-        function sendData(url,data,num){
+        let active=0;
+        function sendData(data,url){
             axios({
                 url:url,
                 method:'post',
@@ -116,14 +109,15 @@
             }).then((res)=>{
                 let data=res.data;
                 if(data.email==null&&data.phone==null&&data.face==null){
-                    $(window).attr('location','/login.html');
+                    // $(window).attr('location','/login.html');
+                    Vue.set(vue.Message,'message','请到你的邮箱激活账户');
                 }
                 else{
-                    Vue.set(vue.Message,'emailMessage',data.email);
-                    Vue.set(vue.Message,'phoneMessage',data.phone);
-                    Vue.set(vue.Message,'faceMessage',data.face);
-                    $('form > span:eq('+num+')').css('width','100%');
+                    if(data.email!=null) Vue.set(vue.Message,'message',''+data.email);
+                    else if(data.phone!=null) Vue.set(vue.Message,'message',''+data.phone);
+                    else if(data.face!=null) Vue.set(vue.Message,'message',''+data.face);
                 }
+                $('.flex-box > span').css('width','100%');
             });
         }
 
@@ -132,40 +126,43 @@
             data(){
                 return {
                     Message:{
-                        emailMessage:'报错',
-                        phoneMessage:'报错',
-                        faceMessage:'报错'
+                        message:"报错",
+                    },
+                    url:{
+                        emailUrl:'/emailRegister',
+                        phoneUrl:'/phoneRegister',
+                        faceUrl:'/faceRegister'
                     }
                 }
             },
             methods: {
-                emailRegister:function (e) {
-                    let data={
-                        name:$('#UserName').val(),
-                        email:$('#UserEmail').val(),
-                        password:$('#UserPasswordFirst').val(),
-                        passwordConfirm:$('#UserPasswordSecond').val()
-                    }
-                    sendData('/emailRegister',data,0);
-                    e.preventDefault();
+                Register:function (e) {
+                   let data=null;
+                   if(active==0){
+                       data={
+                           name:$('#UserName').val(),
+                           email:$('#UserEmail').val(),
+                           password:$('#UserPasswordFirst').val(),
+                           passwordConfirm:$('#UserPasswordSecond').val()
+                       }
+                       sendData(data,vue.url.emailUrl);
+                   }
+                   else if(active==1){
+                       data={
+                           name:$('#UserNamePhone').val(),
+                           phone:$('#UserPhone').val(),
+                           password:$('#UserPasswordFirst').val(),
+                           passwordConfirm:$('#UserPasswordSecond').val()
+                       }
+                       sendData(data,vue.url.phoneUrl);
+                   }
+                   e.preventDefault();
                 },
-                phoneRegister:function (e) {
-                    let data={
-                        name:$('#UserNamePhone').val(),
-                        phone:$('#UserPhone').val(),
-                        password:$('#UserPasswordFirst').val(),
-                        passwordConfirm:$('#UserPasswordSecond').val()
-                    }
-                    sendData('/phoneRegister',data,1);
-                    e.preventDefault();
-                }
             },
             created:{
                 // this.errorEmailMsg=session
             }
         });
-
-        let active=0;
         let li=document.getElementsByTagName('li');
         let form=document.getElementsByTagName('form');
         let initLeft=li[0].getBoundingClientRect().left;
@@ -181,7 +178,7 @@
                     for(let i=active*4;i<(active+1)*4;i++){
                         input[i].value="";
                     }
-                    $('form > span:eq('+active+')').css('width','0%');
+                    $('.flex-box > span').css('width','0%');
                 }
                 let left=this.getBoundingClientRect().left;
                 let slider=document.getElementById('slider');

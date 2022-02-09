@@ -1,5 +1,6 @@
 package com.chat.graduated_design.config;
 
+import com.chat.graduated_design.interceptor.loginAndRegisterInterceptor;
 import com.chat.graduated_design.interceptor.mainInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -26,5 +27,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(new mainInterceptor())
                 .addPathPatterns("/main.html")//所要拦截的路径请求
                 .excludePathPatterns("/index.html","/login.html","/register.html");//所要放行的路径 相当于SpringMVC中的mvc放行
+        registry.addInterceptor(new loginAndRegisterInterceptor())
+                .addPathPatterns("/login.html","register.html")
+                .excludePathPatterns("/main.html");
     }
 }

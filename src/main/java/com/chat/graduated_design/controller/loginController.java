@@ -50,7 +50,7 @@ public class loginController {
         query.eq("email",user.getEmail());
         List<Map<String,Object>> list=userService.listMaps(query);
         if(userList.isEmpty()){
-            if(!list.isEmpty()){
+            if(list.isEmpty()){
                 errorMessage.setEmail("请先注册");
             }
         }
@@ -82,7 +82,7 @@ public class loginController {
         query.eq("phone",user.getPhone());
         List<Map<String,Object>> list=userService.listMaps(query);
         if(userList.isEmpty()){
-            if(!list.isEmpty()){
+            if(list.isEmpty()){
                 errorMessage.setEmail("请先注册");
             }
         }
