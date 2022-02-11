@@ -1,4 +1,4 @@
-package com.chat.graduated_design.entity;
+package com.chat.graduated_design.entity.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package com.chat.graduated_design.entity.mailUtil;
+package com.chat.graduated_design.service;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
