@@ -1,7 +1,10 @@
 package com.chat.graduated_design.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.chat.graduated_design.entity.User;
+import com.chat.graduated_design.entity.file.FileStorage;
+import com.chat.graduated_design.entity.user.User;
+import com.chat.graduated_design.service.impl.fileDataServiceImpl;
+import com.chat.graduated_design.service.impl.fileServiceImpl;
 import com.chat.graduated_design.service.impl.userServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +24,8 @@ import javax.servlet.http.HttpSession;
 public class baseController {
     @Autowired
     private userServiceImpl userService;
+    @Autowired
+    private fileDataServiceImpl fileDataService;
 
     @RequestMapping("/register.html")
     public String register(){
@@ -35,6 +40,7 @@ public class baseController {
     @RequestMapping("/main.html")
     public String main(Model model, HttpServletRequest request){
         HttpSession session=request.getSession();
+        String responseUrl="./image/1.jpeg";
         //看是否激活
         User user=(User) session.getAttribute("user");
         QueryWrapper<User> queryWrapper=new QueryWrapper<>();
@@ -43,6 +49,15 @@ public class baseController {
         if(!queryUser.isActive()){
             return "redirect:/login.html";
         }
+        //查询头像路径
+        QueryWrapper<FileStorage> fileStorageQueryWrapper=new QueryWrapper<>();
+        fileStorageQueryWrapper.eq("Id",queryUser.getId())
+                .eq("folder", fileServiceImpl.HEADPORTRAITPATH);
+        FileStorage fileStorage=fileDataService.getOne(fileStorageQueryWrapper);
+        if(fileStorage!=null){
+            responseUrl="/headportrait/"+fileStorage.getUuid();
+        }
+        model.addAttribute("headportrait",responseUrl);
         return "main";
     }
 }
