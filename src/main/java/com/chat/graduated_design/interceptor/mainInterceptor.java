@@ -1,9 +1,5 @@
 package com.chat.graduated_design.interceptor;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.chat.graduated_design.entity.User;
-import com.chat.graduated_design.service.impl.userServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
