@@ -1,21 +1,20 @@
-package com.chat.graduated_design.controller;
+package com.chat.graduated_design.controller.account;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.chat.graduated_design.entity.User;
-import com.chat.graduated_design.entity.RegisterUser;
+import com.chat.graduated_design.entity.user.User;
+import com.chat.graduated_design.entity.user.RegisterUser;
 import com.chat.graduated_design.message.ErrorMessage;
 import com.chat.graduated_design.service.impl.userServiceImpl;
 import com.chat.graduated_design.util.MD5Util;
+import com.google.code.kaptcha.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import com.chat.graduated_design.entity.mailUtil.impl.MailActiveImpl;
+import com.chat.graduated_design.service.impl.MailActiveImpl;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -71,7 +70,9 @@ public class registerController {
     //电话注册
     @ResponseBody
     @RequestMapping(value = "/phoneRegister",method = RequestMethod.POST)
-    public ErrorMessage phoneRegister(@RequestBody RegisterUser user,HttpServletResponse response){
+    public ErrorMessage phoneRegister(@RequestBody RegisterUser user,
+                                      HttpServletResponse response,
+                                      HttpServletRequest request){
         User saveUser=new User();
         errorMessage.clear();
         if(user.getPassword().equals(user.getPasswordConfirm())){
@@ -79,10 +80,11 @@ public class registerController {
                 String saveString= null;
                 saveString = MD5Util.md5Encode(user.getPassword());
                 saveUser.setPhone(user.getPhone());
-                saveUser.setId(User.getCount()+1);
+                saveUser.setId(User.getCount());
                 saveUser.setName(user.getName());
                 saveUser.setPassword(saveString);
                 saveUser.setNickname(user.getName());
+                saveUser.setActive(true);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -97,13 +99,15 @@ public class registerController {
             errorMessage.setPhone("该手机号已经被注册");
         }
         if(errorMessage.getPhone()==null){
+            //比对验证码
+            String sessionCode=(String)request.getSession().getAttribute(Constants.KAPTCHA_SESSION_KEY);
+            if(!sessionCode.equals(user.getCode())){
+                errorMessage.setPhone("验证码错误");
+                return errorMessage;
+            }
             userService.save(saveUser);
             User.setCount(User.getCount()+1);
-            try {
-                response.sendRedirect("/login.html");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            errorMessage.setPhone("success");
         }
         return errorMessage;
     }

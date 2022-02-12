@@ -1,7 +1,7 @@
-package com.chat.graduated_design.controller;
+package com.chat.graduated_design.controller.account;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.chat.graduated_design.entity.User;
+import com.chat.graduated_design.entity.user.User;
 import com.chat.graduated_design.message.ErrorMessage;
 import com.chat.graduated_design.service.impl.userServiceImpl;
 import com.chat.graduated_design.util.MD5Util;
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -55,9 +54,11 @@ public class loginController {
             }
         }
         else{
+            Map<String,Object> map=list.get(0);
+            User sessionUser=new User(map);
+            sessionUser.setPassword("");
+            request.getSession().setAttribute("user",sessionUser);
             errorMessage.clear();
-            user.setNickname(list.get(0).get("nickname").toString());
-            request.getSession().setAttribute("user",user);
         }
         return errorMessage;
     }
