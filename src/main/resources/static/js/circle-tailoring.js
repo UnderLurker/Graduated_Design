@@ -7,6 +7,10 @@ function headImgUpLoad(){
     imageInput.onclick=function(){
         imageInputFrame.click();
     }
+    $('#image-select').click(function (){
+        imageInputFrame.click();
+    });
+
     //预览图像
     imageInputFrame.onchange=function(){
         upLoad.style.display="flex";
@@ -22,9 +26,7 @@ function headImgUpLoad(){
             // let scale=this.width/canvasWidth;
             // let clientHeight=this.height/scale;
             // canvas.style.height=""+clientHeight+"px";
-
             // let ctx = canvas.getContext('2d');
-
             // console.log(canvasWidth+","+clientHeight);
             // ctx.drawImage(img,0,0,canvasWidth,clientHeight);
         }
@@ -32,12 +34,18 @@ function headImgUpLoad(){
     }
     let uploadClose=document.getElementById('upload-close');
     uploadClose.onclick=function(){
+        imageInputFrame.value=null;
         upLoad.style.display="none";
     }
-    
-    let submit=document.getElementsByClassName('submit')[0];
-    submit.onclick=function(){
-        document.getElementById('image-send').click();
+
+    $('#image-send').click(function (e){
         upLoad.style.display="none";
-    }
+    });
+
+}
+function formSubmit(){
+    $('#portrait-form').ajaxSubmit(function (message){
+        $('.user-head-portrait>img').attr("src",message.obj);
+    });
+    return false;
 }

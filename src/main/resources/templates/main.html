@@ -397,8 +397,8 @@
                     </div>
                 </div>
                 <div>
-                    <div class="user-img">
-                        <img src="./image/1.jpeg" alt="">
+                    <div class="user-img user-head-portrait">
+                        <img th:src="${headportrait}" alt="">
                     </div>
                     <div id="user-name">
                         <h4>用户名字</h4>
@@ -454,16 +454,13 @@
                     </div>
                 </div>
                 <div>
-                    <div class="user-img" id="image-input">
-                        <img src="./image/1.jpeg" alt="">
+                    <div class="user-img user-head-portrait" id="image-input">
+                        <img th:src="${headportrait}" alt="">
                     </div>
-                    <div class="ion-icon-center transparent-camera">
+                    <div class="ion-icon-center transparent-camera" id="image-select">
 <!--                        头像上传-->
-                        <form action="/user/headportrait" method="post" enctype="multipart/form-data">
-                            <ion-icon name="camera-outline"></ion-icon>
-                            <input id="image-input-frame" type="file" accept="image/*" hidden>
-                            <input id="image-send" type="submit" hidden>
-                        </form>
+                        <ion-icon name="camera-outline"></ion-icon>
+<!--                        <input id="image-input-frame" type="file" name="headportrait" accept="image/*" hidden>-->
                     </div>
                 </div>
                 <div id="user-real-name">
@@ -482,6 +479,16 @@
                             <input type="text" id="UserGender" name="gender" th:value="${session.user.gender}" required>
                             <div class="underline"></div>
                             <label for="UserName">性别</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="UserEmail" name="email" th:value="${session.user.email}" required>
+                            <div class="underline"></div>
+                            <label for="UserEmail">邮箱</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="UserPhone" name="phone" th:value="${session.user.phone}" required>
+                            <div class="underline"></div>
+                            <label for="UserPhone">手机号</label>
                         </div>
                         <div class="input-group">
                             <input type="submit" class="btn" value="提交" @click="changeInfo">
@@ -1586,9 +1593,13 @@
             <div class="img-show">
                 <img id="preview-img" src="" alt="">
             </div>
-            <div class="submit ion-icon-center shadow">
-                <ion-icon name="checkmark-outline"></ion-icon>
-            </div>
+            <form th:action="'/'+${session.user.id}+'/headportrait'" id="portrait-form" onsubmit="return formSubmit()" method="post" enctype="multipart/form-data">
+                <div class="submit ion-icon-center shadow">
+                    <ion-icon name="checkmark-outline"></ion-icon>
+                </div>
+                <input id="image-input-frame" type="file" name="headportrait" accept="image/*" hidden>
+                <input id="image-send" type="submit" value=" ">
+            </form>
         </div>
     </div>
     <div class="create-chat-folder">
@@ -1611,37 +1622,8 @@
     <script src="./js/vue.js"></script>
     <script src="./js/axios.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
-    <script>
-        new Vue({
-            el:"#app",
-            methods:{
-                changeInfo:function (e){
-                    let userName=$('#Name').val();
-                    let nickName=$('#UserName').val();
-                    axios({
-                        //请求地址
-                        url:"/changeInfo",
-                        //请求类型
-                        method:'post',
-                        // URl传递参数
-                        // params:{id:2},//get请求时用
-                        data:{
-                            // name:userName,
-                            // nickname:nickName
-                        },//post请求时用
-                        //自定义请求头
-                        // headers:{'x-Requested-With':'XMLHttpRequest'},
-                        //设置超时时间
-                        timeout:5000,
-                    }).then(function (response){
-                        let data=response.data;
-                        console.log(data);
-                    });
-                    e.preventDefault();
-                }
-            }
-        });
-    </script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery.form/4.3.0/jquery.form.js"></script>
+    <script src="./js/main.js"></script>
 </body>
 
 </html>

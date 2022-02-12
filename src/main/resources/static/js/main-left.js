@@ -454,7 +454,7 @@ function darkModel(){
         }
         else{
             dark.style.left="-2px";
-            flag=true
+            flag=true;
         }
     }
 }
