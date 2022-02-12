@@ -38,3 +38,6 @@ mail:
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
+file:
+  upload:
+    paths: classpath:static/image/headportrait,classpath:static/image/file,classpath:static/image/photo,classpath:static/image/music,classpath:static/image/video
