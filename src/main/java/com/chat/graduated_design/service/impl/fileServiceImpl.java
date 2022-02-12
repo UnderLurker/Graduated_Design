@@ -6,16 +6,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
 
@@ -35,16 +38,18 @@ public class fileServiceImpl implements fileService {
 
     private String[] path = new String[5];              // 文件在本地存储的地址
 
-    public fileServiceImpl(@Value("${file.upload.path.headportrait}") String headPortraitPath,
-                           @Value("${file.upload.path.file}") String filePath,
-                           @Value("${file.upload.path.photo}") String photoPath,
-                           @Value("${file.upload.path.music}") String musicPath,
-                           @Value("${file.upload.path.video}") String videoPath) {
-        this.path[0] = headPortraitPath;
-        this.path[1] = filePath;
-        this.path[2] = photoPath;
-        this.path[3] = musicPath;
-        this.path[4] = videoPath;
+    public fileServiceImpl(@Value("${file.upload.paths}") String[] ymlPath) {
+        for(int index=0;index<ymlPath.length;index++){
+            try {
+                this.path[index]=ResourceUtils.getURL(ymlPath[index]).getPath().replace("%20"," ").substring(1);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public String getPath(Integer num) {
+        return this.path[num];
     }
 
     /**
@@ -55,19 +60,19 @@ public class fileServiceImpl implements fileService {
      * @return UUID
      */
     public String storeFile(MultipartFile file, Integer target) {
-        // Normalize file name
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         File saveFile=new File(this.path[target]);
+        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        String suffix=fileName.split("\\.")[1];
         String uuid= UUID.randomUUID().toString().toLowerCase();
         if(!saveFile.exists()){
             saveFile.mkdir();
         }
         try {
-            file.transferTo(new File(this.path[target]+"/"+uuid));//生成UUID
+            file.transferTo(new File(this.path[target]+"/"+uuid+"."+suffix));//生成UUID
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return uuid;
+        return uuid+"."+suffix;
     }
 
     public Resource loadFileAsResource(String fileName,Integer source) {
