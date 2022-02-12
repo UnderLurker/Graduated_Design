@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.Map;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,4 +32,19 @@ public class User {
         User.count = count;
     }
 
+    public User(Map<String,Object> map){
+        this.id=Integer.parseInt(map.get("id").toString());
+        this.password=(String) map.get("password");
+        this.name=(String) map.get("name");
+        this.nickname=(String) map.get("nickname");
+        this.active=(boolean) map.get("active");
+
+        try{
+            this.email=(String) map.get("email");
+            this.phone=(String) map.get("phone");
+            this.gender=(String) map.get("gender");
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
+    }
 }
