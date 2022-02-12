@@ -5,6 +5,7 @@ import com.chat.graduated_design.interceptor.mainInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.util.UrlPathHelper;
 
@@ -30,5 +31,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(new loginAndRegisterInterceptor())
                 .addPathPatterns("/login.html","register.html")
                 .excludePathPatterns("/main.html");
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/headportrait/**").addResourceLocations("file:F:/Program Files/Graduated_Design/target/classes/static/image/headportrait/");
+        WebMvcConfigurer.super.addResourceHandlers(registry);
     }
 }
