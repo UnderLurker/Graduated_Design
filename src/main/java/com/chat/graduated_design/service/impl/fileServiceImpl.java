@@ -59,6 +59,7 @@ public class fileServiceImpl implements fileService {
      * @param target 存储位置
      * @return UUID
      */
+    @Override
     public String storeFile(MultipartFile file, Integer target) {
         File saveFile=new File(this.path[target]);
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
@@ -75,7 +76,14 @@ public class fileServiceImpl implements fileService {
         return uuid+"."+suffix;
     }
 
-    public Resource loadFileAsResource(String fileName,Integer source) {
+    @Override
+    public void deleteFile(String uuid, Integer target) {
+        File file=new File(this.path[target]+"/"+uuid);
+        file.delete();
+    }
+
+    @Override
+    public Resource loadFileAsResource(String fileName, Integer source) {
         try {
             Path fileStorageLocation=Paths.get(this.path[source]).toAbsolutePath().normalize();
             Path filePath = fileStorageLocation.resolve(fileName).normalize();

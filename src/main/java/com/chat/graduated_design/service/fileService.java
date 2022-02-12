@@ -17,5 +17,12 @@ public interface fileService {
      * @return
      */
     public Resource loadFileAsResource(String fileName,Integer source);
+
+    /**
+     * 删除文件
+     * @param uuid
+     * @param target 目标路径
+     */
+    public void deleteFile(String uuid,Integer target);
 }
 
