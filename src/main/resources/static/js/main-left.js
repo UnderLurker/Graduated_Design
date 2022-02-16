@@ -402,16 +402,6 @@ function editUserInfo(){
     }
 }
 
-//清空搜索框
-function deleteSearchInput(){
-    let searchMain=document.querySelector('.search-main');
-    let searchClose=searchMain.getElementsByClassName('close')[0];
-    searchClose.onclick=function(){
-        let input=searchMain.getElementsByTagName('input')[0];
-        input.value="";
-    }
-}
-
 window.onload = function (e) {
     let rightInfo=document.getElementsByClassName('right-info')[0];
 
@@ -427,7 +417,6 @@ window.onload = function (e) {
     userSetting();
     headImgUpLoad();
     editUserInfo();
-    deleteSearchInput();
     dragFrame(e,'list');
     leftSearchOnClick();
     darkModel();

@@ -314,6 +314,7 @@ input:focus {
     height: 100%;
     border-radius: 50%;
 }
+.search-result-items,
 .contact-items{
     width: 100%;
     padding: .6rem .5rem;
@@ -377,6 +378,7 @@ input:focus {
     /* display: none; */
 }
 .user-setting-info-items:hover,
+.search-result-items:hover,
 .contact-items:hover{
     background-color: rgb(244, 244, 244);
     border-radius: 8px;
