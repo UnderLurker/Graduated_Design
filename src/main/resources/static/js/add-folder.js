@@ -11,7 +11,6 @@
     let folderContactList=document.querySelector('.folder-contact-list');
     let options=document.querySelector('.options');
     let optionsSelect=options.getElementsByTagName('div');
-    let formSubmit=document.getElementById('submit-new-folder');
     let selectMumbers=document.getElementById('select-mumbers');
     let folderContactAddBtn=document.getElementById('folder-contact-add-btn');
     let selectList=document.getElementsByClassName('select-list')[0];
@@ -86,6 +85,7 @@
     //添加联系人分类
     addFolder.onclick=function(){
         expandFolder(this);
+        Vue.set(vue.messagebox, 'option', 0);
         folderTitle.innerHTML="添加分类";
         folderSetting.innerHTML="<ion-icon name='checkmark-outline'></ion-icon>";
         input_method[0].value=submitWayPut;
@@ -112,6 +112,7 @@
 
     for(var i=0;i<folderItems.length;i++){
         folderItems[i].onclick=function(e){
+            Vue.set(vue.messagebox, 'option', 0);
             // addRippleEffect(e,this,"rgba(120,120,120,.25)");
             let name=this.getElementsByTagName('span')[0].innerHTML;
             let folderFormInput=folderForm.getElementsByTagName('input')[1];
@@ -122,38 +123,16 @@
             input_method[0].value=submitWayDelete;
         }
     }
-
-    function showCreateFolder(){
-        let createChatFolder=document.querySelector('.create-chat-folder');
-        createChatFolder.style.display="block";
-    }
-    function displayCreateFolder(){
-        let createChatFolder=document.querySelector('.create-chat-folder');
-        createChatFolder.style.display="none";
-    }
-
     //为表单提交绑定
     folderSetting.onclick=function(){
         if(folderTitle.innerHTML=="编辑分类"){
-            showCreateFolder();
+            $('.create-chat-folder').css('display','block');
+            $('.cancel').css('display','block');
         }
         else{
-            formSubmit.click();
+            //提交分类表单
+
         }
     }
 
-    //为options选项绑定点击事件
-    for(var i=0;i<optionsSelect.length;i++){
-        optionsSelect[i].onclick=function(){
-            displayCreateFolder();
-            if(this.className=="cancel"){
-                return;
-            }
-            else{
-                //确定删除
-                formSubmit.click();
-            }
-        }
-    }
-    
 })();
