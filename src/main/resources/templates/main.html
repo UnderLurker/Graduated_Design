@@ -22,7 +22,8 @@
 </head>
 
 <body>
-    <div class="main-flex" id="app">
+<div id="app">
+    <div class="main-flex">
         <div class="left-nav">
             <div id="left-nav-main">
                 <div class="search">
@@ -38,8 +39,9 @@
                         <div class="search-icon">
                             <ion-icon name="search-outline"></ion-icon>
                         </div>
-                        <input type="search" placeholder="搜索" id="left-search" autocomplete="off">
-                        <div class="close riff">
+                        <input type="search" v-model.trim="searchContent.content" @keyup.enter="searchSubmit"
+                               placeholder="搜索" id="left-search" autocomplete="off">
+                        <div class="close riff" @click="clearSearch">
                             <ion-icon name="add-outline"></ion-icon>
                         </div>
                     </div>
@@ -69,72 +71,11 @@
                     </div>
                 </div>
                 <div class="classify">
-                    <div class="list">
-                        <div class="frame">
-                            <div class="title">
-                                所有
-                            </div>
-                            <div class="unread">
-                                <ion-icon name="alert-outline"></ion-icon>
-                            </div>
-                        </div>
-                        <div class="frame">
-                            <div class="title">
-                                通讯录
-                            </div>
-                            <div class="unread">
-                                <ion-icon name="alert-outline"></ion-icon>
-                            </div>
-                        </div>
-                        <div class="frame">
-                            <div class="title">
-                                群组
-                            </div>
-                            <div class="unread">
-                                <ion-icon name="alert-outline"></ion-icon>
-                            </div>
-                        </div>
-                        <div class="frame">
-                            <div class="title">
-                                同事
-                            </div>
-                            <div class="unread">
-                                <ion-icon name="alert-outline"></ion-icon>
-                            </div>
-                        </div>
-                        <div class="frame">
-                            <div class="title">
-                                同事
-                            </div>
-                            <div class="unread">
-                                <ion-icon name="alert-outline"></ion-icon>
-                            </div>
-                        </div>
-                    </div>
+                    <list :msg='contactClassify'></list>
                     <div class="search-list unactive">
-                        <div class="search-frame">
+                        <div class="search-frame" v-for="(classify,index) in searchClassify" :key="index">
                             <div class="title">
-                                联系人
-                            </div>
-                        </div>
-                        <div class="search-frame">
-                            <div class="title">
-                                文件
-                            </div>
-                        </div>
-                        <div class="search-frame">
-                            <div class="title">
-                                照片
-                            </div>
-                        </div>
-                        <div class="search-frame">
-                            <div class="title">
-                                视频
-                            </div>
-                        </div>
-                        <div class="search-frame">
-                            <div class="title">
-                                音频
+                                {{classify}}
                             </div>
                         </div>
                     </div>
@@ -142,17 +83,17 @@
                 </div>
                 <div class="line"></div>
                 <div class="contact" id="scroll">
-                    <div class="contact-list">
-                        <div class="contact-items ">
+                    <div class="contact-list" v-for="(classify,contactIndex) in contact" :key="contactIndex">
+                        <div class="contact-items" v-for="(item,index) in classify" :key="index">
                             <div class="portrait">
-                                <img src="./image/1.jpeg" alt="">
+                                <img :src="item.headportrait" alt="头像">
                             </div>
                             <div class="info">
                                 <div class="contact-info">
                                     <div class="first-info">
-                                        <h3>联系人名字</h3>
-                                        <ion-icon name="notifications-outline"></ion-icon>
-                                        <ion-icon name="notifications-off-outline"></ion-icon>
+                                        <h3 style="margin-right: 1rem;">{{item.nickname}}</h3>
+                                        <!--                                        <ion-icon v-if="item.doNotDisturb==" name="notifications-outline"></ion-icon>-->
+                                        <ion-icon v-if="item.doNotDisturb" name="notifications-off-outline"></ion-icon>
                                     </div>
                                     <div class="second-info">hello world!!!fhdasfhiuasdhifuhsadiufhisuadhf</div>
                                 </div>
@@ -160,223 +101,26 @@
                             <div class="hint">
                                 <div class="hint-time">11:10</div>
                                 <div class="unread-num-frame">
-                                    <div class="unread-num">
-                                        13211123
+                                    <div class="unread-num" v-if="item.unread!==0">
+                                        {{item.unread}}
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="contact-items ">
-                            <div class="portrait">
-                                <img src="./image/1.jpeg" alt="">
+                    </div>
+                    <div class="search-result-list" v-for="(search,index) in searchResult" :key="index">
+                        <div class="search-result-items" v-for="(item,index) in search" :key="index">
+                            <div class="portrait small-3" style="margin-left: 2rem;margin-right: 2rem;">
+                                <img :src="item.headportrait==''?'./image/1.jpeg':item.headportrait" alt="头像">
                             </div>
                             <div class="info">
                                 <div class="contact-info">
                                     <div class="first-info">
-                                        <h3>联系人名字</h3>
-                                        <ion-icon name="notifications-off-outline"></ion-icon>
-                                    </div>
-                                    <div class="second-info">hello world!!!</div>
-                                </div>
-                            </div>
-                            <div class="hint">
-                                <div class="hint-time">11:10</div>
-                                <div class="unread-num-frame">
-                                    <div class="unread-num">
-                                        13211123
+                                        <h3 style="margin-right: 1rem;">{{item.nickname}}</h3>
+                                        <ion-icon v-if="item.doNotDisturb" name="notifications-off-outline"></ion-icon>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="contact-items ">
-                            <div class="portrait">
-                                <img src="./image/1.jpeg" alt="">
-                            </div>
-                            <div class="info">
-                                <div class="contact-info">
-                                    <div class="first-info">
-                                        <h3>联系人名字</h3>
-                                        <ion-icon name="notifications-off-outline"></ion-icon>
-                                    </div>
-                                    <div class="second-info">hello world!!!</div>
-                                </div>
-                            </div>
-                            <div class="hint">
-                                <div class="hint-time">11:10</div>
-                                <div class="unread-num-frame">
-                                    <div class="unread-num">
-                                        13211123
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="contact-list">
-                        <div class="contact-items ">
-                            <div class="portrait">
-                                <img src="./image/1.jpeg" alt="">
-                            </div>
-                            <div class="info">
-                                <div class="contact-info">
-                                    <div class="first-info">
-                                        <h3>联系人名字</h3>
-                                        <ion-icon name="notifications-outline"></ion-icon>
-                                        <ion-icon name="notifications-off-outline"></ion-icon>
-                                    </div>
-                                    <div class="second-info">通讯录</div>
-                                </div>
-                            </div>
-                            <div class="hint">
-                                <div class="hint-time">11:10</div>
-                                <div class="unread-num-frame">
-                                    <div class="unread-num">
-                                        13211123
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="contact-items ">
-                            <div class="portrait">
-                                <img src="./image/1.jpeg" alt="">
-                            </div>
-                            <div class="info">
-                                <div class="contact-info">
-                                    <div class="first-info">
-                                        <h3>联系人名字</h3>
-                                        <ion-icon name="notifications-off-outline"></ion-icon>
-                                    </div>
-                                    <div class="second-info">hello world!!!</div>
-                                </div>
-                            </div>
-                            <div class="hint">
-                                <div class="hint-time">11:10</div>
-                                <div class="unread-num-frame">
-                                    <div class="unread-num">
-                                        13211123
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="contact-items ">
-                            <div class="portrait">
-                                <img src="./image/1.jpeg" alt="">
-                            </div>
-                            <div class="info">
-                                <div class="contact-info">
-                                    <div class="first-info">
-                                        <h3>联系人名字</h3>
-                                        <ion-icon name="notifications-off-outline"></ion-icon>
-                                    </div>
-                                    <div class="second-info">hello world!!!</div>
-                                </div>
-                            </div>
-                            <div class="hint">
-                                <div class="hint-time">11:10</div>
-                                <div class="unread-num-frame">
-                                    <div class="unread-num">
-                                        13211123
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="contact-items ">
-                            <div class="portrait">
-                                <img src="./image/1.jpeg" alt="">
-                            </div>
-                            <div class="info">
-                                <div class="contact-info">
-                                    <div class="first-info">
-                                        <h3>联系人名字</h3>
-                                        <ion-icon name="notifications-off-outline"></ion-icon>
-                                    </div>
-                                    <div class="second-info">hello world!!!</div>
-                                </div>
-                            </div>
-                            <div class="hint">
-                                <div class="hint-time">11:10</div>
-                                <div class="unread-num-frame">
-                                    <div class="unread-num">
-                                        13211123
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="contact-list">
-                    </div>
-                    <div class="contact-list">
-                        <div class="contact-items ">
-                            <div class="portrait">
-                                <img src="./image/1.jpeg" alt="">
-                            </div>
-                            <div class="info">
-                                <div class="contact-info">
-                                    <div class="first-info">
-                                        <h3>同事</h3>
-                                        <ion-icon name="notifications-outline"></ion-icon>
-                                        <ion-icon name="notifications-off-outline"></ion-icon>
-                                    </div>
-                                    <div class="second-info">通讯录</div>
-                                </div>
-                            </div>
-                            <div class="hint">
-                                <div class="hint-time">11:10</div>
-                                <div class="unread-num-frame">
-                                    <div class="unread-num">
-                                        13211123
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="contact-list">
-                        <div class="contact-items ">
-                            <div class="portrait">
-                                <img src="./image/1.jpeg" alt="">
-                            </div>
-                            <div class="info">
-                                <div class="contact-info">
-                                    <div class="first-info">
-                                        <h3>同事</h3>
-                                        <ion-icon name="notifications-outline"></ion-icon>
-                                        <ion-icon name="notifications-off-outline"></ion-icon>
-                                    </div>
-                                    <div class="second-info">通讯录</div>
-                                </div>
-                            </div>
-                            <div class="hint">
-                                <div class="hint-time">11:10</div>
-                                <div class="unread-num-frame">
-                                    <div class="unread-num">
-                                        13211123
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="search-result-list">
-                        <div class="search-result-items">
-                            1
-                        </div>
-                    </div>
-                    <div class="search-result-list">
-                        <div class="search-result-items">
-                            2
-                        </div>
-                    </div>
-                    <div class="search-result-list">
-                        <div class="search-result-items">
-                            3
-                        </div>
-                    </div>
-                    <div class="search-result-list">
-                        <div class="search-result-items">
-                            4
-                        </div>
-                    </div>
-                    <div class="search-result-list">
-                        <div class="search-result-items">
-                            5
                         </div>
                     </div>
                 </div>
@@ -442,7 +186,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- 设置的隐藏页面 -->
             <div class="user-setting-hidden">
                 <div class="hidden-head">
@@ -458,40 +202,40 @@
                         <img th:src="${headportrait}" alt="">
                     </div>
                     <div class="ion-icon-center transparent-camera" id="image-select">
-<!--                        头像上传-->
+                        <!--                        头像上传-->
                         <ion-icon name="camera-outline"></ion-icon>
-<!--                        <input id="image-input-frame" type="file" name="headportrait" accept="image/*" hidden>-->
+                        <!--                        <input id="image-input-frame" type="file" name="headportrait" accept="image/*" hidden>-->
                     </div>
                 </div>
                 <div id="user-real-name">
-                    <form action="/changeInfo" method="post">
+                    <form @submit.prevent="changeInfo" method="post">
                         <div class="input-group">
-                            <input type="text" id="Name" name="name" th:value="${session.user.name}" required>
+                            <input type="text" id="Name" name="name" v-model="userInfo.name" required>
                             <div class="underline"></div>
                             <label for="Name">姓名</label>
                         </div>
                         <div class="input-group">
-                            <input type="text" id="UserName" name="nickname" th:value="${session.user.nickname}" required>
+                            <input type="text" id="UserName" name="nickname" v-model="userInfo.nickname" required>
                             <div class="underline"></div>
                             <label for="UserName">昵称</label>
                         </div>
                         <div class="input-group">
-                            <input type="text" id="UserGender" name="gender" th:value="${session.user.gender}" required>
+                            <input type="text" id="UserGender" name="gender" v-model="userInfo.gender" required>
                             <div class="underline"></div>
                             <label for="UserName">性别</label>
                         </div>
                         <div class="input-group">
-                            <input type="text" id="UserEmail" name="email" th:value="${session.user.email}" required>
+                            <input type="text" id="UserEmail" name="email" v-model="userInfo.email" required>
                             <div class="underline"></div>
                             <label for="UserEmail">邮箱</label>
                         </div>
                         <div class="input-group">
-                            <input type="text" id="UserPhone" name="phone" th:value="${session.user.phone}" required>
+                            <input type="text" id="UserPhone" name="phone" v-model="userInfo.phone" required>
                             <div class="underline"></div>
                             <label for="UserPhone">手机号</label>
                         </div>
                         <div class="input-group">
-                            <input type="submit" class="btn" value="提交" @click="changeInfo">
+                            <input type="submit" class="btn" value="提交">
                         </div>
                     </form>
                 </div>
@@ -629,7 +373,6 @@
                 </div>
                 <div class="folder-form">
                     <form action="" method="post">
-                        <input type="hidden" name="_method" value="put">
                         <div class="input-shadow">
                             <div class="input-group">
                                 <input type="text" id="newFolderName" required>
@@ -660,7 +403,6 @@
                                 </div>
                             </div>
                         </div>
-                        <input id="submit-new-folder" type="submit" hidden>
                     </form>
                 </div>
             </div>
@@ -1593,7 +1335,8 @@
             <div class="img-show">
                 <img id="preview-img" src="" alt="">
             </div>
-            <form th:action="'/'+${session.user.id}+'/headportrait'" id="portrait-form" onsubmit="return formSubmit()" method="post" enctype="multipart/form-data">
+            <form th:action="'/'+${session.user.id}+'/headportrait'" id="portrait-form" onsubmit="return formSubmit()"
+                  method="post" enctype="multipart/form-data">
                 <div class="submit ion-icon-center shadow">
                     <ion-icon name="checkmark-outline"></ion-icon>
                 </div>
@@ -1602,28 +1345,30 @@
             </form>
         </div>
     </div>
+    <!--    提示信息-->
     <div class="create-chat-folder">
-        <div class="img-frame shadow" style="width: 200px;">
-            <h3>移除联系人分组</h3><br>
-            <p>你确定要删除这个联系人分组吗？你的联系人分组将被删除</p>
+        <div class="img-frame shadow" style="width: 200px;transform: translate(-50%,-200%);">
+            <h3>{{showTitle}}</h3><br>
+            <p>{{showMsg}}</p>
             <div class="options">
-                <div class="cancel">
+                <div class="cancel" @click="cancelOption">
                     取消
                 </div>
-                <div class="ok">
+                <div class="ok" @click="okOption">
                     确定
                 </div>
             </div>
         </div>
     </div>
-    <script src="./js/add-folder.js"></script>
-    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-    <script src="./js/vue.js"></script>
-    <script src="./js/axios.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/jquery.form/4.3.0/jquery.form.js"></script>
-    <script src="./js/main.js"></script>
+</div>
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+<script src="./js/vue.js"></script>
+<script src="./js/axios.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.form/4.3.0/jquery.form.js"></script>
+<script src="./js/main.js"></script>
+<script src="./js/add-folder.js"></script>
 </body>
 
 </html>
