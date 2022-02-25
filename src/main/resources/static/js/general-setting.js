@@ -15,7 +15,7 @@
 
         //改变聊天字体大小
         let context=document.getElementsByClassName('chat-info-main');
-        for(var i=0;i<context.length;i++){
+        for(let i=0;i<context.length;i++){
             context[i].style.fontSize=this.value+"px";
         }
     }

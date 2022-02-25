@@ -56,7 +56,7 @@ public class fileController {
             e.printStackTrace();
             return Response.error("出现了未知的错误");
         }
-        FileStorage fileStorage=new FileStorage(id,uuid,originName,saveDate,fileType,fileServiceImpl.HEADPORTRAITPATH);
+        FileStorage fileStorage=new FileStorage(id,null,uuid,originName,saveDate,fileType,fileServiceImpl.HEADPORTRAITPATH);
         //看数据库中是否有头像信息
         //如果有就更新，否则添加
         QueryWrapper<FileStorage> fileStorageQueryWrapper=new QueryWrapper<>();

@@ -17,6 +17,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class FileStorage {
     private Integer id=null;
+    private Integer receiveId;
     private String uuid=null;
     private String originname=null;
     private Date datetime;

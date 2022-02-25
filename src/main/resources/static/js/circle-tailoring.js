@@ -45,7 +45,7 @@ function headImgUpLoad(){
 }
 function formSubmit(){
     $('#portrait-form').ajaxSubmit(function (message){
-        $('.user-head-portrait>img').attr("src",message.obj);
+        vue.userInfo.headportrait=message.obj;
     });
     return false;
 }

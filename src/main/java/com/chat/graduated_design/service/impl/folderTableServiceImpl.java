@@ -1,7 +1,7 @@
 package com.chat.graduated_design.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.chat.graduated_design.entity.folderTable;
+import com.chat.graduated_design.entity.folder.folderTable;
 import com.chat.graduated_design.mapper.folderTableMapper;
 import com.chat.graduated_design.service.folderTableService;
 import org.springframework.stereotype.Service;

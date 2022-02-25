@@ -15,12 +15,18 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class chatInfo {
-    private Integer userId;
-    private Integer contactId;
+public class chatInfo implements Comparable<chatInfo>{
+    //false未读 true已读
     private boolean readFlag=false;
     private String content=null;
     private Date time;
-    //false是user的信息 true是contact的信息
-    private boolean belong=false;
+    //目标用户id
+    private Integer dest=null;
+    //发送的用户id
+    private Integer origin=null;
+
+    @Override
+    public int compareTo(chatInfo o) {
+        return this.time.compareTo(o.getTime());
+    }
 }

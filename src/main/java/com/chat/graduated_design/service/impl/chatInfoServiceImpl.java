@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chat.graduated_design.entity.chat.chatInfo;
 import com.chat.graduated_design.mapper.chatInfoMapper;
 import com.chat.graduated_design.service.chatInfoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,4 +15,6 @@ import org.springframework.stereotype.Service;
  **/
 @Service
 public class chatInfoServiceImpl extends ServiceImpl<chatInfoMapper, chatInfo> implements chatInfoService {
+
+
 }
