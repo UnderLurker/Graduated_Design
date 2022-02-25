@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh">
 
 <head>
     <meta charset="UTF-8">
@@ -14,8 +14,6 @@
     <link rel="stylesheet" href="./css/general-setting.css">
     <!-- <link href="https://cdn.bootcdn.net/ajax/libs/cropperjs/2.0.0-alpha.2/cropper.css" rel="stylesheet"> -->
     <script src="./js/riff.js"></script>
-    <script src="./js/main-left.js"></script>
-    <script src="./js/circle-tailoring.js"></script>
     <!-- 图片裁剪 -->
     <!-- <script src="https://cdn.bootcdn.net/ajax/libs/cropperjs/2.0.0-alpha.2/cropper.js"></script> -->
     <title>首页</title>
@@ -39,7 +37,7 @@
                         <div class="search-icon">
                             <ion-icon name="search-outline"></ion-icon>
                         </div>
-                        <input type="search" v-model.trim="searchContent.content" @keyup.enter="searchSubmit"
+                        <input type="search" v-model.trim="searchContent.content" @keydown.enter="searchSubmit"
                                placeholder="搜索" id="left-search" autocomplete="off">
                         <div class="close riff" @click="clearSearch">
                             <ion-icon name="add-outline"></ion-icon>
@@ -71,7 +69,17 @@
                     </div>
                 </div>
                 <div class="classify">
-                    <list :msg='contactClassify'></list>
+                    <div class="list">
+                        <div class="frame" v-for="(classify,index) in contactClassify"
+                              :key="classify" @click="frameClick(index,$event)">
+                            <div class="title">
+                                {{classify}}
+                            </div>
+                            <div class="unread">
+                                <ion-icon name="alert-outline"></ion-icon>
+                            </div>
+                        </div>
+                    </div>
                     <div class="search-list unactive">
                         <div class="search-frame" v-for="(classify,index) in searchClassify" :key="index">
                             <div class="title">
@@ -84,7 +92,7 @@
                 <div class="line"></div>
                 <div class="contact" id="scroll">
                     <div class="contact-list" v-for="(classify,contactIndex) in contact" :key="contactIndex">
-                        <div class="contact-items" v-for="(item,index) in classify" :key="index">
+                        <div class="contact-items" v-for="(item,index) in classify" :key="index" @click="contactClick(index,$event)">
                             <div class="portrait">
                                 <img :src="item.headportrait" alt="头像">
                             </div>
@@ -111,7 +119,7 @@
                     <div class="search-result-list" v-for="(search,index) in searchResult" :key="index">
                         <div class="search-result-items" v-for="(item,index) in search" :key="index">
                             <div class="portrait small-3" style="margin-left: 2rem;margin-right: 2rem;">
-                                <img :src="item.headportrait==''?'./image/1.jpeg':item.headportrait" alt="头像">
+                                <img :src="item.headportrait" alt="头像">
                             </div>
                             <div class="info">
                                 <div class="contact-info">
@@ -142,13 +150,13 @@
                 </div>
                 <div>
                     <div class="user-img user-head-portrait">
-                        <img th:src="${headportrait}" alt="">
+                        <img :src="userInfo.headportrait" alt="">
                     </div>
                     <div id="user-name">
                         <h4>用户名字</h4>
                     </div>
                     <div id="user-phone-number">
-                        <span>+86 130 1939 2276</span>
+                        <span>+86 {{userPhone}}</span>
                     </div>
                 </div>
                 <div id="user-setting-info">
@@ -199,7 +207,7 @@
                 </div>
                 <div>
                     <div class="user-img user-head-portrait" id="image-input">
-                        <img th:src="${headportrait}" alt="">
+                        <img :src="userInfo.headportrait" alt="">
                     </div>
                     <div class="ion-icon-center transparent-camera" id="image-select">
                         <!--                        头像上传-->
@@ -264,36 +272,12 @@
                     <div class="folder-title">
                         <span>分类</span>
                     </div>
-                    <div class="folder-items">
+                    <div class="folder-items" v-for="(classify,index) in contactClassify" @click="deleteContactFromFolder">
                         <div class="classify-name">
-                            <span>所有</span>
+                            <span>{{classify}}</span>
                         </div>
                         <div class="classify-statistics">
-                            <span>3人</span>
-                        </div>
-                    </div>
-                    <div class="folder-items">
-                        <div class="classify-name">
-                            <span>通讯录</span>
-                        </div>
-                        <div class="classify-statistics">
-                            <span>4人</span>
-                        </div>
-                    </div>
-                    <div class="folder-items">
-                        <div class="classify-name">
-                            <span>群组</span>
-                        </div>
-                        <div class="classify-statistics">
-                            <span>0</span>
-                        </div>
-                    </div>
-                    <div class="folder-items">
-                        <div class="classify-name">
-                            <span>同事</span>
-                        </div>
-                        <div class="classify-statistics">
-                            <span>1人</span>
+                            <span>{{contact[index].length}}人</span>
                         </div>
                     </div>
                 </div>
@@ -351,19 +335,19 @@
                     </div> -->
                 </div>
             </div>
-            <script src="./js/general-setting.js"></script>
             <div id="folder-operation">
                 <div class="hidden-head">
                     <div id="folder-setting-close" class="ion-icon-center">
                         <ion-icon name="arrow-back-outline"></ion-icon>
                     </div>
                     <div class="hidden-head-title">
-                        <h4>添加分类</h4>
+                        <h4 v-if="addOrEdit">添加分类</h4>
+                        <h4 v-else="addOrEdit">编辑分类</h4>
                     </div>
-                    <div class="folder-setting ion-icon-center">
-                        <ion-icon name="checkmark-outline"></ion-icon>
+                    <div class="folder-setting ion-icon-center" @click="folderSubmit">
+                        <ion-icon name="checkmark-outline" v-if="addOrEdit"></ion-icon>
                         <!-- 删除 -->
-                        <!-- <ion-icon name="trash-outline"></ion-icon> -->
+                        <ion-icon name="trash-outline" v-else="addOrEdit"></ion-icon>
                     </div>
                 </div>
                 <div class="bg-img-bg">
@@ -375,7 +359,7 @@
                     <form action="" method="post">
                         <div class="input-shadow">
                             <div class="input-group">
-                                <input type="text" id="newFolderName" required>
+                                <input type="text" id="newFolderName" v-model.trim="selected.folderName" required>
                                 <div class="underline"></div>
                                 <label for="newFolderName">新分类名称</label>
                             </div>
@@ -392,11 +376,11 @@
                                 <span>添加成员</span>
                             </div>
                             <div class="folder-contact-list">
-                                <div class="folder-contact-items">
+                                <div class="folder-contact-items" v-for="person in selected.selectedPerson" :key="person.contactid">
                                     <div class="portrait small-2">
-                                        <img src="./image/1.jpeg" alt="">
+                                        <img :src="person.headportrait" alt="">
                                     </div>
-                                    <span>联系人名字</span>
+                                    <span>{{person.nickname}}</span>
                                     <div class="small-2 ion-icon-center">
                                         <ion-icon name="trash-outline"></ion-icon>
                                     </div>
@@ -414,21 +398,20 @@
                     <div class="hidden-head-title">
                         <h4>添加联系人</h4>
                     </div>
-                    <div class="select-setting ion-icon-center">
+                    <div class="select-setting ion-icon-center" @click="addSelected">
                         <ion-icon name="checkmark-outline"></ion-icon>
                     </div>
                 </div>
                 <form action="" method="get">
                     <div class="select-list">
-                        <div class="select-mumbers-items">
+                        <div class="select-mumbers-items" v-for="person in contact[0]" :key="person.contactid">
                             <div class="portrait small-3">
-                                <img src="./image/1.jpeg" alt="">
+                                <img :src="person.headportrait" alt="">
                             </div>
-                            <label>联系人名字fsdfhsdkfksdjfk</label>
-                            <input class="checkbox-mumbers" type="checkbox">
+                            <label>{{person.nickname}}</label>
+                            <input class="checkbox-mumbers" type="checkbox" v-model="person.select">
                         </div>
                     </div>
-                    <input id="select-submit" type="submit" hidden>
                 </form>
             </div>
         </div>
@@ -439,16 +422,16 @@
                 </div>
                 <!-- 展示联系人的置顶信息 -->
                 <div class="top-items">
-                    <span>联系人名字</span>
+                    <span>{{currentChat.contactInfo.nickname}}</span>
                 </div>
                 <!-- 管理媒体 -->
                 <div class="top-items">
                     123
                 </div>
-                <div class="icon-common bell riff">
+                <div v-if="currentChat.contactInfo.doNotDisturb" class="icon-common bell" @click="doNotDisturb">
                     <ion-icon name="notifications-outline"></ion-icon>
                 </div>
-                <div class="icon-common bell riff mute">
+                <div v-else="currentChat.contactInfo.doNotDisturb" class="icon-common bell mute" @click="doNotDisturb">
                     <ion-icon name="notifications-off-outline"></ion-icon>
                 </div>
                 <div class="icon-common right-close riff">
@@ -460,48 +443,38 @@
             </div>
             <!-- 展示聊天信息 -->
             <div id="chat-main">
-                <!-- 对方信息 -->
-                <div class="info-items">
-                    <div class="portrait chat-info-img shadow">
-                        <img src="./image/1.jpeg" alt="">
-                    </div>
-                    <div class="chat-info-main shadow">
-                        <p>对方华盛顿和覅u水分的防护手段回复和反抗集散地和反馈i还是对回复i说大话打发士大夫十分fsdhaiofhjaiodshfkuashfh都发卡号是可见的回复会计师大后方但是</p>
-                        <div class="current-time">
-                            <span>12:55</span>
+                <template v-for="(info,index) in currentChat.contactInfo.chatInfo" :key="index">
+                    <!-- 自己信息 -->
+                    <div v-if="info.origin===userInfo.id" class="user-info-items info-items">
+                        <div class="share riff">
+                            <ion-icon name="arrow-redo-outline"></ion-icon>
+                        </div>
+                        <div class="chat-info-main shadow">
+                            <p>{{info.content}}</p>
+                            <div class="current-time">
+                                <span>{{info.time.hour+':'+info.time.minute}}</span>
+                            </div>
+                        </div>
+                        <div class="portrait chat-info-img shadow">
+                            <img :src="userInfo.headportrait" alt="">
                         </div>
                     </div>
-                    <div class="share riff">
-                        <ion-icon name="arrow-redo-outline"></ion-icon>
-                    </div>
-                </div>
-                <!-- 自己信息 -->
-                <div class="user-info-items info-items">
-                    <div class="share riff">
-                        <ion-icon name="arrow-redo-outline"></ion-icon>
-                    </div>
-                    <div class="chat-info-main shadow">
-                        <p>
-                            对方华盛顿和覅u
-                            对方华盛顿和覅u水分的防护手段回复和反抗集散地和反
-                            馈i还是对回复i说大话打发士大夫十分fsdhaiofhu
-                            对方华盛顿和覅u水分的防护手段回复和反抗集散地和反
-                            馈i还是对回复i说大话打发士大夫十分fsdhaiofhu
-                            对方华盛顿和覅u水分的防护手段回复和反抗集散地和反
-                            馈i还是对回复i说大话打发士大夫十分fsdhaiofhu
-                            对方华盛顿和覅u水分的防护手段回复和反抗集散地和反
-                            馈i还是对回复i说大话打发士大夫十分fsdhaiofhu
-                            对方华盛顿和覅u水分的防护手段回复和反抗集散地和反
-                            馈i还是对回复i说大话打发士大夫十分fsdhaiofh
-                        </p>
-                        <div class="current-time">
-                            <span>12:55</span>
+                    <!-- 对方信息 -->
+                    <div v-else="info.origin===userInfo.id" class="info-items">
+                        <div class="portrait chat-info-img shadow">
+                            <img :src="currentChat.contactInfo.headportrait" alt="">
+                        </div>
+                        <div class="chat-info-main shadow">
+                            <p>{{info.content}}</p>
+                            <div class="current-time">
+                                <span>{{info.time.hour+':'+info.time.minute}}</span>
+                            </div>
+                        </div>
+                        <div class="share riff">
+                            <ion-icon name="arrow-redo-outline"></ion-icon>
                         </div>
                     </div>
-                    <div class="portrait chat-info-img shadow">
-                        <img src="./image/1.jpeg" alt="">
-                    </div>
-                </div>
+                </template>
             </div>
             <!-- 输入框 -->
             <div class="input-frame">
@@ -509,7 +482,7 @@
                     <div class="riff" id="emotion">
                         <ion-icon name="happy-outline"></ion-icon>
                     </div>
-                    <input type="text" placeholder="消息">
+                    <input type="text" placeholder="消息" v-model="sendInfo.content" @keydown.enter="sendMsg">
                     <div class="riff" id="send-file">
                         <ion-icon name="attach-outline"></ion-icon>
                     </div>
@@ -523,10 +496,10 @@
             <div class="ordinary">
                 <div class="left-contact-img bottom-line">
                     <div class="portrait big-portrait">
-                        <img src="./image/1.jpeg" alt="">
+                        <img :src="currentChat.contactInfo.headportrait" alt="">
                     </div>
                     <div class="contact-name">
-                        <h3>联系人名字</h3>
+                        <h3>{{currentChat.contactInfo.nickname}}</h3>
                         <span>很久没有上线</span>
                     </div>
                 </div>
@@ -537,11 +510,11 @@
                     <!-- 邮箱或者电话号码 -->
                     <div class="introduction-info">
                         <div>
-                            <span id="contact-phone">13019392276</span>
+                            <span id="contact-phone">{{currentChat.contactInfo.phone}}</span>
                             <span id="contact-hint-info">电话</span>
                         </div>
                         <div>
-                            <span id="id">$cxn</span>
+                            <span id="id">${{currentChat.contactInfo.contactid}}</span>
                             <span>联系人id</span>
                         </div>
                     </div>
@@ -1369,6 +1342,10 @@
 <script src="https://cdn.bootcdn.net/ajax/libs/jquery.form/4.3.0/jquery.form.js"></script>
 <script src="./js/main.js"></script>
 <script src="./js/add-folder.js"></script>
+<script src="./js/main-left.js"></script>
+<script src="./js/general-setting.js"></script>
+<script src="./js/websocket.js"></script>
+<script src="./js/circle-tailoring.js"></script>
 </body>
 
 </html>
