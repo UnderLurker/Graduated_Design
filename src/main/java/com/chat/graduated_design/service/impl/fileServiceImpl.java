@@ -2,6 +2,9 @@ package com.chat.graduated_design.service.impl;
 
 import com.chat.graduated_design.exception.FileException;
 import com.chat.graduated_design.service.fileService;
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.geometry.Position;
+import net.coobird.thumbnailator.geometry.Positions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -10,15 +13,13 @@ import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
 
@@ -53,14 +54,14 @@ public class fileServiceImpl implements fileService {
     }
 
     /**
-     * 存储文件到系统
+     * 存储文件到系统，如果需要裁剪图片裁剪图片
      *
      * @param file 文件
      * @param target 存储位置
      * @return UUID
      */
     @Override
-    public String storeFile(MultipartFile file, Integer target) {
+    public String storeFile(MultipartFile file, Integer target,Map<String,Double> crop) {
         File saveFile=new File(this.path[target]);
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         String suffix=fileName.split("\\.")[1];
@@ -68,10 +69,40 @@ public class fileServiceImpl implements fileService {
         if(!saveFile.exists()){
             saveFile.mkdir();
         }
-        try {
-            file.transferTo(new File(this.path[target]+"/"+uuid+"."+suffix));//生成UUID
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(crop==null){
+            //保存图片到本地(不裁剪)
+            try {
+                file.transferTo(new File(this.path[target]+"/"+uuid+"."+suffix));//生成UUID
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else{
+            Integer width=crop.get("originWidth").intValue();
+            Integer height=crop.get("originHeight").intValue();
+            Double scale=crop.get("scale");
+            int x=Integer.parseInt(new java.text.DecimalFormat("0").format(crop.get("x")/scale));
+            int y=Integer.parseInt(new java.text.DecimalFormat("0").format(crop.get("y")/scale));
+            int w=Integer.parseInt(new java.text.DecimalFormat("0").format(crop.get("w")/scale));
+            int h=Integer.parseInt(new java.text.DecimalFormat("0").format(crop.get("h")/scale));
+            int x1=x+w,y1=y+h;
+            if(x1>width){
+                int dif=x1-width;
+                x-=dif;
+            }
+            if(y1>height){
+                int dif=y1-height;
+                y-=dif;
+            }
+            //保存图片到本地(裁剪)
+            try {
+                Thumbnails.of(file.getInputStream())
+                        .scale(1)
+                        .sourceRegion(x,y,w,h)
+                        .toFile(this.path[target]+"/"+uuid+"."+suffix);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return uuid+"."+suffix;
     }

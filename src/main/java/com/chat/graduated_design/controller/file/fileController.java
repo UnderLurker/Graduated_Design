@@ -21,9 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @program: Graduated_Design
@@ -40,13 +38,37 @@ public class fileController {
     @Value("${file.upload.paths}")
     String[] paths;
 
+    /**
+     * 接收上传头像
+     * @param file
+     * @param id
+     * @return
+     */
     @PostMapping("/{id}/headportrait")
     public Response headPortrait(@RequestParam("headportrait") MultipartFile file,
+                                 @RequestParam("scale") Double scale,
+                                 @RequestParam("x") Double x,
+                                 @RequestParam("y") Double y,
+                                 @RequestParam("w") Double w,
+                                 @RequestParam("h") Double h,
+                                 @RequestParam("originWidth") Double originWidth,
+                                 @RequestParam("originHeight") Double originHeight,
                                  @PathVariable("id") Integer id){
-        String uuid=fileService.storeFile(file,fileServiceImpl.HEADPORTRAITPATH);
+        //裁剪信息
+        Map<String,Double> crop=new HashMap<>();
+        crop.put("scale",scale);
+        crop.put("x",x);
+        crop.put("y",y);
+        crop.put("w",w);
+        crop.put("h",h);
+        crop.put("originWidth",originWidth);
+        crop.put("originHeight",originHeight);
+        //保存图片
+        String uuid=fileService.storeFile(file,fileServiceImpl.HEADPORTRAITPATH,crop);
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         String originName=fileName.split("\\.")[0];
         String fileType=file.getContentType();
+
         Date date=new Date();
         Date saveDate=null;
         SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -76,7 +98,7 @@ public class fileController {
 
     @PostMapping("/uploadFile")
     public upLoadFileResponse uploadFile(@RequestParam("headportrait") MultipartFile file){
-        String fileName = fileService.storeFile(file,fileServiceImpl.PHOTOPATH);
+        String fileName = fileService.storeFile(file,fileServiceImpl.PHOTOPATH,null);
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/downloadFile/")
