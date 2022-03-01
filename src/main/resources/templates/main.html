@@ -12,10 +12,10 @@
     <link rel="stylesheet" href="./css/folder.css">
     <link rel="stylesheet" href="./css/uploadimg.css">
     <link rel="stylesheet" href="./css/general-setting.css">
-    <!-- <link href="https://cdn.bootcdn.net/ajax/libs/cropperjs/2.0.0-alpha.2/cropper.css" rel="stylesheet"> -->
+    <link rel="stylesheet" href="./css/Jcrop.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
     <script src="./js/riff.js"></script>
-    <!-- 图片裁剪 -->
-    <!-- <script src="https://cdn.bootcdn.net/ajax/libs/cropperjs/2.0.0-alpha.2/cropper.js"></script> -->
+    <script src="./js/Jcrop.js"></script>
     <title>首页</title>
 </head>
 
@@ -479,16 +479,24 @@
             <!-- 输入框 -->
             <div class="input-frame">
                 <div class="input-frame-left shadow">
-                    <div class="riff" id="emotion">
+                    <div id="emotion" style="margin-right: .5rem">
                         <ion-icon name="happy-outline"></ion-icon>
                     </div>
-                    <input type="text" placeholder="消息" v-model="sendInfo.content" @keydown.enter="sendMsg">
+                    <div id="editor" placeholder="消息" v-model="sendInfo.content" @keydown.enter="sendMsg" style="height: 2rem;overflow-y: scroll;max-width: 100%;" contenteditable="true"></div>
                     <div class="riff" id="send-file">
                         <ion-icon name="attach-outline"></ion-icon>
                     </div>
                 </div>
                 <div class="input-frame-right shadow riff">
                     <ion-icon name="mic-outline"></ion-icon>
+                </div>
+            </div>
+            <div id="emoji">
+                <!-- 展示表情 -->
+                <div style="height: 7rem;overflow-y: scroll;"></div>
+                <!-- 表情分类 -->
+                <div>
+                    <div class="emoji-list emoji-list-active">系统表情</div>
                 </div>
             </div>
         </div>
@@ -1306,10 +1314,14 @@
                 <span>选择</span>
             </div>
             <div class="img-show">
-                <img id="preview-img" src="" alt="">
+                <img id="preview-img" src="" alt="预览">
             </div>
-            <form th:action="'/'+${session.user.id}+'/headportrait'" id="portrait-form" onsubmit="return formSubmit()"
-                  method="post" enctype="multipart/form-data">
+            <form @submit.prevent="submitHeadPortrait" method="post" enctype="multipart/form-data">
+                <input id="scale" name="scale" type="hidden">
+                <input id="x" name="x" type="hidden">
+                <input id="y" name="y" type="hidden">
+                <input id="w" name="w" type="hidden">
+                <input id="h" name="h" type="hidden">
                 <div class="submit ion-icon-center shadow">
                     <ion-icon name="checkmark-outline"></ion-icon>
                 </div>
@@ -1338,14 +1350,20 @@
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 <script src="./js/vue.js"></script>
 <script src="./js/axios.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
-<script src="https://cdn.bootcdn.net/ajax/libs/jquery.form/4.3.0/jquery.form.js"></script>
 <script src="./js/main.js"></script>
 <script src="./js/add-folder.js"></script>
 <script src="./js/main-left.js"></script>
 <script src="./js/general-setting.js"></script>
 <script src="./js/websocket.js"></script>
 <script src="./js/circle-tailoring.js"></script>
+<script src="./js/coolapk-emotion-svg.js"></script>
+<script>
+    var string = "";
+    for (var word of emoji) {
+        string += '<i class="' + word + '"></i>'
+    }
+    $('#emoji>div:eq(0)')[0].innerHTML=string;
+</script>
 </body>
 
 </html>
