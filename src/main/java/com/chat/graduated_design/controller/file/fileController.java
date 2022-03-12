@@ -1,26 +1,23 @@
 package com.chat.graduated_design.controller.file;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.chat.graduated_design.controller.WebSocket;
+import com.chat.graduated_design.entity.chat.chatInfo;
 import com.chat.graduated_design.entity.file.FileStorage;
-import com.chat.graduated_design.entity.file.upLoadFileResponse;
 import com.chat.graduated_design.message.Response;
+import com.chat.graduated_design.service.impl.chatInfoServiceImpl;
 import com.chat.graduated_design.service.impl.fileDataServiceImpl;
 import com.chat.graduated_design.service.impl.fileServiceImpl;
+import com.chat.graduated_design.util.DateUtil;
+import com.chat.graduated_design.util.FileSizeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import javax.websocket.Session;
 import java.util.*;
 
 /**
@@ -35,6 +32,8 @@ public class fileController {
     private fileServiceImpl fileService;
     @Autowired
     private fileDataServiceImpl fileDataService;
+    @Autowired
+    private chatInfoServiceImpl chatInfoService;
     @Value("${file.upload.paths}")
     String[] paths;
 
@@ -64,29 +63,21 @@ public class fileController {
         crop.put("originWidth",originWidth);
         crop.put("originHeight",originHeight);
         //保存图片
-        String uuid=fileService.storeFile(file,fileServiceImpl.HEADPORTRAITPATH,crop);
+        String uuid=fileService.storeFile(file,fileServiceImpl.HEAD_PORTRAIT_PATH,crop);
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         String originName=fileName.split("\\.")[0];
         String fileType=file.getContentType();
 
-        Date date=new Date();
-        Date saveDate=null;
-        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try {
-            saveDate=format.parse(format.format(date));
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return Response.error("出现了未知的错误");
-        }
-        FileStorage fileStorage=new FileStorage(id,null,uuid,originName,saveDate,fileType,fileServiceImpl.HEADPORTRAITPATH);
+        Date saveDate=DateUtil.getCurrentTime();
+        FileStorage fileStorage=new FileStorage(id,null,uuid,originName,saveDate,fileType,fileServiceImpl.HEAD_PORTRAIT_PATH,null);
         //看数据库中是否有头像信息
         //如果有就更新，否则添加
         QueryWrapper<FileStorage> fileStorageQueryWrapper=new QueryWrapper<>();
         fileStorageQueryWrapper.eq("Id",id)
-                .eq("folder",fileServiceImpl.HEADPORTRAITPATH);
+                .eq("folder",fileServiceImpl.HEAD_PORTRAIT_PATH);
         FileStorage queryFileStorage=fileDataService.getOne(fileStorageQueryWrapper);
         if(queryFileStorage!=null){
-            fileService.deleteFile(queryFileStorage.getUuid(),fileServiceImpl.HEADPORTRAITPATH);
+            fileService.deleteFile(queryFileStorage.getUuid(),fileServiceImpl.HEAD_PORTRAIT_PATH);
             fileDataService.update(fileStorage,fileStorageQueryWrapper);
         }
         else{
@@ -96,46 +87,51 @@ public class fileController {
         return Response.ok("上传成功",responseUrl);
     }
 
-    @PostMapping("/uploadFile")
-    public upLoadFileResponse uploadFile(@RequestParam("headportrait") MultipartFile file){
-        String fileName = fileService.storeFile(file,fileServiceImpl.PHOTOPATH,null);
+    @PostMapping("/uploadMultipleFiles/{userId}/{contactId}")
+    public Response uploadMultipleFiles(@RequestParam("files") MultipartFile[] files,
+                                        @PathVariable("userId") Integer userId,
+                                        @PathVariable("contactId") Integer contactId) {
+        Map<String, List<String>> stringListMap = fileService.storeFiles(files);
+        List<Map<String,Object>> responseInfo=new LinkedList<>();
+        Date saveDate=DateUtil.getCurrentTime();
+        for(int index=0;index<files.length;index++){
+            FileStorage fileStorage=new FileStorage(userId,contactId,
+                    stringListMap.get("uuid").get(index),
+                    files[index].getOriginalFilename(),saveDate,
+                    files[index].getContentType(),null,
+                    stringListMap.get("suffix").get(index));
+            fileDataService.save(fileStorage);
+            //添加聊天信息
+            chatInfo info=new chatInfo(false,
+                    files[index].getOriginalFilename(),saveDate,contactId,userId,true);
+            chatInfoService.save(info);
 
-        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/downloadFile/")
-                .path(fileName)
-                .toUriString();
+            //给发送信息的客户端发送成功信息
+            Map<String,Object> item=new HashMap<>();
+            item.put("name",files[index].getOriginalFilename());
+            item.put("dest",contactId);
+            item.put("origin",userId);
+            responseInfo.add(item);
 
-        return new upLoadFileResponse(fileName, fileDownloadUri,
-                file.getContentType(), file.getSize());
-    }
+            WebSocket webSocket=new WebSocket();
+            Session toSession= webSocket.getSessionById(contactId);
+            if (toSession != null&&toSession.isOpen()){
+                //向接收者发送信息
+                Map<String,Object> sendInfo=new HashMap<>();
+                sendInfo.put("content",files[index].getOriginalFilename());
+                sendInfo.put("dest",contactId);
+                sendInfo.put("origin",userId);
+                sendInfo.put("readFlag",true);
+                sendInfo.put("time",saveDate);
+                sendInfo.put("file",true);
+                sendInfo.put("size",FileSizeUtil.getSize(files[index].getSize()));
+                sendInfo.put("suffix",stringListMap.get("suffix").get(index));
 
-    @PostMapping("/uploadMultipleFiles")
-    public List<upLoadFileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
-        List<upLoadFileResponse> list = new ArrayList<>();
-        if (files != null) {
-            for (MultipartFile multipartFile:files) {
-                upLoadFileResponse uploadFileResponse = uploadFile(multipartFile);
-                list.add(uploadFileResponse);
+                String jsonObject= new JSONObject(sendInfo).toString();
+                toSession.getAsyncRemote().sendObject(jsonObject);
             }
-        }
-        return list;
-    }
 
-    @GetMapping("/downloadFile/{fileName:.*}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
-        Resource resource = fileService.loadFileAsResource(fileName,fileServiceImpl.FILEPATH);
-        String contentType = null;
-        try {
-            request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        if(contentType == null) {
-            contentType = "application/octet-stream";
-        }
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                .body(resource);
+        return Response.ok("存储成功",responseInfo);
     }
 }

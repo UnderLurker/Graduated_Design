@@ -55,7 +55,7 @@ public class AccountController {
         user.setPassword("");
         //查询用户头像信息
         QueryWrapper<FileStorage> portraitQueryWrapper=new QueryWrapper<>();
-        portraitQueryWrapper.eq("Id",id).eq("folder",fileServiceImpl.HEADPORTRAITPATH);
+        portraitQueryWrapper.eq("Id",id).eq("folder",fileServiceImpl.HEAD_PORTRAIT_PATH);
         FileStorage fileStorage=fileDataService.getOne(portraitQueryWrapper);
         //查询用户分类列表
         QueryWrapper<folderTable> folderTableQueryWrapper=new QueryWrapper<>();
@@ -67,12 +67,15 @@ public class AccountController {
         }
         //查询用户的联系人
         List<ResponseContact> resList=contactService.queryContact(id,userService,chatInfoService);
+        //查询表情图片
+        List<String> emojiList=fileDataService.selectEmojiById(id);
 
         Map<String,Object> res=new HashMap<>();
         res.put("user",user);
         res.put("headportrait",fileStorage.getUuid());
         res.put("folder",folders);
         res.put("contact",resList);
+        res.put("emojiList",emojiList);
 
         return Response.ok("/prepare/"+id.toString(),res);
     }

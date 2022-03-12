@@ -1,18 +1,21 @@
 package com.chat.graduated_design.entity.user;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.Map;
+import java.util.Objects;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class User {
+public class User implements Comparable<User>{
     private String name;
+    @TableId
     private Integer id=null;
     private String password=null;
     private String email=null;
@@ -21,6 +24,7 @@ public class User {
     private String phone=null;
     private String nickname;
     private boolean active=false;
+//    private boolean inline=false;
 
     private static Integer count=1;
 
@@ -46,5 +50,23 @@ public class User {
         }catch (NullPointerException e){
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return name.equals(user.name) && email.equals(user.email) && gender.equals(user.gender) && phone.equals(user.phone) && nickname.equals(user.nickname);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, email, gender, phone, nickname);
+    }
+
+    @Override
+    public int compareTo(User o) {
+        return this.id-o.getId();
     }
 }

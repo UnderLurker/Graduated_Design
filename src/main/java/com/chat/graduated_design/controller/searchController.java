@@ -1,11 +1,7 @@
 package com.chat.graduated_design.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.chat.graduated_design.entity.user.User;
 import com.chat.graduated_design.message.Response;
-import com.chat.graduated_design.service.impl.contactServiceImpl;
 import com.chat.graduated_design.service.impl.fileDataServiceImpl;
-import com.chat.graduated_design.service.impl.folderTableServiceImpl;
 import com.chat.graduated_design.service.impl.userServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,10 +23,6 @@ import java.util.Map;
 public class searchController {
     @Autowired
     private userServiceImpl userService;
-    @Autowired
-    private folderTableServiceImpl folderTableService;
-    @Autowired
-    private contactServiceImpl contactService;
     @Autowired
     private fileDataServiceImpl fileDataService;
     @GetMapping("/search/{id}")

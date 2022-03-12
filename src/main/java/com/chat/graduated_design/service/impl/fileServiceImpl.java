@@ -3,25 +3,21 @@ package com.chat.graduated_design.service.impl;
 import com.chat.graduated_design.exception.FileException;
 import com.chat.graduated_design.service.fileService;
 import net.coobird.thumbnailator.Thumbnails;
-import net.coobird.thumbnailator.geometry.Position;
-import net.coobird.thumbnailator.geometry.Positions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.List;
 
 /**
  * @program: Graduated_Design
@@ -31,13 +27,11 @@ import java.util.UUID;
  **/
 @Component
 public class fileServiceImpl implements fileService {
-    public static final Integer HEADPORTRAITPATH = 0;   //头像存储位置
-    public static final Integer FILEPATH = 1;           //
-    public static final Integer PHOTOPATH = 2;          //图片存储位置
-    public static final Integer MUSICPATH = 3;          //音乐存储位置
-    public static final Integer VIDEOPATH = 4;          //视频存储位置
+    public static final Integer HEAD_PORTRAIT_PATH = 0;   //头像存储位置
+    public static final Integer EMOJI_PATH = 1;          //视频存储位置
+    public static final Integer THUMBNAIL_PATH = 2;       //视频文件的展示图片
 
-    private String[] path = new String[5];              // 文件在本地存储的地址
+    private String[] path = new String[3];              // 文件在本地存储的地址
 
     public fileServiceImpl(@Value("${file.upload.paths}") String[] ymlPath) {
         for(int index=0;index<ymlPath.length;index++){
@@ -58,19 +52,15 @@ public class fileServiceImpl implements fileService {
      *
      * @param file 文件
      * @param target 存储位置
+     * @param crop 图片裁剪
      * @return UUID
      */
     @Override
     public String storeFile(MultipartFile file, Integer target,Map<String,Double> crop) {
-        File saveFile=new File(this.path[target]);
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-        String suffix=fileName.split("\\.")[1];
+        String suffix=file.getOriginalFilename().split("\\.")[1];
         String uuid= UUID.randomUUID().toString().toLowerCase();
-        if(!saveFile.exists()){
-            saveFile.mkdir();
-        }
         if(crop==null){
-            //保存图片到本地(不裁剪)
+            //保存文件到本地(不裁剪)
             try {
                 file.transferTo(new File(this.path[target]+"/"+uuid+"."+suffix));//生成UUID
             } catch (IOException e) {
@@ -105,6 +95,43 @@ public class fileServiceImpl implements fileService {
             }
         }
         return uuid+"."+suffix;
+    }
+
+    @Override
+    public Map<String,List<String>> storeFiles(MultipartFile[] files){
+        String rootPath="";
+        try {
+            rootPath=ResourceUtils.getURL("classpath:static/image/").getPath().replace("%20"," ").substring(1);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        Map<String,List<String>> result=new HashMap<>();
+        result.put("path",new LinkedList<>());
+        result.put("uuid",new LinkedList<>());
+        result.put("suffix",new LinkedList<>());
+
+        for(MultipartFile file : files){
+            //看是否有对应后缀的文件夹
+            String[] fileNameSplit=file.getOriginalFilename().split("\\.");
+            String suffix=fileNameSplit[fileNameSplit.length-1];
+            String folderName=rootPath+suffix;
+            File folder=new File(folderName);
+            if(!folder.exists()){
+                folder.mkdir();
+            }
+            //存储文件
+            String uuid= UUID.randomUUID().toString().toLowerCase();
+            try {
+                file.transferTo(new File(folderName+"/"+uuid+"."+suffix));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            result.get("path").add(folderName);
+            result.get("uuid").add(uuid+'.'+suffix);
+            result.get("suffix").add(suffix);
+        }
+        return result;
     }
 
     @Override

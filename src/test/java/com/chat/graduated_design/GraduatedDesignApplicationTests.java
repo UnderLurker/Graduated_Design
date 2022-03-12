@@ -1,33 +1,25 @@
 package com.chat.graduated_design;
 
-import com.chat.graduated_design.entity.mailUtil.impl.MailActiveImpl;
+import com.chat.graduated_design.entity.contact.ResponseContact;
+import com.chat.graduated_design.entity.contact.contact;
+import com.chat.graduated_design.entity.user.User;
+import com.chat.graduated_design.service.impl.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.util.ResourceUtils;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.*;
 
 @SpringBootTest
 class GraduatedDesignApplicationTests {
-
-//    @Autowired
-//    private bookMapper bookmapper;
-//
-//    @Test
-//    void contextLoads() {
-//        System.out.println(("----- selectAll method test ------"));
-//        List<book> userList = bookmapper.selectList(null);
-//        System.out.println(userList.toString());
-//    }
     @Test
-    void stringTest(){
-        System.out.println("---------------------");
-        System.out.println("   123   ".trim());
-    }
-    @Autowired
-    private MailActiveImpl util;
-    @Test
-    void mailUtilTest(){
-        System.out.println("----------------------");
-//        util.sendMimeMail("1481167030@qq.com");
-        System.out.println(util.toString());
+    void fileTest(){
+        System.out.println("123");
     }
 }

@@ -1,0 +1,16 @@
+:root{
+    --theme-background:white;
+    --theme-background-input:white;
+    --theme-classify-font-color:dodgerblue;
+    --theme-unread-color:silver;
+    --theme-contact-name-color:white;
+    --theme-search-framework:1px solid gainsboro;
+}
+.night{
+    --theme-background:rgb(33,33,33);
+    --theme-background-input:rgb(24,24,24);
+    --theme-classify-font-color:rgb(134,105,197);
+    --theme-unread-color:rgb(112,117,121);
+    --theme-contact-name-color:white;
+    --theme-search-framework:none;
+}

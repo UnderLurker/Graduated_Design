@@ -1,7 +1,7 @@
 
 /* 中间聊天栏 */
 .middle-chat{
-    width: 60%;
+    width: 50%;
     height: 100vh;
     flex-grow: 1.5;
     background: radial-gradient(circle farthest-corner at left top,
@@ -10,7 +10,7 @@
 }
 .top{
     height: 0;
-    background-color: rgb(30, 144, 255,.5);
+    background-color: rgba(30, 144, 255, .5);
     overflow: hidden;
     transition: all 0.5s;
     font-size: 1.2rem;
@@ -29,7 +29,7 @@
     right: 1rem;
 }
 .right-close:hover{
-    background-color: rgb(30, 144, 255,1);
+    background-color: rgba(30, 144, 255,1);
 }
 @media only screen and (max-width:1320px) {
     .right-close{
@@ -259,20 +259,22 @@
     display: none;
 }
 #editor[placeholder]:empty:focus::before{
-    content: "消息";
+    content: "";
 }
 
 #editor:empty:before{
     content:attr(placeholder);
     color:rgb(190, 198, 214);
-    margin-left: 5%
 }
-.coolapk-emotion{
+.emoji .emoji-icon{
+    width: 1.8em;
+    height: 1.8em;
     padding: .5rem;
 }
-.coolapk-emotion:hover{
+.emoji .emoji-icon:hover{
     border-radius: 5px;
     background-color: rgb(247, 247, 247);
+    cursor: pointer;
 }
 #emoji{
     width: 100%;
@@ -288,9 +290,56 @@
     height: 2.5rem;
     line-height: 2.5rem;
     padding: 0 1rem;
-    display: inline-block;
+    cursor: pointer;
+    background-color: transparent;
+    z-index: 1;
 }
-.emoji-list-active{
+#emoji-list-active{
+    position: relative;
+    left: 0;
+    top: -40px;
+    width: 96px;
+    height: 40px;
     border-radius: 5px;
+    display: inline-block;
     background-color: white;
+    transition: all .5s ease;
+}
+.emoji{
+    height: 7rem;
+    overflow-y: scroll;
+    width: 100%;
+    display: inline-block;
+    transition: all .5s ease;
+}
+.emoji-container{
+    overflow: hidden;
+    transition: all .5s ease;
+}
+.file{
+    display: flex;
+    padding: 1rem 1rem .5rem 1rem;
+}
+.file-icon{
+    width: 7rem;
+    height: 7rem;
+    background-color: white;
+    cursor: pointer;
+}
+.file-icon>p{
+    background-color: transparent;
+    font-size: 3rem;
+    line-height: 7rem;
+    padding: 0;
+    text-align: center;
+}
+.file-info{
+    width: 10rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.file-name{
+    width: 100%;
+    word-wrap: break-word;
 }

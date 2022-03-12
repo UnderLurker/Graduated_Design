@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +32,9 @@ public class loginController {
     //邮箱登录
     @ResponseBody
     @RequestMapping("/emaillogin")
-    public ErrorMessage emailLogin(@RequestBody User user, HttpServletRequest request){
+    public ErrorMessage emailLogin(@RequestBody User user,
+                                   HttpServletRequest request,
+                                   HttpServletResponse response){
         String saveString= null;
         errorMessage.clear();
         errorMessage.setEmail("用户名或密码错误");
@@ -58,6 +62,8 @@ public class loginController {
             User sessionUser=new User(map);
             sessionUser.setPassword("");
             request.getSession().setAttribute("user",sessionUser);
+            Cookie cookie=new Cookie("id",sessionUser.getId().toString());
+            response.addCookie(cookie);
             errorMessage.clear();
         }
         return errorMessage;
@@ -65,7 +71,9 @@ public class loginController {
     //手机登录
     @ResponseBody
     @PostMapping("/phonelogin")
-    public ErrorMessage phoneLogin(@RequestBody User user, HttpServletRequest request){
+    public ErrorMessage phoneLogin(@RequestBody User user,
+                                   HttpServletRequest request,
+                                   HttpServletResponse response){
         errorMessage.clear();
         errorMessage.setPhone("用户名或密码错误");
         String saveString= null;
@@ -89,8 +97,12 @@ public class loginController {
         }
         else{
             errorMessage.clear();
-            user.setNickname(list.get(0).get("nickname").toString());
-            request.getSession().setAttribute("user",user);
+            Map<String,Object> map=list.get(0);
+            User sessionUser=new User(map);
+            sessionUser.setPassword("");
+            request.getSession().setAttribute("user",sessionUser);
+            Cookie cookie=new Cookie("id",user.getId().toString());
+            response.addCookie(cookie);
         }
         return errorMessage;
     }

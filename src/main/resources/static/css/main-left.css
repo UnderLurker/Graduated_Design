@@ -135,6 +135,7 @@ input {
     width: 200px;
     font-size: 1.1rem;
     border-width: 0;
+    background-color: transparent;
 }
 
 input:focus {
@@ -280,20 +281,20 @@ input:focus {
     display: block;
     opacity: 1;
 }
-#emoji>div:first-child::-webkit-scrollbar,
+.emoji::-webkit-scrollbar,
 .general-setting::-webkit-scrollbar,
 .select-list::-webkit-scrollbar,
 .contact-list::-webkit-scrollbar{
     width: 6px;
 }
-#emoji>div:first-child::-webkit-scrollbar-thumb,
+.emoji::-webkit-scrollbar-thumb,
 .general-setting::-webkit-scrollbar-thumb,
 .select-list::-webkit-scrollbar-thumb,
 .contact-list::-webkit-scrollbar-thumb{
     border-radius: 1rem;
     background-color: silver;
 }
-#emoji>div:first-child::-webkit-scrollbar-track,
+.emoji::-webkit-scrollbar-track,
 .general-setting::-webkit-scrollbar-track,
 .select-list::-webkit-scrollbar-track,
 .contact-list::-webkit-scrollbar-track{

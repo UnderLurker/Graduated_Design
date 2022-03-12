@@ -24,6 +24,8 @@ public class chatInfo implements Comparable<chatInfo>{
     private Integer dest=null;
     //发送的用户id
     private Integer origin=null;
+    //false为聊天 true为文件
+    private boolean file=false;
 
     @Override
     public int compareTo(chatInfo o) {

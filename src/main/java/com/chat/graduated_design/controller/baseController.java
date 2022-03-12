@@ -52,12 +52,17 @@ public class baseController {
         //查询头像路径
         QueryWrapper<FileStorage> fileStorageQueryWrapper=new QueryWrapper<>();
         fileStorageQueryWrapper.eq("Id",queryUser.getId())
-                .eq("folder", fileServiceImpl.HEADPORTRAITPATH);
+                .eq("folder", fileServiceImpl.HEAD_PORTRAIT_PATH);
         FileStorage fileStorage=fileDataService.getOne(fileStorageQueryWrapper);
         if(fileStorage!=null){
             responseUrl="/headportrait/"+fileStorage.getUuid();
         }
         model.addAttribute("headportrait",responseUrl);
         return "main";
+    }
+
+    @RequestMapping("/")
+    public String root(){
+        return "index";
     }
 }

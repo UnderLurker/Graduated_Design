@@ -6,6 +6,7 @@ import com.chat.graduated_design.entity.contact.contact;
 import com.chat.graduated_design.entity.user.User;
 import com.chat.graduated_design.service.impl.chatInfoServiceImpl;
 import com.chat.graduated_design.service.impl.contactServiceImpl;
+import com.chat.graduated_design.util.DateUtil;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.chat.graduated_design.controller.code.ServerEncoder;
@@ -19,12 +20,10 @@ import javax.servlet.http.HttpSession;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
@@ -36,7 +35,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @ServerEndpoint(value = "/chat",configurator = WebSocketConfig.class,encoders = ServerEncoder.class)
 @Component
 public class WebSocket {
-    //用来存放每个客户端对应的MyWebSocket对象。
+    //用来存放每个客户端对应的WebSocket对象。
     private static CopyOnWriteArraySet<WebSocket> webSocketSet = new CopyOnWriteArraySet<WebSocket>();
     //用来记录id和该session进行绑定
     private static Map<Integer, Session> map = new HashMap<Integer, Session>();
@@ -50,6 +49,10 @@ public class WebSocket {
     private chatInfoServiceImpl chatInfoService;
 
     private contactServiceImpl contactService;
+
+    public Session getSessionById(Integer id){
+        return map.get(id);
+    }
 
     /**
      * 连接建立成功调用的方法，初始化id、session
@@ -101,13 +104,7 @@ public class WebSocket {
         try {
             chatMsg = objectMapper.readValue(message, chatInfo.class);
 
-            Date saveDate=null;
-            SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            try {
-                saveDate=format.parse(format.format(new Date()));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            Date saveDate= DateUtil.getCurrentTime();
             //对chatMsg进行装箱
             chatMsg.setTime(saveDate);
 
@@ -120,6 +117,7 @@ public class WebSocket {
             sendInfo.put("origin",chatMsg.getOrigin());
             sendInfo.put("readFlag",true);
             sendInfo.put("time",saveDate);
+            sendInfo.put("file",false);
 
             //发送给origin
             fromSession.getAsyncRemote().sendObject(sendInfo);
@@ -170,5 +168,18 @@ public class WebSocket {
             //异步发送消息.
             item.session.getAsyncRemote().sendText(message);
         }
+    }
+
+    public Date CSTToGMT(Date CSTTime){
+        DateFormat cstFormat=new SimpleDateFormat();
+        TimeZone gmtZone=TimeZone.getTimeZone("GMT");
+        cstFormat.setTimeZone(gmtZone);
+        Date result=null;
+        try {
+            result=cstFormat.parse(cstFormat.format(CSTTime));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }

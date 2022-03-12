@@ -138,10 +138,10 @@ function leftSearchOnClick(){
     }
 }
 
+//协助联系人点击
+let rightInfoShrink=true;
 // rightInfo变化
 function rightInfoChange(rightInfo){
-    //协助联系人点击
-    let rightInfoShrink=true;
     //right-info伸缩功能实现
     let rightClose=document.getElementsByClassName('right-close')[0];
     rightClose.onclick=function(){
@@ -150,7 +150,6 @@ function rightInfoChange(rightInfo){
             rightInfo.style.width="0";
             rightInfo.style.opacity="0";
             rightInfoShrink=false;
-            // transform: rotate(180deg);
         }
         else{
             rightClose.style.transform="";
@@ -158,6 +157,7 @@ function rightInfoChange(rightInfo){
             rightInfo.style.opacity="1";
             rightInfoShrink=true;
         }
+        reSizeEmojiWidth();
     }
 }
 
@@ -185,6 +185,8 @@ function leftNavShrink(e){
             searchRightShrink=false;
             leftNavExpand.style.opacity="1";
         }
+        reSizeEmojiWidth();
+        activeLeft=document.getElementById('emoji-list-active').getBoundingClientRect().left;
     }
     leftNavExpand.onclick=function(e){
         if(vue.contactSelect.contactActive===-1) return;
@@ -195,9 +197,18 @@ function leftNavShrink(e){
             searchRightShrink=true;
             leftNavExpand.style.opacity="0";
         }
+        activeLeft=originLeft;
+        reSizeEmojiWidth();
     }
 }
-
+function sleep(n) {
+    var start = new Date().getTime();
+    while (true) {
+        if (new Date().getTime() - start > n) {
+            break;
+        }
+    }
+}
 //展开统计栏
 function statisticsExpand(e){
     let statisticsItems=document.getElementsByClassName('statistics-items');
@@ -207,7 +218,7 @@ function statisticsExpand(e){
     for(var i=0;i<statisticsItems.length;i++){
         statisticsItems[i].onclick=function () {
             for(var j=0;j<statisticsItems.length;j++){
-                if(this==statisticsItems[j]) break;
+                if(this===statisticsItems[j]) break;
             }
             // addRippleEffect(e,this,"rgba(30, 144, 255, .15)");
             ordinary.style.width="0";
@@ -254,7 +265,7 @@ function userSetting(){
     let hidden=document.getElementById('hidden');
     let leftNavMain=document.getElementById('left-nav-main');
     let userSetting=document.getElementById('user-setting');
-    for(var i=1;i<hiddenItems.length;i++){
+    for(let i=1;i<hiddenItems.length;i++){
         hiddenItems[i].onclick=function(){
             leftNavMain.style.width="0";
             leftNavMain.style.opacity="0";
@@ -266,7 +277,7 @@ function userSetting(){
         }
     }
     let hiddenHeadClose=document.getElementsByClassName('hidden-head-close');
-    for(var i=0;i<hiddenHeadClose.length;i++){
+    for(let i=0;i<hiddenHeadClose.length;i++){
         hiddenHeadClose[i].onclick=function () {
             leftNavMain.style.width="384px";
             leftNavMain.style.opacity="1";
@@ -328,19 +339,58 @@ window.onload = function (e) {
     dragFrame(e,'list');
     leftSearchOnClick();
     darkModel();
+    SystemEmoji();
 }
 
 function scrollToBottom(){
     $('#chat-main')[0].scrollTop=$('#chat-main')[0].scrollHeight;
 }
-
+//加载系统表情包
+function SystemEmoji(){
+    //svg表情，出现问题
+    // let string = "";
+    // for (let word of emotionNameList) {
+    //     string += '<i class="' + word + '"></i>'
+    // }
+    // $('.emoji:eq(0)')[0].innerHTML=string;
+    // setCoolapkEmotion();
+    // $('.coolapk-emotion').click(function (){
+    //     let range, node;
+    //     range = window.getSelection().getRangeAt(0);
+    //     node = range.createContextualFragment('<svg class="coolapk-emotion" aria-hidden="true">'+this.innerHTML+'</svg>');
+    //     range.insertNode(node);
+    //
+    // });
+    //使用emoji表情库
+    $('.emoji-icon').click(function (){
+        let range, node;
+        let selection = window.getSelection();
+        $('#editor').focus();
+        range=selection.getRangeAt(0);
+        node = range.createContextualFragment($(this).html());
+        range.insertNode(node);
+    });
+}
 let emojiShow=false;
+//表情包界面
 document.getElementById('emotion').onclick=function (e){
+    reSizeEmojiWidth();
+    let emojiSelect=document.getElementsByClassName('emoji-list')[0];
+    let currentLeft=emojiSelect.getBoundingClientRect().left;
+    let currentWidth=emojiSelect.getBoundingClientRect().width;
+    $('#emoji-list-active').css({'width':currentWidth+'px','left':currentLeft-activeLeft+'px'});
+
+    $('.emoji-container:first-child').css('width','100%');
+
     addRippleEffect(e,this,"rgba(30, 144, 255, .15)");
     if(emojiShow){
         $('#emoji').css('height','0rem');
     }
     else{
+        //重置表情包界面
+        $('.emoji-container').css({'width':'0','color':'black'});
+        $('.emoji-container:eq(0)').css({'width':'100%','color':'dodgerblue'});
+        emojiActive=0;
         $('#emoji').css('height','10rem');
     }
     emojiShow=!emojiShow;
@@ -354,7 +404,7 @@ function onLoadChatMain(){
     let emotionHeight=(emojiShow)?16*5+64:0;
     chatMain.style.height=(bodyHeight-136-emotionHeight)+"px";
     chatMain.style.width="100%";
-    scrollToBottom();
+    // scrollToBottom();
 }
 window.onresize=onLoadChatMain;
 
@@ -373,3 +423,29 @@ function darkModel(){
         }
     }
 }
+
+// 重新设置表情包栏宽度
+function reSizeEmojiWidth(){
+    let width=$('.middle-chat').width();
+    let timeId=setInterval(()=>{
+        let tempWidth=$('.middle-chat').width();
+        if(tempWidth===width){
+            clearInterval(timeId);
+            return;
+        }
+        $('.emoji').css('width',width+'px');
+    },1);
+}
+
+$('#editor[contenteditable]').keydown(function(e) {
+    if (e.keyCode === 13) {
+        vue.sendMsg(false);
+        // document.execCommand('insertHTML', false, '<br>');
+        return false;
+    }
+});
+let originLeft;
+$(document).ready(function (){
+    activeLeft=document.getElementById('emoji-list-active').getBoundingClientRect().left;
+    originLeft=activeLeft;
+});

@@ -1,7 +1,7 @@
 //点击扩散效果
 function addRippleEffect(e,object,color){
-    var rect = object.getBoundingClientRect();
-    var ripple = object.querySelector('.ripple');
+    let rect = object.getBoundingClientRect();
+    let ripple = object.querySelector('.ripple');
     if (!ripple) {
         ripple = document.createElement('span');
         ripple.className = 'ripple';
@@ -9,11 +9,13 @@ function addRippleEffect(e,object,color){
         ripple.style.backgroundColor=''+color;
         object.appendChild(ripple);
     }
-    ripple.classList.remove('show');
-    var top = e.pageY - rect.top - ripple.offsetHeight / 2 - document.body.scrollTop;
-    var left = e.pageX - rect.left - ripple.offsetWidth / 2 - document.body.scrollLeft;
+    let top = e.pageY - rect.top - ripple.offsetHeight / 2 - document.body.scrollTop;
+    let left = e.pageX - rect.left - ripple.offsetWidth / 2 - document.body.scrollLeft;
     ripple.style.top = top + 'px';
     ripple.style.left = left + 'px';
     ripple.classList.add('show');
+    setInterval(null,750);
+    ripple.classList.remove('show');
+
     return rect.left;
 }

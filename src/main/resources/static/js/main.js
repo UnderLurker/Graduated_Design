@@ -1,53 +1,64 @@
-
 let statisticsActive=-1;
 let websocket = null; //websocket连接服务器使用
-function sendPost(url, data, callback) {
+let emojiActive=0;
+let activeLeft;
+function sendPost(url, data,headers, callback) {
     axios({
         url: url,
         method: 'post',
         data: data,
-        headers: {
-            'Content-Type': "application/json;charset=UTF-8",
-        },
+        headers: headers,
     }).then(function (msg) {
         callback(msg);
     });
 }
 
-function sendGet(url, param, callback) {
+function sendGet(url, param,headers, callback) {
     axios({
         url: url,
         method: 'get',
         params: param,
-        headers: {
-            'Content-Type': "application/json;charset=UTF-8",
-        },
+        headers: headers,
     }).then(function (msg) {
         callback(msg);
     });
 }
 
 //发送消息
-function send(fromUser,toUser,cotent) {
+function send(fromUser,toUser,cotent,file) {
     //获取输入的文本信息进行发送
     const chatMsg = {
         content: cotent,
         dest: toUser,
-        origin: fromUser
+        origin: fromUser,
+        file: file
     };
 
     websocket.send(JSON.stringify(chatMsg));
 }
 
+function CSTToGMT(strDate,isDatabase){
+    let dateStr=strDate.split(" ");
+    let strGMT = dateStr[0]+" "+dateStr[1]+" "+dateStr[2]+" "+dateStr[5]+" "+dateStr[3]+" GMT+0800";
+    let date = new Date(Date.parse(strGMT));
+    return date;
+}
 
-function formatDate(dateString){
-    let time=new Date(dateString);
+function formatDate(dateString,isDatabase){
+    let time=null;
+    if(isDatabase){
+        time=new Date(dateString);
+    }else{
+        time=CSTToGMT(dateString);
+    }
+    let min=time.getMinutes();
+    if(min<10) min='0'+min;
     return {
         year:time.getFullYear(),
         mouth:time.getMonth()+1,
         day:time.getDate(),
         hour:time.getHours(),
-        minute:time.getMinutes()
+        minute:min
     }
 }
 
@@ -85,6 +96,7 @@ let vue = new Vue({
             phone: '',
             id: -1,
             headportrait:'',
+            emojilist:[],
         },
         contactClassify: [],
         searchClassify: ['用户', '文件', '图片', '视频', '音频'],
@@ -113,14 +125,17 @@ let vue = new Vue({
             contactActive:-1,
         },
         sendInfo:{
-            content:'',
             fromUser:'',
             toUser:'',
         },
+        emojiArr:emojiArr,
+
     },
     methods: {
         changeInfo(e) {
-            sendPost('/changeInfo', this.userInfo, (msg) => {
+            sendPost('/changeInfo', this.userInfo,{
+                    'Content-Type': "application/json;charset=UTF-8",
+                }, (msg) => {
                 let response = msg.data;
                 let responseInfo = response.obj;
                 Vue.set(vue.messagebox, 'option', 1);
@@ -144,6 +159,7 @@ let vue = new Vue({
             $('.create-chat-folder').css('display', 'none');
             //清空input内容
             $('#newFolderName').val("");
+            $('#media').val('');
         },
         okOption: function () {
             $('.create-chat-folder').css('display', 'none');
@@ -154,8 +170,9 @@ let vue = new Vue({
             else if(vue.messagebox.option===2){
                 //提交新增联系人分类表单
                 sendPost('/folder/put/'+getCookie('id'),
-                    this.selected,
-                    (msg)=>{
+                    this.selected,{
+                        'Content-Type': "application/json;charset=UTF-8",
+                    },(msg)=>{
                         let response=msg.data;
                         if(response.status===200){
                             Vue.set(this.messagebox, 'option', -1);
@@ -172,6 +189,21 @@ let vue = new Vue({
 
                         }
                     });
+            }
+            else if(vue.messagebox.option===3){
+                //发送多个文件
+                let formData=new FormData();
+                let files=$('#media').prop('files');
+                for(let file of files){
+                    formData.append('files',file);
+                }
+                sendPost('/uploadMultipleFiles/'+getCookie('id')+'/'+this.currentChat.contactInfo.contactid,formData,{
+                        'Content-Type': 'multipart/form-data',
+                    },(msg)=>{
+                    let response=msg.data;
+
+                });
+                $('#media').val('');
             }
         },
         searchSubmit(){
@@ -287,17 +319,49 @@ let vue = new Vue({
             this.currentChat.contactInfo.doNotDisturb=!this.currentChat.contactInfo.doNotDisturb;
             //查找所有修改bell
         },
-        sendMsg(){
-            send(this.sendInfo.fromUser,this.sendInfo.toUser,this.sendInfo.content);
-            this.sendInfo.content="";
+        sendMsg(file){
+            send(this.sendInfo.fromUser,this.sendInfo.toUser,$('#editor').html(),file);
+            $('#editor').html('');
         },
         putMessage(message){
             let JsonObject=JSON.parse(message);
             let row=vue.contactSelect.frameActive,col=vue.contactSelect.contactActive;
-            JsonObject.time=formatDate(JsonObject.time);
+            JsonObject.time=formatDate(JsonObject.time,false);
             this.contact[row][col].chatInfo.push(JsonObject);
         },
-
+        submitHeadPortrait(){
+            let formData=new FormData();
+            let file=$('#image-input-frame').prop('files')[0];
+            formData.append('headportrait',file,file.name);
+            formData.append('scale',$('#scale').val());
+            formData.append('x',$('#x').val());
+            formData.append('y',$('#y').val());
+            formData.append('w',$('#w').val());
+            formData.append('h',$('#h').val());
+            formData.append('originWidth',originWidth);
+            formData.append('originHeight',originHeight);
+            sendPost('/'+this.userInfo.id+'/headportrait',formData,{
+                'Content-Type': 'multipart/form-data',
+            },(msg)=>{
+                this.userInfo.headportrait=msg.data.obj;
+            });
+        },
+        emojiClick(){
+            console.log(1);
+        },
+        emojiSwitch(index,e){
+            if(index===emojiActive) return;
+            let currentLeft=e.target.getBoundingClientRect().left;
+            let currentWidth=e.target.getBoundingClientRect().width;
+            $('.emoji-container').css({'width':'0','color':'black'});
+            $('.emoji-container:eq('+index+')').css({'width':'100%','color':'dodgerblue'});
+            let left=(activeLeft===originLeft)?(currentLeft-activeLeft):currentLeft;
+            $('#emoji-list-active').css({'width':currentWidth+'px','left':left+'px'});
+            emojiActive=index;
+        },
+        upLoadMedia(){
+            $('#media').click();
+        }
     },
     components: {
     },
@@ -328,7 +392,8 @@ function Contact(contactId, headPortrait,nickname,doNotDisturb,phone,index,chatI
     this.chatInfo=[];
     if(chatInfo!==null&&chatInfo!==undefined){
         for(let item of chatInfo){
-            item.time=formatDate(item.time);
+            item.time=formatDate(item.time,true);
+            //item.content=item.content.replace(/(<svg class="coolapk-emotion" aria-hidden="true">[^]*?<\/svg>)/g,'"</p>$1<p>"');
             this.chatInfo.push(item);
         }
     }
@@ -347,6 +412,7 @@ function Contact(contactId, headPortrait,nickname,doNotDisturb,phone,index,chatI
         vue.userInfo.phone = userData.phone;
         vue.userInfo.id = userData.id;
         vue.userInfo.headportrait=(msg.data.obj.headportrait===null)?'./image/1.jpeg':'/headportrait/'+msg.data.obj.headportrait;
+        vue.userInfo.emojilist=msg.data.obj.emojiList;
 
         vue.contactClassify = msg.data.obj.folder;
 
@@ -386,3 +452,4 @@ function Contact(contactId, headPortrait,nickname,doNotDisturb,phone,index,chatI
         vue.sendInfo.fromUser=getCookie('id');
     });
 })();
+

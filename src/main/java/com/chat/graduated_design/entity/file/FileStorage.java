@@ -23,4 +23,5 @@ public class FileStorage {
     private Date datetime;
     private String type=null;
     private Integer folder;
+    private String path=null;
 }

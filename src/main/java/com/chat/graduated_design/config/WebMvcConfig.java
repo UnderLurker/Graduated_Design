@@ -36,6 +36,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/headportrait/**").addResourceLocations("file:F:/Program Files/Graduated_Design/target/classes/static/image/headportrait/");
+        registry.addResourceHandler("/thumbnail/**").addResourceLocations("file:F:/Program Files/Graduated_Design/target/classes/static/image/thumbnail/");
         WebMvcConfigurer.super.addResourceHandlers(registry);
     }
 }

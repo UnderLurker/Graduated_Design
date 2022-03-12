@@ -10,7 +10,7 @@ import com.chat.graduated_design.mapper.contactMapper;
 import com.chat.graduated_design.service.contactService;
 import org.springframework.stereotype.Service;
 
-import javax.management.Query;
+// import javax.management.Query;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
