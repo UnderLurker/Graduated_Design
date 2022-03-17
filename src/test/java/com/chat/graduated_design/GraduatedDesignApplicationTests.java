@@ -4,6 +4,8 @@ import com.chat.graduated_design.entity.contact.ResponseContact;
 import com.chat.graduated_design.entity.contact.contact;
 import com.chat.graduated_design.entity.user.User;
 import com.chat.graduated_design.service.impl.*;
+import com.chat.graduated_design.util.VideoUtil;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +22,9 @@ import java.util.*;
 class GraduatedDesignApplicationTests {
     @Test
     void fileTest(){
-        System.out.println("123");
+        VideoUtil videoUtil=new VideoUtil("F:\\Program Files\\Graduated_Design\\target\\classes\\static\\image\\mp4\\",
+                "F:\\Program Files\\Graduated_Design\\target\\classes\\static\\image\\thumbnail\\");
+        String name=videoUtil.CreateJPGByFileType("video/mp4","1.mp4");
+        System.out.println(name);
     }
 }

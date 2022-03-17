@@ -1,5 +1,6 @@
 package com.chat.graduated_design.entity.contact;
 
+import com.chat.graduated_design.entity.chat.ResponseChat;
 import com.chat.graduated_design.entity.chat.chatInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,9 +20,9 @@ import java.util.List;
 public class ResponseContact extends contact{
     private String nickname;
     private String phone;
-    private List<chatInfo> chatInfoList;
+    private List<ResponseChat> chatInfoList;
 
-    public ResponseContact(contact person,String nickname,String phone,List<chatInfo> chatInfoList){
+    public ResponseContact(contact person,String nickname,String phone,List<ResponseChat> chatInfoList){
         super(person.getContactNo(),
                 person.getUserid(),
                 person.getContactid(),

@@ -16,6 +16,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class videoThumbnail {
     @TableId
-    private Integer fileStorageNo;
+    private Integer chatNo;
     private String uuid;
+    private Integer fileStorageNo;
+    private String type=null;
 }

@@ -200,8 +200,10 @@ let vue = new Vue({
                 sendPost('/uploadMultipleFiles/'+getCookie('id')+'/'+this.currentChat.contactInfo.contactid,formData,{
                         'Content-Type': 'multipart/form-data',
                     },(msg)=>{
-                    let response=msg.data;
-
+                    let response=msg.data.obj;
+                    for(let item of response){
+                        this.putMessage(item);
+                    }
                 });
                 $('#media').val('');
             }
@@ -218,6 +220,11 @@ let vue = new Vue({
         clearSearch(){
             this.searchContent.content="";
         },
+        changFlag(){
+            this.addOrEdit=true;
+            this.selected.folderName='';
+            this.selected.selectedPerson=[];
+        },
         addSelected(){
             this.selected.selectedPerson.length=0;
             for(let person of this.contact[0]){
@@ -229,7 +236,12 @@ let vue = new Vue({
             $('#folder-operation').css({'width':'384px','opacity':'1'});
             $('#select-mumbers').css({'width':'0','opacity':'0'});
         },
-        deleteContactFromFolder(){
+        deleteContactFromFolder(index,e){
+            this.addOrEdit=false;
+            this.selected.folderName=this.contactClassify[index];
+            this.selected.selectedPerson=this.contact[index];
+            $('#folder-operation').css({'width':'384px','opacity':'1'});
+            $('.user-setting-hidden:eq(1)').css({'width':'0','opacity':'0'});
             // for(var i=0;i<folderItems.length;i++){
             //     folderItems[i].onclick=function(e){
             //         Vue.set(vue.messagebox, 'option', 0);
@@ -324,10 +336,16 @@ let vue = new Vue({
             $('#editor').html('');
         },
         putMessage(message){
-            let JsonObject=JSON.parse(message);
             let row=vue.contactSelect.frameActive,col=vue.contactSelect.contactActive;
-            JsonObject.time=formatDate(JsonObject.time,false);
-            this.contact[row][col].chatInfo.push(JsonObject);
+            if(typeof message === 'string'){
+                let JsonObject=JSON.parse(message);
+                JsonObject.time=formatDate(JsonObject.time,false);
+                this.contact[row][col].chatInfo.push(JsonObject);
+            }
+            else{
+                message.time=formatDate(message.time,true);
+                this.contact[row][col].chatInfo.push(message);
+            }
         },
         submitHeadPortrait(){
             let formData=new FormData();
@@ -361,7 +379,12 @@ let vue = new Vue({
         },
         upLoadMedia(){
             $('#media').click();
-        }
+        },
+        download(no){
+            sendGet('/video/'+no,null,null,()=>{
+
+            });
+        },
     },
     components: {
     },
@@ -394,6 +417,9 @@ function Contact(contactId, headPortrait,nickname,doNotDisturb,phone,index,chatI
         for(let item of chatInfo){
             item.time=formatDate(item.time,true);
             //item.content=item.content.replace(/(<svg class="coolapk-emotion" aria-hidden="true">[^]*?<\/svg>)/g,'"</p>$1<p>"');
+            if(item.file){
+                item.suffix=item.content.split('.').slice(-1)[0];
+            }
             this.chatInfo.push(item);
         }
     }

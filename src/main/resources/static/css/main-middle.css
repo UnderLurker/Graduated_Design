@@ -318,6 +318,7 @@
 }
 .file{
     display: flex;
+    background-color: whitesmoke;
     padding: 1rem 1rem .5rem 1rem;
 }
 .file-icon{
@@ -333,7 +334,7 @@
     padding: 0;
     text-align: center;
 }
-.file-info{
+.chat-file-info{
     width: 10rem;
     display: flex;
     flex-direction: column;

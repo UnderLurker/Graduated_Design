@@ -6,6 +6,10 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+
+
 /**
  * @program: Graduated_Design
  * @description: 文件存储类
@@ -16,12 +20,13 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FileStorage {
+    @TableId(type = IdType.AUTO)
+    private Integer no;
     private Integer id=null;
     private Integer receiveId;
     private String uuid=null;
     private String originname=null;
     private Date datetime;
-    private String type=null;
     private Integer folder;
     private String path=null;
 }

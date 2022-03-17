@@ -1,5 +1,6 @@
 package com.chat.graduated_design.entity.user;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +16,7 @@ import java.util.Objects;
 @ToString
 public class User implements Comparable<User>{
     private String name;
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Integer id=null;
     private String password=null;
     private String email=null;

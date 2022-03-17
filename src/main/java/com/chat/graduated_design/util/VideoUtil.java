@@ -26,6 +26,7 @@
 
     //存放截取视频某一帧的图片绝对路径
     private String videoFramesPath;
+
     /**
      * 将视频文件帧处理并以“jpg”格式进行存储。
      * 依赖FrameToBufferedImage方法：将frame转换为bufferedImage对象
@@ -43,7 +44,7 @@
  			 /*
             获取视频文件
             */
-            FFmpegFrameGrabber fFmpegFrameGrabber = new FFmpegFrameGrabber(videoPath + videoFileName);
+            FFmpegFrameGrabber fFmpegFrameGrabber = new FFmpegFrameGrabber(videoPath + "/" + videoFileName);
             fFmpegFrameGrabber.start();
 
             //获取视频总帧数
@@ -54,15 +55,16 @@
                 frame = fFmpegFrameGrabber.grabImage();
  				//对视频的第五帧进行处理
                 if (frame != null && flag==5) {
+                    String uuid=UUID.randomUUID().toString();
                     //文件绝对路径+名字
-                    String fileName = videoFramesPath + UUID.randomUUID().toString()+ ".jpg";
+                    String fileName = videoFramesPath + "/" + uuid + ".jpg";
 
                     //文件储存对象
                     File outPut = new File(fileName);
                     ImageIO.write(FrameToBufferedImage(frame), "jpg", outPut);
 
-                    //视频第五帧图的路径
-                    videPicture=fileName;
+                    //视频第五帧图的名字
+                    videPicture=uuid + ".jpg";
                     break;
                 }
                 flag++;
@@ -82,6 +84,19 @@
         return bufferedImage;
     }
 
+    /**
+     * 创建JPG图片通过文件类型
+     * @param filetype
+     * @param videoFileName 文件名称（存入数据库的文件uuid）
+     * @return null该文件不是视频 字符串则是存储的jpg的uuid
+     */
+    public String CreateJPGByFileType(String filetype,String videoFileName){
+        String type=filetype.split("/")[0];
+        if(type.equals("video")){
+            return grabberVideoFramer(videoFileName);
+        }
+        return null;
+    }
 
     /**
      * 测试：
@@ -92,7 +107,7 @@
     public static void main(String[] args) {
         VideoUtil videoUtil=new VideoUtil("F:\\Program Files\\Graduated_Design\\target\\classes\\static\\image\\mp4\\",
                 "F:\\Program Files\\Graduated_Design\\target\\classes\\static\\image\\thumbnail\\");
-        String name=videoUtil.grabberVideoFramer("1.mp4");
+        String name=videoUtil.CreateJPGByFileType("video/mp4","1.mp4");
         System.out.println(name);
     }
  }

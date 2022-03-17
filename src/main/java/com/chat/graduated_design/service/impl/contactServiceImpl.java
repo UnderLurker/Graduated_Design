@@ -2,12 +2,16 @@ package com.chat.graduated_design.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.chat.graduated_design.entity.chat.ResponseChat;
 import com.chat.graduated_design.entity.chat.chatInfo;
 import com.chat.graduated_design.entity.contact.ResponseContact;
 import com.chat.graduated_design.entity.contact.contact;
+import com.chat.graduated_design.entity.file.videoThumbnail;
 import com.chat.graduated_design.entity.user.User;
 import com.chat.graduated_design.mapper.contactMapper;
 import com.chat.graduated_design.service.contactService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 // import javax.management.Query;
@@ -25,6 +29,9 @@ import java.util.Map;
 @Service
 public class contactServiceImpl extends ServiceImpl<contactMapper, contact> implements contactService {
 
+    @Autowired
+    private videoThumbnailServiceImpl videoThumbnailService;
+
     /**
      * 查询联系人的信息以及聊天记录
      * @param id
@@ -33,15 +40,17 @@ public class contactServiceImpl extends ServiceImpl<contactMapper, contact> impl
      * @return
      */
     public List<ResponseContact> queryContact(Integer id,
-                                              userServiceImpl userService,
-                                              chatInfoServiceImpl chatInfoService) {
+                                                userServiceImpl userService,
+                                                chatInfoServiceImpl chatInfoService) {
         List<ResponseContact> res = new LinkedList<>();
 
         Map<String, Object> query = new HashMap<>();
         query.put("userid", id);
+        
         //将联系人表和用户表排序以便构造返回的联系人信息
         List<contact> contactList = this.listByMap(query);
         contactList.sort(null);
+
         //构造联系人的id集合，以便查询联系人的信息
         List<Integer> ids = new LinkedList<>();
         for (contact con : contactList) {
@@ -50,12 +59,13 @@ public class contactServiceImpl extends ServiceImpl<contactMapper, contact> impl
         if(ids.size()==0) return res;
         List<User> userList = userService.listByIds(ids);
         userList.sort(null);
+
         //查询聊天记录
-        QueryWrapper<chatInfo> queryInfo=new QueryWrapper<>();
-        queryInfo.eq("dest",id).or().eq("origin",id);
-        List<chatInfo> chatInfoList=chatInfoService.list(queryInfo);
+        List<chatInfo> chatInfoList=chatInfoService.selectChatByUserId(id);
         //将聊天信息分类 key为联系人的id
         Map<Integer,List<chatInfo>> chatInfoMap=new HashMap<>();
+        //用户聊天信息的主键信息，用来查找thumbnail的信息
+        List<Integer> chatNoList=new LinkedList<>();
         //第一步分类
         for(chatInfo info : chatInfoList){
             Integer tempId=(info.getOrigin()==id)?info.getDest():info.getOrigin();
@@ -67,6 +77,14 @@ public class contactServiceImpl extends ServiceImpl<contactMapper, contact> impl
             else{
                 chatInfoMap.get(tempId).add(info);
             }
+            //如果为文件将chat_no添加到chatNoList
+            if(info.isFile()){
+                chatNoList.add(info.getChatNo());
+            }
+        }
+        Map<Integer,Map<String,Object>> thumbnailMap=new HashMap<>();
+        if(!chatNoList.isEmpty()){
+            thumbnailMap=videoThumbnailService.mapByIds(chatNoList);
         }
         //第二步排序（按照时间）
         for (Map.Entry<Integer,List<chatInfo>> entry : chatInfoMap.entrySet()){
@@ -77,11 +95,28 @@ public class contactServiceImpl extends ServiceImpl<contactMapper, contact> impl
         int contactIndex = 0;
         for (int index = 0; index < userList.size() && contactIndex < contactList.size(); ) {
             if (userList.get(index).getId().equals(contactList.get(contactIndex).getContactid())) {
+                //先将聊天信息与文件图片的信息连接
+                List<chatInfo> chat=chatInfoMap.get(contactList.get(contactIndex).getContactid());
+                List<ResponseChat> responseChat=new LinkedList<>();
+                if(chat!=null){
+                    for(chatInfo item : chat){
+                        if(!item.isFile()||thumbnailMap.get(item.getChatNo())==null){
+                            responseChat.add(new ResponseChat(item,null,null,null));
+                        }
+                        else{
+                            responseChat.add(new ResponseChat(item,
+                                    thumbnailMap.get(item.getChatNo()).get("uuid"),
+                                    thumbnailMap.get(item.getChatNo()).get("fileStorageNo"),
+                                    thumbnailMap.get(item.getChatNo()).get("filetype")));
+                        }
+                    }
+                }
+
                 ResponseContact responseContact = new ResponseContact(
                         contactList.get(contactIndex),
                         userList.get(index).getNickname(),
                         userList.get(index).getPhone(),
-                        chatInfoMap.get(contactList.get(contactIndex).getContactid()));
+                        responseChat);
                 res.add(responseContact);
                 contactIndex++;
                 continue;
@@ -90,4 +125,6 @@ public class contactServiceImpl extends ServiceImpl<contactMapper, contact> impl
         }
         return res;
     }
+
+
 }

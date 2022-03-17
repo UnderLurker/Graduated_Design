@@ -44,14 +44,9 @@ public class loginController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        QueryWrapper<User> queryWrapper=new QueryWrapper<>();
-        queryWrapper.eq("name",user.getName())
-                .eq("email",user.getEmail())
-                .eq("password",saveString);
-        List<Object> userList=userService.listObjs(queryWrapper);
-        QueryWrapper<User> query=new QueryWrapper<>();
-        query.eq("email",user.getEmail());
-        List<Map<String,Object>> list=userService.listMaps(query);
+        
+        List<Object> userList=userService.listUserByInfo(user.getName(),user.getEmail(),saveString);
+        List<Map<String,Object>> list=userService.listMapByEmail(user.getEmail());
         if(userList.isEmpty()){
             if(list.isEmpty()){
                 errorMessage.setEmail("请先注册");
@@ -82,14 +77,9 @@ public class loginController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        QueryWrapper<User> queryWrapper=new QueryWrapper<>();
-        queryWrapper.eq("name",user.getName())
-                .eq("phone",user.getPhone())
-                .eq("password",saveString);
-        List<Object> userList=userService.listObjs(queryWrapper);
-        QueryWrapper<User> query=new QueryWrapper<>();
-        query.eq("phone",user.getPhone());
-        List<Map<String,Object>> list=userService.listMaps(query);
+        
+        List<Object> userList=userService.listUserByInfo(user.getName(),user.getEmail(),saveString);
+        List<Map<String,Object>> list=userService.listMapByPhone(user.getPhone());
         if(userList.isEmpty()){
             if(list.isEmpty()){
                 errorMessage.setEmail("请先注册");

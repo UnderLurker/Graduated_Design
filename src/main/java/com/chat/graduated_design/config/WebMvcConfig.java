@@ -2,6 +2,8 @@ package com.chat.graduated_design.config;
 
 import com.chat.graduated_design.interceptor.loginAndRegisterInterceptor;
 import com.chat.graduated_design.interceptor.mainInterceptor;
+import com.chat.graduated_design.interceptor.videoPreviewInterceptor;
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
@@ -31,6 +33,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(new loginAndRegisterInterceptor())
                 .addPathPatterns("/login.html","register.html")
                 .excludePathPatterns("/main.html");
+        registry.addInterceptor(new videoPreviewInterceptor())
+                .addPathPatterns("/video/preview/**")
+                .excludePathPatterns("");
     }
 
     @Override

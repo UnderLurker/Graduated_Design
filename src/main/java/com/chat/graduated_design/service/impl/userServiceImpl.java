@@ -34,4 +34,69 @@ public class userServiceImpl extends ServiceImpl<userMapper, User> implements us
         }
         return queryResult;
     }
+
+    /**
+     * 查询用户（通过email）
+     * @param email
+     * @return 
+     */
+    public List<User> selectByEmail(String email){
+        QueryWrapper<User> emailQuery=new QueryWrapper<>();
+        emailQuery.eq("email",email);
+        return this.list(emailQuery);
+    }
+
+    /**
+     * 查询用户（通过phone）
+     * @param phone
+     * @return
+     */
+    public List<User> selectByPhone(String phone){
+        QueryWrapper<User> phoneQuery=new QueryWrapper<>();
+        phoneQuery.eq("phone",phone);
+        return this.list(phoneQuery);
+    }
+
+    /**
+     * 查询用户（通过姓名，邮件地址，密码）
+     * @param name
+     * @param email
+     * @param password
+     * @return
+     */
+    public List<Object> listUserByInfo(String name,String email,String password){
+        QueryWrapper<User> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("name",name)
+                .eq("email",email)
+                .eq("password",password);
+        return this.listObjs(queryWrapper);
+    }
+
+    /**
+     * 
+     * @param email
+     * @return
+     */
+    public List<Map<String,Object>> listMapByEmail(String email){
+        QueryWrapper<User> query=new QueryWrapper<>();
+        query.eq("email",email);
+        return this.listMaps(query);
+    }
+
+    /**
+     * 
+     * @param phone
+     * @return
+     */
+    public List<Map<String,Object>> listMapByPhone(String phone){
+        QueryWrapper<User> query=new QueryWrapper<>();
+        query.eq("phone",phone);
+        return this.listMaps(query);
+    }
+
+    public User getOneByEmail(String email){
+        QueryWrapper<User> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("email",email);
+        return this.getOne(queryWrapper);
+    }
 }

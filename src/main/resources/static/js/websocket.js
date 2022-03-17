@@ -1,5 +1,6 @@
 function connectWebSocket() {
     //这里需要的路径需要配置相对应的路径
+    // const target = "ws://192.168.137.1:8080/chat";
     const target = "ws://localhost:8080/chat";
     //判断当前浏览器是否支持WebSocket
     if ('WebSocket' in window) {
@@ -19,6 +20,7 @@ function connectWebSocket() {
     websocket.onmessage = function (event) {
         let message=event.data;
         vue.putMessage(message);
+        scrollToBottom();
     }
     //连接关闭的回调方法
     websocket.onclose = function () {

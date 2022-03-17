@@ -43,17 +43,12 @@ public class baseController {
         String responseUrl="./image/1.jpeg";
         //看是否激活
         User user=(User) session.getAttribute("user");
-        QueryWrapper<User> queryWrapper=new QueryWrapper<>();
-        queryWrapper.eq("email",user.getEmail());
-        User queryUser=userService.getOne(queryWrapper);
+        User queryUser=userService.getOneByEmail(user.getEmail());
         if(!queryUser.isActive()){
             return "redirect:/login.html";
         }
         //查询头像路径
-        QueryWrapper<FileStorage> fileStorageQueryWrapper=new QueryWrapper<>();
-        fileStorageQueryWrapper.eq("Id",queryUser.getId())
-                .eq("folder", fileServiceImpl.HEAD_PORTRAIT_PATH);
-        FileStorage fileStorage=fileDataService.getOne(fileStorageQueryWrapper);
+        FileStorage fileStorage=fileDataService.getUserPortrait(queryUser.getId());
         if(fileStorage!=null){
             responseUrl="/headportrait/"+fileStorage.getUuid();
         }

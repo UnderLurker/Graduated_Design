@@ -1,5 +1,6 @@
 package com.chat.graduated_design.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chat.graduated_design.entity.file.FileStorage;
 import com.chat.graduated_design.mapper.fileMapper;
@@ -35,4 +36,39 @@ public class fileDataServiceImpl  extends ServiceImpl<fileMapper, FileStorage> i
         }
         return result;
     }
+
+    /**
+     * 
+     * @param userId
+     * @return 返回用户头像信息
+     */
+    public FileStorage getUserPortrait(Integer userId){
+        QueryWrapper<FileStorage> portraitQueryWrapper=new QueryWrapper<>();
+        portraitQueryWrapper.eq("Id",userId).eq("folder",fileServiceImpl.HEAD_PORTRAIT_PATH);
+        return this.getOne(portraitQueryWrapper);
+    }
+
+    
+
+    // /**
+    //  * 保存信息到数据库并返回生成的主键值
+    //  * @param fileInfo FileStorage实体
+    //  * @return 存储到数据库中的主键值
+    //  */
+    // public Integer saveFile(FileStorage fileInfo){
+    //     this.save(fileInfo);
+
+    //     Map<String,Object> query=new HashMap<>();
+    //     query.put("id", fileInfo.getId());
+    //     query.put("receive_id", fileInfo.getReceiveId());
+    //     query.put("uuid", fileInfo.getUuid());
+    //     query.put("originname", fileInfo.getOriginname());
+    //     query.put("datetime", fileInfo.getDatetime());
+    //     query.put("type", fileInfo.getType());
+    //     query.put("folder", fileInfo.getFolder());
+    //     query.put("path", fileInfo.getPath());
+
+    //     List<FileStorage> queryResult=this.listByMap(query);
+    //     return queryResult.get(0).getNo();
+    // }
 }

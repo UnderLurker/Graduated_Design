@@ -36,9 +36,7 @@ public class changeInfoController {
         }
         //需要查询数据库看是否重复
         if(!clientUser.getEmail().equals(user.getEmail())){
-            QueryWrapper<User> emailQuery=new QueryWrapper<>();
-            emailQuery.eq("email",user.getEmail());
-            List<User> emailUser=userService.list(emailQuery);
+            List<User> emailUser=userService.selectByEmail(user.getEmail());
             if(!emailUser.isEmpty()){
                 map.put("title","修改失败");
                 map.put("msg","您的新邮箱已被注册！！！");
@@ -48,9 +46,7 @@ public class changeInfoController {
             }
         }
         if(!clientUser.getPhone().equals(user.getPhone())){
-            QueryWrapper<User> phoneQuery=new QueryWrapper<>();
-            phoneQuery.eq("phone",user.getPhone());
-            List<User> phoneUser=userService.list(phoneQuery);
+            List<User> phoneUser=userService.selectByPhone(user.getPhone());
             if(!phoneUser.isEmpty()){
                 map.put("title","修改失败");
                 map.put("msg","您的新手机号码已被注册！！！");

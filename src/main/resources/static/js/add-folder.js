@@ -3,8 +3,6 @@
     let folderOperation=document.querySelector('#folder-operation');
     let folderSettingClose=document.querySelector('#folder-setting-close');
     let userSettingHidden=null;
-    let folderTitle=folderOperation.getElementsByTagName('h4')[0];
-    let folderSetting=folderOperation.getElementsByClassName('folder-setting')[0];
     let selectMumbers=document.getElementById('select-mumbers');
     let folderContactAddBtn=document.getElementById('folder-contact-add-btn');
     let selectList=document.getElementsByClassName('select-list')[0];
@@ -62,22 +60,9 @@
     folderSettingClose.onclick=function(e){
         addRippleEffect(e,this,"rgba(120,120,120,.25)");
         let folderPage=this.parentNode.parentNode;
-        userSettingHidden.style.width="384px";
-        userSettingHidden.style.opacity="1";
+        $('.user-setting-hidden:eq(1)').css({'width':'384px','opacity':'1'});
         folderPage.style.width="0";
         folderPage.style.opacity="0";
-    }
-
-    //为表单提交绑定
-    folderSetting.onclick=function(){
-        if(folderTitle.innerHTML=="编辑分类"){
-            $('.create-chat-folder').css('display','block');
-            $('.cancel').css('display','block');
-        }
-        else{
-            //提交分类表单
-
-        }
     }
 
 })();

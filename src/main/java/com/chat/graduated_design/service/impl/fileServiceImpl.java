@@ -38,11 +38,30 @@ public class fileServiceImpl implements fileService {
             try {
                 this.path[index]=ResourceUtils.getURL(ymlPath[index]).getPath().replace("%20"," ").substring(1);
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                //若此地址下没有该文件夹，新建
+                String folderName=ymlPath[index].split("/")[ymlPath[index].split("/").length-1];
+                String root=null;
+                try {
+                    root=ResourceUtils.getURL("classpath:static/image").getPath().replace("%20", " ").substring(1);
+                } catch (FileNotFoundException ex) {
+                    ex.printStackTrace();
+                }
+                root+="/"+folderName;
+                File folder=new File(root);
+                if(!folder.exists()){
+                    folder.mkdir();
+                }
+                this.path[index]=root;
+                // e.printStackTrace();
             }
         }
     }
 
+    /**
+     * 获取对应的文件夹路径
+     * @param num 对应的默认文件路径宏
+     * @return 文件夹路径
+     */
     public String getPath(Integer num) {
         return this.path[num];
     }

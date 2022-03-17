@@ -262,7 +262,7 @@
                     <div class="bg-img ion-icon-center">
                         <ion-icon name="folder-outline"></ion-icon>
                     </div>
-                    <div id="add-folder">
+                    <div id="add-folder" @click="changFlag">
                         <div class="ion-icon-center">
                             <ion-icon name="add-outline"></ion-icon>
                         </div>
@@ -273,7 +273,7 @@
                     <div class="folder-title">
                         <span>分类</span>
                     </div>
-                    <div class="folder-items" v-for="(classify,index) in contactClassify" @click="deleteContactFromFolder">
+                    <div class="folder-items" v-for="(classify,index) in contactClassify" @click="deleteContactFromFolder(index,$event)">
                         <div class="classify-name">
                             <span>{{classify}}</span>
                         </div>
@@ -382,7 +382,7 @@
                                         <img :src="person.headportrait" alt="">
                                     </div>
                                     <span>{{person.nickname}}</span>
-                                    <div class="small-2 ion-icon-center">
+                                    <div v-if="!addOrEdit" class="small-2 ion-icon-center">
                                         <ion-icon name="trash-outline"></ion-icon>
                                     </div>
                                 </div>
@@ -453,11 +453,11 @@
                         <div class="chat-info-main shadow">
                             <template v-if="info.file">
                                 <div class="file">
-                                    <div class="file-icon shadow-bottom">
-                                         <p>{{info.suffix}}</p>
-<!--                                        <img src="./image/1.jpeg" width="100%" height="100%" alt="">-->
+                                    <div class="file-icon shadow-bottom" @click="download(info.fileStorageNo)">
+                                        <p v-if="info.thumbnail===null">{{info.suffix}}</p>
+                                        <img v-else="info.thumbnail===null" :src="'/thumbnail/'+info.thumbnail" width="100%" height="100%" alt="">
                                     </div>
-                                    <div class="file-info">
+                                    <div class="chat-file-info">
                                         <p class="file-name">{{info.content}}</p>
                                         <p style="font-size: .5rem;padding-top: 0;padding-bottom: 0;">发送时间：{{info.time.year+'-'+info.time.mouth+'-'+info.time.day}}</p>
                                         <p style="font-size: .5rem;padding-top: 0;padding-bottom: 0;">文件大小：{{info.size}}</p>
@@ -483,11 +483,11 @@
                         <div class="chat-info-main shadow">
                             <template v-if="info.file">
                                 <div class="file">
-                                    <div class="file-icon shadow-bottom">
-                                        <p>{{info.suffix}}</p>
-                                        <!--<img src="./image/1.jpeg" width="100%" height="100%" alt="">-->
+                                    <div class="file-icon shadow-bottom" @click="download(info.fileStorageNo)">
+                                        <p v-if="info.thumbnail===null">{{info.suffix}}</p>
+                                        <img v-else="info.thumbnail===null" :src="'/thumbnail/'+info.thumbnail" width="100%" height="100%" alt="">
                                     </div>
-                                    <div class="file-info">
+                                    <div class="chat-file-info">
                                         <p class="file-name">{{info.content}}</p>
                                         <p style="font-size: .5rem;padding-top: 0;padding-bottom: 0;">发送时间：{{info.time.year+'-'+info.time.mouth+'-'+info.time.day}}</p>
                                         <p style="font-size: .5rem;padding-top: 0;padding-bottom: 0;">文件大小：{{info.size}}</p>
@@ -645,198 +645,24 @@
                     <ion-icon class="statistics-close-icon" name="arrow-forward-outline"></ion-icon>
                 </div>
                 <div class="statistics-frame">
-                    <div class="file-info-items">
-                        <div class="file-info-items-img">
-                            <span>yml</span>
-                        </div>
-                        <div class="file-info-items-introduce">
-                            <div class="file-info-items-title">
-                                <h4>文件标题fdsafasdfasdd3123</h4>
+                    <template v-for="(item,index) in currentChat.contactInfo.chatInfo" :key="index">
+                        <div class="file-info-items" v-if="item.file&&item.thumbnail===null">
+                            <div class="file-info-items-img">
+                                <span>{{item.suffix}}</span>
                             </div>
-                            <div class="file-info-items-size">
-                                <span>100KB</span>
-                            </div>
-                            <div class="file-info-items-time">
-                                <span>2022/1/20 16:33</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="file-info-items">
-                        <div class="file-info-items-img">
-                            <span>yml</span>
-                        </div>
-                        <div class="file-info-items-introduce">
-                            <div class="file-info-items-title">
-                                <h4>文件标题fdsafasdfasdd3123</h4>
-                            </div>
-                            <div class="file-info-items-size">
-                                <span>100KB</span>
-                            </div>
-                            <div class="file-info-items-time">
-                                <span>2022/1/20 16:33</span>
+                            <div class="file-info-items-introduce">
+                                <div class="file-info-items-title">
+                                    <h4>{{item.content}}</h4>
+                                </div>
+                                <div class="file-info-items-size">
+                                    <span>{{item.size}}</span>
+                                </div>
+                                <div class="file-info-items-time">
+                                    <span>{{item.time.year+'/'+item.time.mouth+'/'+item.time.day}}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="file-info-items">
-                        <div class="file-info-items-img">
-                            <span>yml</span>
-                        </div>
-                        <div class="file-info-items-introduce">
-                            <div class="file-info-items-title">
-                                <h4>文件标题fdsafasdfasdd3123</h4>
-                            </div>
-                            <div class="file-info-items-size">
-                                <span>100KB</span>
-                            </div>
-                            <div class="file-info-items-time">
-                                <span>2022/1/20 16:33</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="file-info-items">
-                        <div class="file-info-items-img">
-                            <span>yml</span>
-                        </div>
-                        <div class="file-info-items-introduce">
-                            <div class="file-info-items-title">
-                                <h4>文件标题fdsafasdfasdd3123</h4>
-                            </div>
-                            <div class="file-info-items-size">
-                                <span>100KB</span>
-                            </div>
-                            <div class="file-info-items-time">
-                                <span>2022/1/20 16:33</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="file-info-items">
-                        <div class="file-info-items-img">
-                            <span>yml</span>
-                        </div>
-                        <div class="file-info-items-introduce">
-                            <div class="file-info-items-title">
-                                <h4>文件标题fdsafasdfasdd3123</h4>
-                            </div>
-                            <div class="file-info-items-size">
-                                <span>100KB</span>
-                            </div>
-                            <div class="file-info-items-time">
-                                <span>2022/1/20 16:33</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="file-info-items">
-                        <div class="file-info-items-img">
-                            <span>yml</span>
-                        </div>
-                        <div class="file-info-items-introduce">
-                            <div class="file-info-items-title">
-                                <h4>文件标题fdsafasdfasdd3123</h4>
-                            </div>
-                            <div class="file-info-items-size">
-                                <span>100KB</span>
-                            </div>
-                            <div class="file-info-items-time">
-                                <span>2022/1/20 16:33</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="file-info-items">
-                        <div class="file-info-items-img">
-                            <span>yml</span>
-                        </div>
-                        <div class="file-info-items-introduce">
-                            <div class="file-info-items-title">
-                                <h4>文件标题fdsafasdfasdd3123</h4>
-                            </div>
-                            <div class="file-info-items-size">
-                                <span>100KB</span>
-                            </div>
-                            <div class="file-info-items-time">
-                                <span>2022/1/20 16:33</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="file-info-items">
-                        <div class="file-info-items-img">
-                            <span>yml</span>
-                        </div>
-                        <div class="file-info-items-introduce">
-                            <div class="file-info-items-title">
-                                <h4>文件标题fdsafasdfasdd3123</h4>
-                            </div>
-                            <div class="file-info-items-size">
-                                <span>100KB</span>
-                            </div>
-                            <div class="file-info-items-time">
-                                <span>2022/1/20 16:33</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="file-info-items">
-                        <div class="file-info-items-img">
-                            <span>yml</span>
-                        </div>
-                        <div class="file-info-items-introduce">
-                            <div class="file-info-items-title">
-                                <h4>文件标题fdsafasdfasdd3123</h4>
-                            </div>
-                            <div class="file-info-items-size">
-                                <span>100KB</span>
-                            </div>
-                            <div class="file-info-items-time">
-                                <span>2022/1/20 16:33</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="file-info-items">
-                        <div class="file-info-items-img">
-                            <span>yml</span>
-                        </div>
-                        <div class="file-info-items-introduce">
-                            <div class="file-info-items-title">
-                                <h4>文件标题fdsafasdfasdd3123</h4>
-                            </div>
-                            <div class="file-info-items-size">
-                                <span>100KB</span>
-                            </div>
-                            <div class="file-info-items-time">
-                                <span>2022/1/20 16:33</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="file-info-items">
-                        <div class="file-info-items-img">
-                            <span>yml</span>
-                        </div>
-                        <div class="file-info-items-introduce">
-                            <div class="file-info-items-title">
-                                <h4>文件标题fdsafasdfasdd3123</h4>
-                            </div>
-                            <div class="file-info-items-size">
-                                <span>100KB</span>
-                            </div>
-                            <div class="file-info-items-time">
-                                <span>2022/1/20 16:33</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="file-info-items">
-                        <div class="file-info-items-img">
-                            <span>yml</span>
-                        </div>
-                        <div class="file-info-items-introduce">
-                            <div class="file-info-items-title">
-                                <h4>文件标题fdsafasdfasdd3123</h4>
-                            </div>
-                            <div class="file-info-items-size">
-                                <span>100KB</span>
-                            </div>
-                            <div class="file-info-items-time">
-                                <span>2022/1/20 16:33</span>
-                            </div>
-                        </div>
-                    </div>
+                    </template>
                 </div>
             </div>
             <div class="statistics-info photo-info">
@@ -860,134 +686,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="file-info-items">
-                        <div class="file-info-items-img">
-                            <img src="./image/1.jpeg" alt="">
-                        </div>
-                        <div class="file-info-items-introduce">
-                            <div class="file-info-items-title">
-                                <h4>文件标题fdsafasdfasdd3123</h4>
-                            </div>
-                            <div class="file-info-items-size">
-                                <span>100KB</span>
-                            </div>
-                            <div class="file-info-items-time">
-                                <span>2022/1/20 16:33</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="file-info-items">
-                        <div class="file-info-items-img">
-                            <img src="./image/1.jpeg" alt="">
-                        </div>
-                        <div class="file-info-items-introduce">
-                            <div class="file-info-items-title">
-                                <h4>文件标题fdsafasdfasdd3123</h4>
-                            </div>
-                            <div class="file-info-items-size">
-                                <span>100KB</span>
-                            </div>
-                            <div class="file-info-items-time">
-                                <span>2022/1/20 16:33</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="file-info-items">
-                        <div class="file-info-items-img">
-                            <img src="./image/1.jpeg" alt="">
-                        </div>
-                        <div class="file-info-items-introduce">
-                            <div class="file-info-items-title">
-                                <h4>文件标题fdsafasdfasdd3123</h4>
-                            </div>
-                            <div class="file-info-items-size">
-                                <span>100KB</span>
-                            </div>
-                            <div class="file-info-items-time">
-                                <span>2022/1/20 16:33</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="file-info-items">
-                        <div class="file-info-items-img">
-                            <img src="./image/1.jpeg" alt="">
-                        </div>
-                        <div class="file-info-items-introduce">
-                            <div class="file-info-items-title">
-                                <h4>文件标题fdsafasdfasdd3123</h4>
-                            </div>
-                            <div class="file-info-items-size">
-                                <span>100KB</span>
-                            </div>
-                            <div class="file-info-items-time">
-                                <span>2022/1/20 16:33</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="file-info-items">
-                        <div class="file-info-items-img">
-                            <img src="./image/1.jpeg" alt="">
-                        </div>
-                        <div class="file-info-items-introduce">
-                            <div class="file-info-items-title">
-                                <h4>文件标题fdsafasdfasdd3123</h4>
-                            </div>
-                            <div class="file-info-items-size">
-                                <span>100KB</span>
-                            </div>
-                            <div class="file-info-items-time">
-                                <span>2022/1/20 16:33</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="file-info-items">
-                        <div class="file-info-items-img">
-                            <img src="./image/1.jpeg" alt="">
-                        </div>
-                        <div class="file-info-items-introduce">
-                            <div class="file-info-items-title">
-                                <h4>文件标题fdsafasdfasdd3123</h4>
-                            </div>
-                            <div class="file-info-items-size">
-                                <span>100KB</span>
-                            </div>
-                            <div class="file-info-items-time">
-                                <span>2022/1/20 16:33</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="file-info-items">
-                        <div class="file-info-items-img">
-                            <img src="./image/1.jpeg" alt="">
-                        </div>
-                        <div class="file-info-items-introduce">
-                            <div class="file-info-items-title">
-                                <h4>文件标题fdsafasdfasdd3123</h4>
-                            </div>
-                            <div class="file-info-items-size">
-                                <span>100KB</span>
-                            </div>
-                            <div class="file-info-items-time">
-                                <span>2022/1/20 16:33</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="file-info-items">
-                        <div class="file-info-items-img">
-                            <img src="./image/1.jpeg" alt="">
-                        </div>
-                        <div class="file-info-items-introduce">
-                            <div class="file-info-items-title">
-                                <h4>文件标题fdsafasdfasdd3123</h4>
-                            </div>
-                            <div class="file-info-items-size">
-                                <span>100KB</span>
-                            </div>
-                            <div class="file-info-items-time">
-                                <span>2022/1/20 16:33</span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
             <div class="statistics-info video-info">
@@ -995,168 +693,17 @@
                     <ion-icon class="statistics-close-icon" name="arrow-forward-outline"></ion-icon>
                 </div>
                 <div class="statistics-frame">
-                    <div class="video-info-items">
-                        <div class="duration">
-                            <div>
-                                <ion-icon name="caret-forward-outline"></ion-icon>
-                                <span>12:39</span>
+                    <template v-for="(item,index) in currentChat.contactInfo.chatInfo" :key="index">
+                        <div class="video-info-items" v-if="item.file&&item.thumbnail!==null">
+                            <div class="duration">
+                                <div>
+                                    <ion-icon name="caret-forward-outline"></ion-icon>
+                                    <span>12:39</span>
+                                </div>
                             </div>
+                            <img :src="'/thumbnail/'+item.thumbnail" width="100%" height="100%" alt="">
                         </div>
-                        <img src="./image/1.jpeg" alt="">
-                    </div>
-                    <div class="video-info-items">
-                        <div class="duration">
-                            <div>
-                                <ion-icon name="caret-forward-outline"></ion-icon>
-                                <span>12:39</span>
-                            </div>
-                        </div>
-                        <img src="./image/1.jpeg" alt="">
-                    </div>
-                    <div class="video-info-items">
-                        <div class="duration">
-                            <div>
-                                <ion-icon name="caret-forward-outline"></ion-icon>
-                                <span>12:39</span>
-                            </div>
-                        </div>
-                        <img src="./image/1.jpeg" alt="">
-                    </div>
-                    <div class="video-info-items">
-                        <div class="duration">
-                            <div>
-                                <ion-icon name="caret-forward-outline"></ion-icon>
-                                <span>12:39</span>
-                            </div>
-                        </div>
-                        <img src="./image/1.jpeg" alt="">
-                    </div>
-                    <div class="video-info-items">
-                        <div class="duration">
-                            <div>
-                                <ion-icon name="caret-forward-outline"></ion-icon>
-                                <span>12:39</span>
-                            </div>
-                        </div>
-                        <img src="./image/1.jpeg" alt="">
-                    </div>
-                    <div class="video-info-items">
-                        <div class="duration">
-                            <div>
-                                <ion-icon name="caret-forward-outline"></ion-icon>
-                                <span>12:39</span>
-                            </div>
-                        </div>
-                        <img src="./image/1.jpeg" alt="">
-                    </div>
-                    <div class="video-info-items">
-                        <div class="duration">
-                            <div>
-                                <ion-icon name="caret-forward-outline"></ion-icon>
-                                <span>12:39</span>
-                            </div>
-                        </div>
-                        <img src="./image/1.jpeg" alt="">
-                    </div>
-                    <div class="video-info-items">
-                        <div class="duration">
-                            <div>
-                                <ion-icon name="caret-forward-outline"></ion-icon>
-                                <span>12:39</span>
-                            </div>
-                        </div>
-                        <img src="./image/1.jpeg" alt="">
-                    </div>
-                    <div class="video-info-items">
-                        <div class="duration">
-                            <div>
-                                <ion-icon name="caret-forward-outline"></ion-icon>
-                                <span>12:39</span>
-                            </div>
-                        </div>
-                        <img src="./image/1.jpeg" alt="">
-                    </div>
-                    <div class="video-info-items">
-                        <div class="duration">
-                            <div>
-                                <ion-icon name="caret-forward-outline"></ion-icon>
-                                <span>12:39</span>
-                            </div>
-                        </div>
-                        <img src="./image/1.jpeg" alt="">
-                    </div>
-                    <div class="video-info-items">
-                        <div class="duration">
-                            <div>
-                                <ion-icon name="caret-forward-outline"></ion-icon>
-                                <span>12:39</span>
-                            </div>
-                        </div>
-                        <img src="./image/1.jpeg" alt="">
-                    </div>
-                    <div class="video-info-items">
-                        <div class="duration">
-                            <div>
-                                <ion-icon name="caret-forward-outline"></ion-icon>
-                                <span>12:39</span>
-                            </div>
-                        </div>
-                        <img src="./image/1.jpeg" alt="">
-                    </div>
-                    <div class="video-info-items">
-                        <div class="duration">
-                            <div>
-                                <ion-icon name="caret-forward-outline"></ion-icon>
-                                <span>12:39</span>
-                            </div>
-                        </div>
-                        <img src="./image/1.jpeg" alt="">
-                    </div>
-                    <div class="video-info-items">
-                        <div class="duration">
-                            <div>
-                                <ion-icon name="caret-forward-outline"></ion-icon>
-                                <span>12:39</span>
-                            </div>
-                        </div>
-                        <img src="./image/1.jpeg" alt="">
-                    </div>
-                    <div class="video-info-items">
-                        <div class="duration">
-                            <div>
-                                <ion-icon name="caret-forward-outline"></ion-icon>
-                                <span>12:39</span>
-                            </div>
-                        </div>
-                        <img src="./image/1.jpeg" alt="">
-                    </div>
-                    <div class="video-info-items">
-                        <div class="duration">
-                            <div>
-                                <ion-icon name="caret-forward-outline"></ion-icon>
-                                <span>12:39</span>
-                            </div>
-                        </div>
-                        <img src="./image/1.jpeg" alt="">
-                    </div>
-                    <div class="video-info-items">
-                        <div class="duration">
-                            <div>
-                                <ion-icon name="caret-forward-outline"></ion-icon>
-                                <span>12:39</span>
-                            </div>
-                        </div>
-                        <img src="./image/1.jpeg" alt="">
-                    </div>
-                    <div class="video-info-items">
-                        <div class="duration">
-                            <div>
-                                <ion-icon name="caret-forward-outline"></ion-icon>
-                                <span>12:39</span>
-                            </div>
-                        </div>
-                        <img src="./image/1.jpeg" alt="">
-                    </div>
+                    </template>
                 </div>
             </div>
             <div class="statistics-info music-info">
@@ -1174,187 +721,6 @@
                             <span>大小</span>
                         </div>
                     </div>
-                    <div class="music-info-items">
-                        <div class="music-icon">
-                            <ion-icon name="caret-forward-outline"></ion-icon>
-                        </div>
-                        <div class="music-info-introduce">
-                            <h5>音乐标题</h5>
-                            <span>时长</span>
-                            <span>大小</span>
-                        </div>
-                    </div>
-                    <div class="music-info-items">
-                        <div class="music-icon">
-                            <ion-icon name="caret-forward-outline"></ion-icon>
-                        </div>
-                        <div class="music-info-introduce">
-                            <h5>音乐标题</h5>
-                            <span>时长</span>
-                            <span>大小</span>
-                        </div>
-                    </div>
-                    <div class="music-info-items">
-                        <div class="music-icon">
-                            <ion-icon name="caret-forward-outline"></ion-icon>
-                        </div>
-                        <div class="music-info-introduce">
-                            <h5>音乐标题</h5>
-                            <span>时长</span>
-                            <span>大小</span>
-                        </div>
-                    </div>
-                    <div class="music-info-items">
-                        <div class="music-icon">
-                            <ion-icon name="caret-forward-outline"></ion-icon>
-                        </div>
-                        <div class="music-info-introduce">
-                            <h5>音乐标题</h5>
-                            <span>时长</span>
-                            <span>大小</span>
-                        </div>
-                    </div>
-                    <div class="music-info-items">
-                        <div class="music-icon">
-                            <ion-icon name="caret-forward-outline"></ion-icon>
-                        </div>
-                        <div class="music-info-introduce">
-                            <h5>音乐标题</h5>
-                            <span>时长</span>
-                            <span>大小</span>
-                        </div>
-                    </div>
-                    <div class="music-info-items">
-                        <div class="music-icon">
-                            <ion-icon name="caret-forward-outline"></ion-icon>
-                        </div>
-                        <div class="music-info-introduce">
-                            <h5>音乐标题</h5>
-                            <span>时长</span>
-                            <span>大小</span>
-                        </div>
-                    </div>
-                    <div class="music-info-items">
-                        <div class="music-icon">
-                            <ion-icon name="caret-forward-outline"></ion-icon>
-                        </div>
-                        <div class="music-info-introduce">
-                            <h5>音乐标题</h5>
-                            <span>时长</span>
-                            <span>大小</span>
-                        </div>
-                    </div>
-                    <div class="music-info-items">
-                        <div class="music-icon">
-                            <ion-icon name="caret-forward-outline"></ion-icon>
-                        </div>
-                        <div class="music-info-introduce">
-                            <h5>音乐标题</h5>
-                            <span>时长</span>
-                            <span>大小</span>
-                        </div>
-                    </div>
-                    <div class="music-info-items">
-                        <div class="music-icon">
-                            <ion-icon name="caret-forward-outline"></ion-icon>
-                        </div>
-                        <div class="music-info-introduce">
-                            <h5>音乐标题</h5>
-                            <span>时长</span>
-                            <span>大小</span>
-                        </div>
-                    </div>
-                    <div class="music-info-items">
-                        <div class="music-icon">
-                            <ion-icon name="caret-forward-outline"></ion-icon>
-                        </div>
-                        <div class="music-info-introduce">
-                            <h5>音乐标题</h5>
-                            <span>时长</span>
-                            <span>大小</span>
-                        </div>
-                    </div>
-                    <div class="music-info-items">
-                        <div class="music-icon">
-                            <ion-icon name="caret-forward-outline"></ion-icon>
-                        </div>
-                        <div class="music-info-introduce">
-                            <h5>音乐标题</h5>
-                            <span>时长</span>
-                            <span>大小</span>
-                        </div>
-                    </div>
-                    <div class="music-info-items">
-                        <div class="music-icon">
-                            <ion-icon name="caret-forward-outline"></ion-icon>
-                        </div>
-                        <div class="music-info-introduce">
-                            <h5>音乐标题</h5>
-                            <span>时长</span>
-                            <span>大小</span>
-                        </div>
-                    </div>
-                    <div class="music-info-items">
-                        <div class="music-icon">
-                            <ion-icon name="caret-forward-outline"></ion-icon>
-                        </div>
-                        <div class="music-info-introduce">
-                            <h5>音乐标题</h5>
-                            <span>时长</span>
-                            <span>大小</span>
-                        </div>
-                    </div>
-                    <div class="music-info-items">
-                        <div class="music-icon">
-                            <ion-icon name="caret-forward-outline"></ion-icon>
-                        </div>
-                        <div class="music-info-introduce">
-                            <h5>音乐标题</h5>
-                            <span>时长</span>
-                            <span>大小</span>
-                        </div>
-                    </div>
-                    <div class="music-info-items">
-                        <div class="music-icon">
-                            <ion-icon name="caret-forward-outline"></ion-icon>
-                        </div>
-                        <div class="music-info-introduce">
-                            <h5>音乐标题</h5>
-                            <span>时长</span>
-                            <span>大小</span>
-                        </div>
-                    </div>
-                    <div class="music-info-items">
-                        <div class="music-icon">
-                            <ion-icon name="caret-forward-outline"></ion-icon>
-                        </div>
-                        <div class="music-info-introduce">
-                            <h5>音乐标题</h5>
-                            <span>时长</span>
-                            <span>大小</span>
-                        </div>
-                    </div>
-                    <div class="music-info-items">
-                        <div class="music-icon">
-                            <ion-icon name="caret-forward-outline"></ion-icon>
-                        </div>
-                        <div class="music-info-introduce">
-                            <h5>音乐标题</h5>
-                            <span>时长</span>
-                            <span>大小</span>
-                        </div>
-                    </div>
-                    <div class="music-info-items">
-                        <div class="music-icon">
-                            <ion-icon name="caret-forward-outline"></ion-icon>
-                        </div>
-                        <div class="music-info-introduce">
-                            <h5>音乐标题</h5>
-                            <span>时长</span>
-                            <span>大小</span>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>

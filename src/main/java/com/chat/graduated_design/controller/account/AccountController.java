@@ -54,13 +54,9 @@ public class AccountController {
         User user=userService.getById(id);
         user.setPassword("");
         //查询用户头像信息
-        QueryWrapper<FileStorage> portraitQueryWrapper=new QueryWrapper<>();
-        portraitQueryWrapper.eq("Id",id).eq("folder",fileServiceImpl.HEAD_PORTRAIT_PATH);
-        FileStorage fileStorage=fileDataService.getOne(portraitQueryWrapper);
+        FileStorage fileStorage=fileDataService.getUserPortrait(id);
         //查询用户分类列表
-        QueryWrapper<folderTable> folderTableQueryWrapper=new QueryWrapper<>();
-        folderTableQueryWrapper.eq("user_id",id);
-        List<Map<String,Object>> folderList=folderTableService.listMaps(folderTableQueryWrapper);
+        List<Map<String,Object>> folderList=folderTableService.selectUserClassify(id);
         List<String> folders=new LinkedList<>();
         for (Map<String, Object> val: folderList){
             folders.add(val.get("folder").toString());
