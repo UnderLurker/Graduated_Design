@@ -186,7 +186,7 @@ public class fileController {
         return Response.ok("存储成功",responseInfo);
     }
 
-    @GetMapping("/video/{fileStorageNo}")
+    @GetMapping("/file/{fileStorageNo}")
     public void fileDownLoad(@PathVariable("fileStorageNo") Integer fileStorageNo,
                                                             HttpServletResponse response) throws IOException {
         FileStorage fileStorage=fileDataService.getById(fileStorageNo);
