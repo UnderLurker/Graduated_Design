@@ -11,8 +11,10 @@ import com.chat.graduated_design.service.impl.fileDataServiceImpl;
 import com.chat.graduated_design.service.impl.fileServiceImpl;
 import com.chat.graduated_design.service.impl.videoThumbnailServiceImpl;
 import com.chat.graduated_design.util.DateUtil;
-import com.chat.graduated_design.util.FileSizeUtil;
+import com.chat.graduated_design.util.FileUtil;
 import com.chat.graduated_design.util.VideoUtil;
+
+import net.coobird.thumbnailator.Thumbnails;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,10 +24,13 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.websocket.Session;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -105,6 +110,13 @@ public class fileController {
         return Response.ok("上传成功",responseUrl);
     }
 
+    /**
+     * 接收上传的多个文件
+     * @param files 文件
+     * @param userId 用户id
+     * @param contactId 联系人id
+     * @return
+     */
     @PostMapping("/uploadMultipleFiles/{userId}/{contactId}")
     public Response uploadMultipleFiles(@RequestParam("files") MultipartFile[] files,
                                         @PathVariable("userId") Integer userId,
@@ -117,7 +129,7 @@ public class fileController {
             String fileType=files[index].getContentType();
             String fileUuid=stringListMap.get("uuid").get(index);
             String suffix=stringListMap.get("suffix").get(index);
-            String size=FileSizeUtil.getSize(files[index].getSize());
+            String size=FileUtil.getSize(files[index].getSize());
             
             //保存数据信息到数据库并得到主键值
             FileStorage fileStorage=new FileStorage(null,userId,contactId,fileUuid,originName,saveDate,null,suffix);
@@ -186,31 +198,72 @@ public class fileController {
         return Response.ok("存储成功",responseInfo);
     }
 
+    /**
+     * 文件下载响应函数
+     * @param fileStorageNo 文件的存储id
+     * @param response 通过输出流返回信息
+     * @throws IOException
+     */
     @GetMapping("/file/{fileStorageNo}")
     public void fileDownLoad(@PathVariable("fileStorageNo") Integer fileStorageNo,
                                                             HttpServletResponse response) throws IOException {
         FileStorage fileStorage=fileDataService.getById(fileStorageNo);
         String fileName=fileStorage.getOriginname();
-        String root=null;
-        try {
-            root=ResourceUtils.getURL("classpath:static/image").getPath().replace("%20", " ").substring(1);
-        } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
-        }
-        root+="/"+fileStorage.getPath()+"/"+fileStorage.getUuid();
+        String root=FileUtil.getPathByFileStorageNo(fileStorage);
         
-        InputStream inputStream=new FileInputStream(root);
-        response.reset();
         response.setContentType("application/octet-stream");
+        response.setCharacterEncoding("UTF-8");
         response.addHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, "UTF-8"));
 
+        InputStream inputStream=new FileInputStream(root);
         ServletOutputStream outputStream=response.getOutputStream();
-        byte[] b=new byte[1024];
-        int len;
-        //从输入流中读取一定数量的字节，并将其存储在缓冲区字节数组中，读到末尾返回-1
-        while ((len = inputStream.read(b)) > 0) {
-            outputStream.write(b, 0, len);
-        }
+        inToOutStream(inputStream, outputStream);
         inputStream.close();
     }
+
+    /**
+     * 返回图片的缩略图
+     * @param fileStorageNo 文件存储id
+     * @param response 通过输出流返回数据
+     * @throws IOException
+     */
+    @GetMapping("/photo/dim/{fileStorageNo}")
+    public void dimPhoto(@PathVariable("fileStorageNo") Integer fileStorageNo,
+                            HttpServletResponse response) throws IOException {
+        FileStorage fileStorage=fileDataService.getById(fileStorageNo);
+        String root=FileUtil.getPathByFileStorageNo(fileStorage);
+
+        response.setContentType("image/*");
+        ServletOutputStream outputStream=response.getOutputStream();
+
+        BufferedImage bi = ImageIO.read(new File(root));
+        Thumbnails.of(root)
+                    .sourceRegion(0, 0,bi.getWidth(),bi.getHeight())
+                    .size(bi.getWidth(),bi.getHeight())
+                    .keepAspectRatio(true) // 是否保持原来的长宽比
+                    .toOutputStream(outputStream); // 将生成的缩略图直接一输出流的形式输出；
+    }
+
+    @GetMapping("/photo/{fileStorageNo}")
+    public void originPhoto(@PathVariable("fileStorageNo") Integer fileStorageNo,
+                            HttpServletResponse response) throws IOException {
+        FileStorage fileStorage=fileDataService.getById(fileStorageNo);
+        String root=FileUtil.getPathByFileStorageNo(fileStorage);
+
+        response.setContentType("image/*");
+        
+        InputStream inputStream=new FileInputStream(root);
+        ServletOutputStream outputStream=response.getOutputStream();
+        inToOutStream(inputStream, outputStream);
+        inputStream.close();
+    }
+
+    public void inToOutStream(InputStream inputStream,ServletOutputStream outputStream) throws IOException{
+        byte[] b=new byte[1024];
+        int len;
+        while((len=inputStream.read(b))>0){
+            outputStream.write(b,0,len);
+        }
+    }
+
 }
