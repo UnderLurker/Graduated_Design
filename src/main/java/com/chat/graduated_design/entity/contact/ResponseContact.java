@@ -1,7 +1,6 @@
 package com.chat.graduated_design.entity.contact;
 
 import com.chat.graduated_design.entity.chat.ResponseChat;
-import com.chat.graduated_design.entity.chat.chatInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

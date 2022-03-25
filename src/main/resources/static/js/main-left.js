@@ -185,8 +185,10 @@ function leftNavShrink(e){
             searchRightShrink=false;
             leftNavExpand.style.opacity="1";
         }
-        reSizeEmojiWidth();
-        activeLeft=document.getElementById('emoji-list-active').getBoundingClientRect().left;
+        setTimeout(()=>{
+            reSizeEmojiWidth();
+            activeLeft=document.getElementById('emoji-list-active').getBoundingClientRect().left;
+        },500);
     }
     leftNavExpand.onclick=function(e){
         if(vue.contactSelect.contactActive===-1) return;
@@ -362,7 +364,8 @@ function SystemEmoji(){
     //
     // });
     //使用emoji表情库
-    $('.emoji-icon').click(function (){
+    $('.emoji-icon').click(function (e){
+        e.preventDefault();
         let range, node;
         let selection = window.getSelection();
         $('#editor').focus();

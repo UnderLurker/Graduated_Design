@@ -1,9 +1,7 @@
 package com.chat.graduated_design.controller.account;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.chat.graduated_design.entity.contact.ResponseContact;
 import com.chat.graduated_design.entity.file.FileStorage;
-import com.chat.graduated_design.entity.folder.folderTable;
 import com.chat.graduated_design.entity.user.User;
 import com.chat.graduated_design.message.Response;
 import com.chat.graduated_design.service.impl.*;

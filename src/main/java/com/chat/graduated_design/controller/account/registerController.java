@@ -43,7 +43,6 @@ public class registerController {
                 String saveString= null;
                 saveString = MD5Util.md5Encode(user.getPassword());
                 saveUser.setEmail(user.getEmail());
-                saveUser.setId(User.getCount()+1);
                 saveUser.setName(user.getName());
                 saveUser.setPassword(saveString);
                 saveUser.setNickname(user.getName());
@@ -62,7 +61,6 @@ public class registerController {
         }
         if(errorMessage.getEmail()==null){
             userService.save(saveUser);
-            User.setCount(User.getCount()+1);
             activeUtil.sendMimeMailWithId(user.getEmail(),saveUser.getId());
         }
         return errorMessage;
@@ -80,7 +78,6 @@ public class registerController {
                 String saveString= null;
                 saveString = MD5Util.md5Encode(user.getPassword());
                 saveUser.setPhone(user.getPhone());
-                saveUser.setId(User.getCount());
                 saveUser.setName(user.getName());
                 saveUser.setPassword(saveString);
                 saveUser.setNickname(user.getName());
@@ -106,7 +103,6 @@ public class registerController {
                 return errorMessage;
             }
             userService.save(saveUser);
-            User.setCount(User.getCount()+1);
             errorMessage.setPhone("success");
         }
         return errorMessage;

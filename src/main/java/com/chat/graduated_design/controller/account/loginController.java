@@ -1,6 +1,5 @@
 package com.chat.graduated_design.controller.account;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.chat.graduated_design.entity.user.User;
 import com.chat.graduated_design.message.ErrorMessage;
 import com.chat.graduated_design.service.impl.userServiceImpl;

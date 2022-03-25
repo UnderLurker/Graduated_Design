@@ -1,10 +1,8 @@
 package com.chat.graduated_design.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.chat.graduated_design.entity.file.FileStorage;
 import com.chat.graduated_design.entity.user.User;
 import com.chat.graduated_design.service.impl.fileDataServiceImpl;
-import com.chat.graduated_design.service.impl.fileServiceImpl;
 import com.chat.graduated_design.service.impl.userServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

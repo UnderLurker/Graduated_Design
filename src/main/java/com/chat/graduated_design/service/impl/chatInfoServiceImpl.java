@@ -1,8 +1,6 @@
 package com.chat.graduated_design.service.impl;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;

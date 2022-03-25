@@ -32,7 +32,7 @@ public class folderController {
     @PostMapping("/folder/put/{id}")
     public Response addFolderById(@PathVariable("id") Integer id, @RequestBody CustomFolder customFolder){
         //为folder_table添加
-        folderTable folderEntity=new folderTable(id,customFolder.getFolderName());
+        folderTable folderEntity=new folderTable(null,id,customFolder.getFolderName());
         folderTableService.save(folderEntity);
         //为contact表添加
         List<contact> contactBatch=new LinkedList<>();

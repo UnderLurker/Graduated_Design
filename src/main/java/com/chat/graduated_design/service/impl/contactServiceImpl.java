@@ -1,12 +1,10 @@
 package com.chat.graduated_design.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chat.graduated_design.entity.chat.ResponseChat;
 import com.chat.graduated_design.entity.chat.chatInfo;
 import com.chat.graduated_design.entity.contact.ResponseContact;
 import com.chat.graduated_design.entity.contact.contact;
-import com.chat.graduated_design.entity.file.videoThumbnail;
 import com.chat.graduated_design.entity.user.User;
 import com.chat.graduated_design.mapper.contactMapper;
 import com.chat.graduated_design.service.contactService;

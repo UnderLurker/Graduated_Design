@@ -9,8 +9,12 @@
     position: relative;
 }
 .top{
+    width: 100%;
     height: 0;
     background-color: rgba(30, 144, 255, .5);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
     overflow: hidden;
     transition: all 0.5s;
     font-size: 1.2rem;
@@ -20,19 +24,16 @@
     height: 3.5rem;
 }
 .top-items{
-    width: 100%;
+    width: 80%;
     text-align: center;
     line-height: 3.5rem;
     overflow: hidden;
 }
-.right-close{
-    right: 1rem;
-}
-.right-close:hover{
-    background-color: rgba(30, 144, 255,1);
-}
 @media only screen and (max-width:1320px) {
     .right-close{
+        display: none;
+    }
+    .left-nav-expand{
         display: none;
     }
 }
@@ -156,6 +157,7 @@
     border-radius: 10px;
     margin-right: .5rem;
     overflow: hidden;
+    min-width: 70px;
 }
 @media only screen and (max-width:490px) {
     .chat-info-main{
@@ -214,33 +216,19 @@
     width: 2.5rem;
     height: 2.5rem;
     border-radius: 50%;
-    position: absolute;
     font-size: 1.8rem;
-    margin-top: .4rem;
     transition: all 0.5s ease;
     opacity: 0;
     overflow: hidden;
 }
-.left-nav-expand ion-icon {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-}
 .icon-common{
     width: 2rem;
     height: 2rem;
-    line-height: 2.3rem;
     text-align: center;
     background-color: transparent;
     border-radius: 50%;
-    position: absolute;
-    top: .6rem;
     overflow: hidden;
     transition: all 0.5s ease;
-}
-.bell{
-    right: 3rem;
 }
 .mute{
     height: 0;
@@ -322,13 +310,13 @@
     padding: 1rem 1rem .5rem 1rem;
 }
 .file-icon{
-    width: 7rem;
-    height: 7rem;
-    background-color: white;
+    max-width: 15rem;
+    background-color: transparent;
     cursor: pointer;
 }
-.file-icon>p{
-    background-color: transparent;
+.file-icon>p,
+.file-icon>img{
+    background-color: white;
     font-size: 3rem;
     line-height: 7rem;
     padding: 0;
@@ -343,4 +331,11 @@
 .file-name{
     width: 100%;
     word-wrap: break-word;
+}
+.chat-audio{
+    font-size: 2rem;
+    border-radius: 50%;
+    background-color: blue;
+    height: 4rem;
+    width: 4rem;
 }

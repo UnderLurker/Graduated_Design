@@ -13,10 +13,13 @@
     <link rel="stylesheet" href="./css/uploadimg.css">
     <link rel="stylesheet" href="./css/general-setting.css">
     <link rel="stylesheet" href="./css/Jcrop.min.css">
+    <link rel="stylesheet" href="./css/audio.css">
+    <link rel="stylesheet" href="./css/video.css">
+    <link rel="stylesheet" href="./css/photo.css">
     <script src="./js/jquery.js"></script>
     <script src="./js/riff.js"></script>
     <script src="./js/Jcrop.js"></script>
-    <script src="./js/emoji.js"></script>
+    <script src="./js/emoji.min.js"></script>
     <title>首页</title>
 </head>
 
@@ -418,24 +421,53 @@
         </div>
         <div class="middle-chat">
             <div class="top">
-                <div class="left-nav-expand">
+                <div class="left-nav-expand ion-icon-center">
                     <ion-icon name="chevron-forward-outline"></ion-icon>
                 </div>
                 <!-- 展示联系人的置顶信息 -->
-                <div class="top-items">
-                    <span>{{currentChat.contactInfo.nickname}}</span>
-                </div>
+                <template v-if="!media.audio">
+                    <div class="top-items">
+                        <span>{{currentChat.contactInfo.nickname}}</span>
+                    </div>
+                    <div v-if="currentChat.contactInfo.doNotDisturb" class="icon-common ion-icon-center" @click="doNotDisturb">
+                        <ion-icon name="notifications-outline"></ion-icon>
+                    </div>
+                    <div v-else="currentChat.contactInfo.doNotDisturb" class="icon-common ion-icon-center mute" @click="doNotDisturb">
+                        <ion-icon name="notifications-off-outline"></ion-icon>
+                    </div>
+                </template>
                 <!-- 管理媒体 -->
-                <div class="top-items">
-                    123
-                </div>
-                <div v-if="currentChat.contactInfo.doNotDisturb" class="icon-common bell" @click="doNotDisturb">
-                    <ion-icon name="notifications-outline"></ion-icon>
-                </div>
-                <div v-else="currentChat.contactInfo.doNotDisturb" class="icon-common bell mute" @click="doNotDisturb">
-                    <ion-icon name="notifications-off-outline"></ion-icon>
-                </div>
-                <div class="icon-common right-close riff">
+                <template v-else="!media.audio">
+                    <div id="media-info" class="top-items">
+                        <audio id="audio-preview" src="" type="audio/mp3"></audio>
+                        <div class="audio-left">
+                            <div class="audio-control" id="audio-pre">
+                                <ion-icon name="play-skip-back-outline"></ion-icon>
+                            </div>
+                            <div class="audio-control" id="audioPlayer">
+                                <ion-icon name="play-circle-outline"></ion-icon>
+                            </div>
+                            <div class="audio-control" id="audio-next">
+                                <ion-icon name="play-skip-forward-outline"></ion-icon>
+                            </div>
+                        </div>
+                        <div class="audio-right">
+                            <p style="max-width: 536px;"></p>
+                            <div class="progress-bar-bg" id="progressBarBg">
+                                <span id="progressDot" class="shadow"></span>
+                                <div class="progress-bar" id="progressBar"></div>
+                            </div>
+                            <div class="audio-time">
+                                <span class="audio-length-current" id="audioCurTime">00:00</span>
+                                <span class="audio-length-total">00:00</span>
+                            </div>
+                        </div>
+                        <div id="audio-close" class="ion-icon-center">
+                            <ion-icon name="close-outline"></ion-icon>
+                        </div>
+                    </div>
+                </template>
+                <div class="icon-common right-close ion-icon-center">
                     <ion-icon name="arrow-forward-outline"></ion-icon>
                 </div>
             </div>
@@ -453,9 +485,13 @@
                         <div class="chat-info-main shadow">
                             <template v-if="info.file">
                                 <div class="file">
-                                    <div class="file-icon shadow-bottom" @click="download(info.fileStorageNo)">
-                                        <p v-if="info.thumbnail===null">{{info.suffix}}</p>
-                                        <img v-else="info.thumbnail===null" :src="'/thumbnail/'+info.thumbnail" width="100%" height="100%" alt="">
+                                    <div class="file-icon" :class="{'shadow':info.filetype!=='audio'}"> <!--@click="download(info.fileStorageNo)"-->
+                                        <p v-if="info.filetype==='application'">{{info.suffix}}</p>
+                                        <img v-if="info.filetype==='video'" :src="'/thumbnail/'+info.thumbnail" width="100%" height="100%" alt="" onload="autoSize(event)" @click="videoPreview(info.fileStorageNo,'/thumbnail/'+info.thumbnail)">
+                                        <div v-if="info.filetype==='audio'" class="ion-icon-center chat-audio shadow" @click="audioPreview(info.fileStorageNo,info.content)">
+                                            <ion-icon name="caret-forward-outline"></ion-icon>
+                                        </div>
+                                        <img v-if="info.filetype==='image'" :src="'/photo/dim/'+info.fileStorageNo" width="100%" height="100%" alt="" onload="autoSize(event)" @click="photoPreview(info.fileStorageNo,info.content)">
                                     </div>
                                     <div class="chat-file-info">
                                         <p class="file-name">{{info.content}}</p>
@@ -483,9 +519,13 @@
                         <div class="chat-info-main shadow">
                             <template v-if="info.file">
                                 <div class="file">
-                                    <div class="file-icon shadow-bottom" @click="download(info.fileStorageNo)">
-                                        <p v-if="info.thumbnail===null">{{info.suffix}}</p>
-                                        <img v-else="info.thumbnail===null" :src="'/thumbnail/'+info.thumbnail" width="100%" height="100%" alt="">
+                                    <div class="file-icon" :class="{'shadow':info.filetype!=='audio'}"> <!--@click="download(info.fileStorageNo)"-->
+                                        <p v-if="info.filetype==='application'">{{info.suffix}}</p>
+                                        <img v-if="info.filetype==='video'" :src="'/thumbnail/'+info.thumbnail" width="100%" height="100%" alt="" onload="autoSize(event)" @click="videoPreview(info.fileStorageNo,'/thumbnail/'+info.thumbnail)">
+                                        <div v-if="info.filetype==='audio'" class="ion-icon-center chat-audio shadow" @click="audioPreview(info.fileStorageNo,info.content)">
+                                            <ion-icon name="caret-forward-outline"></ion-icon>
+                                        </div>
+                                        <img v-if="info.filetype==='image'" :src="'/photo/dim/'+info.fileStorageNo" width="100%" height="100%" alt="" onload="autoSize(event)" @click="photoPreview(info.fileStorageNo,info.content)">
                                     </div>
                                     <div class="chat-file-info">
                                         <p class="file-name">{{info.content}}</p>
@@ -646,7 +686,7 @@
                 </div>
                 <div class="statistics-frame">
                     <template v-for="(item,index) in currentChat.contactInfo.chatInfo" :key="index">
-                        <div class="file-info-items" v-if="item.file&&item.thumbnail===null">
+                        <div class="file-info-items" v-if="item.file&&item.filetype!=='audio'&&item.filetype!=='video'&&item.filetype!=='image'">
                             <div class="file-info-items-img">
                                 <span>{{item.suffix}}</span>
                             </div>
@@ -670,22 +710,24 @@
                     <ion-icon class="statistics-close-icon" name="arrow-forward-outline"></ion-icon>
                 </div>
                 <div class="statistics-frame">
-                    <div class="file-info-items">
-                        <div class="file-info-items-img">
-                            <img src="./image/1.jpeg" alt="">
+                    <template v-for="(item,index) in currentChat.contactInfo.chatInfo" :key="index">
+                        <div class="file-info-items" v-if="item.file&&item.filetype==='image'" @click="photoPreview(item.fileStorageNo,item.content)">
+                            <div class="file-info-items-img">
+                                <img :src="'/photo/dim/'+item.fileStorageNo" height="100%" alt="">
+                            </div>
+                            <div class="file-info-items-introduce">
+                                <div class="file-info-items-title">
+                                    <h4>{{item.content}}</h4>
+                                </div>
+                                <div class="file-info-items-size">
+                                    <span>{{item.size}}</span>
+                                </div>
+                                <div class="file-info-items-time">
+                                    <span>{{item.time.year+'/'+item.time.mouth+'/'+item.time.day+' '+item.time.hour+':'+item.time.minute}}</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="file-info-items-introduce">
-                            <div class="file-info-items-title">
-                                <h4>文件标题fdsafasdfasdd3123</h4>
-                            </div>
-                            <div class="file-info-items-size">
-                                <span>100KB</span>
-                            </div>
-                            <div class="file-info-items-time">
-                                <span>2022/1/20 16:33</span>
-                            </div>
-                        </div>
-                    </div>
+                    </template>
                 </div>
             </div>
             <div class="statistics-info video-info">
@@ -694,7 +736,7 @@
                 </div>
                 <div class="statistics-frame">
                     <template v-for="(item,index) in currentChat.contactInfo.chatInfo" :key="index">
-                        <div class="video-info-items" v-if="item.file&&item.thumbnail!==null">
+                        <div class="video-info-items" v-if="item.file&&item.thumbnail!==null" @click="videoPreview(item.fileStorageNo,'/thumbnail/'+item.thumbnail)">
                             <div class="duration">
                                 <div>
                                     <ion-icon name="caret-forward-outline"></ion-icon>
@@ -711,16 +753,18 @@
                     <ion-icon class="statistics-close-icon" name="arrow-forward-outline"></ion-icon>
                 </div>
                 <div class="statistics-frame">
-                    <div class="music-info-items">
-                        <div class="music-icon">
-                            <ion-icon name="caret-forward-outline"></ion-icon>
+                    <template v-for="(item,index) in currentChat.contactInfo.chatInfo" :key="index">
+                        <div class="music-info-items" v-if="item.file&&item.filetype==='audio'" @click="audioPreview(item.fileStorageNo,item.content)">
+                            <div class="music-icon">
+                                <ion-icon name="caret-forward-outline"></ion-icon>
+                            </div>
+                            <div class="music-info-introduce">
+                                <h5>{{item.content}}</h5>
+                                <span>时长</span>
+                                <span>{{item.size}}</span>
+                            </div>
                         </div>
-                        <div class="music-info-introduce">
-                            <h5>音乐标题hiudhfiuhasdiuhfiousdfsadfsdfsd</h5>
-                            <span>时长</span>
-                            <span>大小</span>
-                        </div>
-                    </div>
+                    </template>
                 </div>
             </div>
         </div>
@@ -752,7 +796,7 @@
     </div>
     <!--    提示信息-->
     <div class="create-chat-folder">
-        <div class="img-frame shadow" style="width: 200px;transform: translate(-50%,-200%);">
+        <div class="img-frame shadow" style="width: 200px;">
             <h3 v-html="showTitle"></h3><br>
             <p v-html="showMsg"></p>
             <div class="options">
@@ -765,11 +809,66 @@
             </div>
         </div>
     </div>
+    <div class="video-player">
+        <div id="video-close" class="ion-icon-center">
+            <ion-icon name="close-outline"></ion-icon>
+        </div>
+        <div id="container" class="container">
+            <video id="video-player" width="60%" poster=""></video>
+            <div class="pos">
+                <div id="video-pre" class="ion-icon-center magnify">
+                    <ion-icon name="play-skip-back-outline"></ion-icon>
+                </div>
+                <div id="playBtn" class="ion-icon-center magnify">
+                    <ion-icon name="caret-forward-outline"></ion-icon>
+                </div>
+                <div id="video-next" class="ion-icon-center magnify">
+                    <ion-icon name="play-skip-forward-outline"></ion-icon>
+                </div>
+                <span id="time1">00:00:00</span>
+                <progress  value="0" id="progress"></progress>
+                <span id="time2">00:00:00</span>
+                <div id="full" class="ion-icon-center magnify">
+                    <ion-icon name="expand-outline"></ion-icon>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="photo-player">
+        <div id="photo-close" class="ion-icon-center">
+            <ion-icon name="close-outline"></ion-icon>
+        </div>
+        <div class="container">
+            <div class="photo-player-up">
+                <div class="ion-icon-center magnify col-10">
+                    <ion-icon name="chevron-back-outline"></ion-icon>
+                </div>
+                <div class="photo-frame">
+                    <img id="photo-player" height="100%" width="100%" src="" alt="聊天发送的图片" onload="autoSize(event)">
+                </div>
+                <div class="ion-icon-center magnify col-10">
+                    <ion-icon name="chevron-forward-outline"></ion-icon>
+                </div>
+            </div>
+            <div class="photo-player-down">
+                <div class="ion-icon-center magnify" id="photo-expand">
+                    <ion-icon name="add-circle-outline"></ion-icon>
+                </div>
+                <div class="ion-icon-center magnify" id="photo-shrink">
+                    <ion-icon name="remove-circle-outline"></ion-icon>
+                </div>
+                <div class="ion-icon-center magnify" id="photo-download">
+                    <ion-icon name="cloud-download-outline"></ion-icon>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 <script src="./js/vue.js"></script>
 <script src="./js/axios.js"></script>
+<script src="./js/audio.js"></script>
 <script src="./js/main.js"></script>
 <script src="./js/add-folder.js"></script>
 <script src="./js/main-left.js"></script>
@@ -778,6 +877,8 @@
 <script src="./js/circle-tailoring.js"></script>
 <script src="./js/coolapk-emotion-svg.js"></script>
 <script src="./js/file.js"></script>
+<script src="./js/video.js"></script>
+<script src="./js/photo.js"></script>
 <script>
 </script>
 </body>

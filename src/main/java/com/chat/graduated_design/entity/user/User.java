@@ -27,16 +27,6 @@ public class User implements Comparable<User>{
     private boolean active=false;
 //    private boolean inline=false;
 
-    private static Integer count=1;
-
-    public static Integer getCount() {
-        return count;
-    }
-
-    public static void setCount(Integer count) {
-        User.count = count;
-    }
-
     public User(Map<String,Object> map){
         this.id=Integer.parseInt(map.get("id").toString());
         this.password=(String) map.get("password");

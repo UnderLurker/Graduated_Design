@@ -85,7 +85,7 @@
     }
 
     /**
-     * 创建JPG图片通过文件类型
+     * 创建JPG图片通过文件类型 若为image取得缩略图
      * @param filetype
      * @param videoFileName 文件名称（存入数据库的文件uuid）
      * @return null该文件不是视频 字符串则是存储的jpg的uuid
@@ -95,8 +95,13 @@
         if(type.equals("video")){
             return grabberVideoFramer(videoFileName);
         }
+        else if(type.equals("image")){
+
+        }
         return null;
     }
+
+    
 
     /**
      * 测试：
