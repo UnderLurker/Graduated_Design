@@ -6,6 +6,8 @@ import com.chat.graduated_design.entity.file.FileStorage;
 import com.chat.graduated_design.entity.user.User;
 import com.chat.graduated_design.mapper.userMapper;
 import com.chat.graduated_design.service.userService;
+import com.chat.graduated_design.util.DateUtil;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,6 +35,17 @@ public class userServiceImpl extends ServiceImpl<userMapper, User> implements us
             item.put("headportrait","/headportrait/"+fileStorge.get("uuid"));
         }
         return queryResult;
+    }
+
+    /**
+     * 更新用户最近登录时间
+     * @param no
+     */
+    public void updateLoginTime(Integer no){
+        User user=this.getById(no);
+        user.setPreLoginTime(user.getLoginTime());
+        user.setLoginTime(DateUtil.getCurrentTime());
+        this.updateById(user);
     }
 
     /**

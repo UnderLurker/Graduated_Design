@@ -4,6 +4,8 @@ document.getElementById('photo-close').onclick = function () {
     var photoPlayer = document.getElementById('photo-player');
     photoPlayer.style.left = '0px';
     photoPlayer.style.top = '0px';
+    photoPlayer.style.width=photoWidth+'px';
+    photoPlayer.style.height=photoHeight+'px';
 }
 //设1rem=16px
 const rem = 16;

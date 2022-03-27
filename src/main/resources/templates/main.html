@@ -74,8 +74,7 @@
                 </div>
                 <div class="classify">
                     <div class="list">
-                        <div class="frame" v-for="(classify,index) in contactClassify"
-                              :key="classify" @click="frameClick(index,$event)">
+                        <div class="frame" v-for="(classify,index) in contactClassify" :key="classify" @click="frameClick(index,$event)">
                             <div class="title">
                                 {{classify}}
                             </div>
@@ -120,7 +119,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="search-result-list" v-for="(search,index) in searchResult" :key="index">
+                    <div class="search-result-list" v-for="(search,ind) in searchResult" :key="ind">
                         <div class="search-result-items" v-for="(item,index) in search" :key="index">
                             <div class="portrait small-3" style="margin-left: 2rem;margin-right: 2rem;">
                                 <img :src="item.headportrait" alt="头像">
@@ -132,6 +131,9 @@
                                         <ion-icon v-if="item.doNotDisturb" name="notifications-off-outline"></ion-icon>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="ion-icon-center contact-add" @click="addContact(item)">
+                                <ion-icon name="person-add-outline"></ion-icon>
                             </div>
                         </div>
                     </div>
@@ -160,7 +162,7 @@
                         <h4>用户名字</h4>
                     </div>
                     <div id="user-phone-number">
-                        <span>+86 {{userPhone}}</span>
+                        <span>{{userPhone}}</span>
                     </div>
                 </div>
                 <div id="user-setting-info">
@@ -214,9 +216,8 @@
                         <img :src="userInfo.headportrait" alt="">
                     </div>
                     <div class="ion-icon-center transparent-camera" id="image-select">
-                        <!--                        头像上传-->
+                        <!--头像上传-->
                         <ion-icon name="camera-outline"></ion-icon>
-                        <!--                        <input id="image-input-frame" type="file" name="headportrait" accept="image/*" hidden>-->
                     </div>
                 </div>
                 <div id="user-real-name">
@@ -550,13 +551,14 @@
             <!-- 输入框 -->
             <div class="input-frame">
                 <div class="input-frame-left shadow">
-                    <div id="emotion" style="margin-right: .5rem">
+                    <div id="emotion" style="margin-right: .5rem;resize: none;">
                         <ion-icon name="happy-outline"></ion-icon>
                     </div>
-                    <div id="editor" placeholder="消息" style="height: 2.5rem;overflow-y: scroll;max-width: 100%;user-select: all" contenteditable="true">
-
+                    <div style="width: 100%;display: flex;justify-content: center;">
+                        <textarea name="" id="editor" @keydown.enter="sendMsg(false)"></textarea>
                     </div>
-                    <div id="send-file" class="riff" @click="upLoadMedia">
+                    <!-- <div id="editor" placeholder="消息" style="height: 2.5rem;overflow-y: scroll;max-width: 100%;user-select: all" contenteditable="true"></div> -->
+                    <div id="send-file" class="riff" @click="upLoadMedia" style="resize: none;">
                         <ion-icon name="attach-outline"></ion-icon>
                         <input type="file" id="media" hidden multiple name="media" accept="*/*">
                     </div>
@@ -602,7 +604,7 @@
                     </div>
                     <div class="contact-name">
                         <h3>{{currentChat.contactInfo.nickname}}</h3>
-                        <span>很久没有上线</span>
+                        <span v-html="showOutLineTime"></span>
                     </div>
                 </div>
                 <div class="introduction bottom-line">

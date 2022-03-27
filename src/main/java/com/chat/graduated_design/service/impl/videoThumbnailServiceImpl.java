@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chat.graduated_design.entity.file.videoThumbnail;
 import com.chat.graduated_design.mapper.videoThumbnailMapper;
@@ -37,5 +38,4 @@ public class videoThumbnailServiceImpl extends ServiceImpl<videoThumbnailMapper,
         }
         return thumbnailMap;
     }
-
 }

@@ -1,5 +1,6 @@
 package com.chat.graduated_design.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chat.graduated_design.entity.chat.ResponseChat;
 import com.chat.graduated_design.entity.chat.chatInfo;
@@ -8,12 +9,14 @@ import com.chat.graduated_design.entity.contact.contact;
 import com.chat.graduated_design.entity.user.User;
 import com.chat.graduated_design.mapper.contactMapper;
 import com.chat.graduated_design.service.contactService;
+import com.chat.graduated_design.util.DateUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-// import javax.management.Query;
+import java.text.ParseException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -109,12 +112,18 @@ public class contactServiceImpl extends ServiceImpl<contactMapper, contact> impl
                         }
                     }
                 }
-
+                Integer misTiming;
+                try {
+                    misTiming=DateUtil.daysBetween(userList.get(index).getPreLoginTime(), userList.get(index).getLoginTime());
+                } catch (ParseException e) {
+                    misTiming=null;
+                }
                 ResponseContact responseContact = new ResponseContact(
                         contactList.get(contactIndex),
                         userList.get(index).getNickname(),
                         userList.get(index).getPhone(),
-                        responseChat);
+                        responseChat,
+                        misTiming);
                 res.add(responseContact);
                 contactIndex++;
                 continue;
@@ -124,5 +133,20 @@ public class contactServiceImpl extends ServiceImpl<contactMapper, contact> impl
         return res;
     }
 
+    /**
+     * 通过用户ID查找联系人ID
+     * @param userId 用户ID
+     * @return
+     */
+    public HashSet<Integer> selectContactIdByUserId(Integer userId){
+        QueryWrapper<contact> query=new QueryWrapper<>();
+        query.eq("userid", userId);
+        List<contact> cotactList=this.list(query);
+        HashSet<Integer> result=new HashSet<>();
+        for(contact person : cotactList){
+            result.add(person.getContactid());
+        }
+        return result;
+    }
 
 }

@@ -565,3 +565,15 @@ input:focus {
     padding: 0 2rem;
     margin-top: 3rem;
 }
+.contact-add{
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all ease .5s;
+}
+.contact-add:hover{
+    background-color: rgba(31, 143, 255,.5);
+    color: whitesmoke;
+}

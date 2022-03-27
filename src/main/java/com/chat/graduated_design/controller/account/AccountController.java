@@ -1,6 +1,7 @@
 package com.chat.graduated_design.controller.account;
 
 import com.chat.graduated_design.entity.contact.ResponseContact;
+import com.chat.graduated_design.entity.contact.contact;
 import com.chat.graduated_design.entity.file.FileStorage;
 import com.chat.graduated_design.entity.user.User;
 import com.chat.graduated_design.message.Response;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
@@ -51,6 +54,7 @@ public class AccountController {
         //查询用户信息
         User user=userService.getById(id);
         user.setPassword("");
+        userService.updateLoginTime(id);
         //查询用户头像信息
         FileStorage fileStorage=fileDataService.getUserPortrait(id);
         //查询用户分类列表
@@ -74,4 +78,13 @@ public class AccountController {
         return Response.ok("/prepare/"+id.toString(),res);
     }
 
+    @ResponseBody
+    @PostMapping("/addContact/{userId}")
+    public Response addContact(@RequestBody Map<String,Object> info,
+                                @PathVariable("userId") Integer userId){
+        contact person=new contact(null,userId,(Integer) info.get("id"),"所有",
+                                    (String) info.get("headportrait"),false,0);
+        contactService.save(person);
+        return Response.ok("/addContact",info);
+    }
 }

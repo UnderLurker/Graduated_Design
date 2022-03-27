@@ -48,7 +48,15 @@ public class fileDataServiceImpl  extends ServiceImpl<fileMapper, FileStorage> i
         return this.getOne(portraitQueryWrapper);
     }
 
-    
+    /**
+     * 查找接收或发送的所有文件，通过用户ID
+     * @param userId
+     * @return
+     */
+    public List<FileStorage> selectById(Integer userId){
+        
+        return null;
+    }
 
     // /**
     //  * 保存信息到数据库并返回生成的主键值

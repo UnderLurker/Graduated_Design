@@ -20,8 +20,9 @@ public class ResponseContact extends contact{
     private String nickname;
     private String phone;
     private List<ResponseChat> chatInfoList;
+    private Integer misTiming;
 
-    public ResponseContact(contact person,String nickname,String phone,List<ResponseChat> chatInfoList){
+    public ResponseContact(contact person,String nickname,String phone,List<ResponseChat> chatInfoList,Integer misTiming){
         super(person.getContactNo(),
                 person.getUserid(),
                 person.getContactid(),
@@ -32,6 +33,7 @@ public class ResponseContact extends contact{
         this.nickname=nickname;
         this.phone=phone;
         this.chatInfoList=chatInfoList;
+        this.misTiming=misTiming;
     }
 
 }

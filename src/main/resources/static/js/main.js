@@ -79,8 +79,23 @@ let vue = new Vue({
             return (this.messagebox.option === 0) ? this.messagebox.folderMsg : this.messagebox.msg;
         },
         userPhone() {
-            return this.userInfo.phone.slice(0, 3) + ' ' + this.userInfo.phone.slice(3, 7) + ' ' + this.userInfo.phone.slice(7);
+            return phoneStyle(this.userInfo.phone);
         },
+        showOutLineTime(){
+            let time=this.currentChat.contactInfo.misTiming;
+            if(time>21){
+                return '已经很久没有上线了';
+            }
+            else if(time>7){
+                return '已经有'+time%7+'周多没有上线了';
+            }
+            else if(time>0){
+                return '最近几天刚刚上线过';
+            }
+            else if(time===0){
+                return '刚刚上线';
+            }
+        }
     },
     data: {
         currentChat: {
@@ -116,7 +131,8 @@ let vue = new Vue({
             music: []
         },
         searchContent: {
-            content: ''
+            content: '',
+            classify: 0,
         },
         selected: {
             folderName: '',
@@ -222,10 +238,10 @@ let vue = new Vue({
         },
         searchSubmit() {
             if (this.searchContent.content === '') return;
+            this.searchContent.classify=searchFrameActive;
             sendGet('/search/' + getCookie('id'),
-                this.searchContent, (msg) => {
+                this.searchContent,null, (msg) => {
                     let data = msg.data.obj;
-                    console.log(data.user);
                     this.searchResult.user = data.user;
                 });
         },
@@ -364,8 +380,8 @@ let vue = new Vue({
             //查找所有修改bell
         },
         sendMsg(file) {
-            send(this.sendInfo.fromUser, this.sendInfo.toUser, $('#editor').html(), file);
-            $('#editor').html('');
+            send(this.sendInfo.fromUser, this.sendInfo.toUser, $('#editor').val(), file);
+            $('#editor').val('');
         },
         putMessage(message) {
             let row = vue.contactSelect.frameActive,
@@ -496,6 +512,17 @@ let vue = new Vue({
                 }
             }
         },
+        addContact(contact){
+            let headportrait=contact.headportrait.split('/')[contact.headportrait.split('/').length-1];
+            sendPost('/addContact/'+getCookie('id'),{
+                'id':contact.id,
+                'headportrait':headportrait,
+            },{
+                'Content-Type': "application/json;charset=UTF-8",
+            },(msg)=>{
+                console.log(msg.data);
+            })
+        }
     },
     components: {},
 });
@@ -513,7 +540,16 @@ function getCookie(name) {
     return "";
 }
 
-function Contact(contactId, headPortrait, nickname, doNotDisturb, phone, index, chatInfo) {
+/**
+ * 电话号码格式转换
+ * @param {string} phone 
+ * @returns 
+ */
+function phoneStyle(phone){
+    return '+86 ' + phone.slice(0, 3) + ' ' + phone.slice(3, 7) + ' ' + phone.slice(7);
+}
+
+function Contact(contactId, headPortrait, nickname, doNotDisturb, phone, index, chatInfo,misTiming) {
     this.contactid = contactId;
     this.headportrait = headPortrait;
     this.nickname = nickname;
@@ -533,6 +569,7 @@ function Contact(contactId, headPortrait, nickname, doNotDisturb, phone, index, 
             this.chatInfo.push(item);
         }
     }
+    this.misTiming=misTiming;
 }
 //向服务器请求用户信息（除密码）
 (function () {
@@ -577,8 +614,9 @@ function Contact(contactId, headPortrait, nickname, doNotDisturb, phone, index, 
                 img,
                 person.nickname,
                 person.doNotDisturb,
-                person.phone, index,
-                person.chatInfoList));
+                phoneStyle(person.phone), index,
+                person.chatInfoList,
+                person.misTiming));
         }
 
         //改变滑条的位置和大小

@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 
@@ -25,6 +26,8 @@ public class User implements Comparable<User>{
     private String phone=null;
     private String nickname;
     private boolean active=false;
+    private Date loginTime;
+    private Date preLoginTime;
 //    private boolean inline=false;
 
     public User(Map<String,Object> map){
