@@ -1,5 +1,6 @@
 package com.chat.graduated_design.controller;
 
+import com.chat.graduated_design.entity.file.FileStorage;
 import com.chat.graduated_design.entity.file.videoThumbnail;
 import com.chat.graduated_design.message.Response;
 import com.chat.graduated_design.service.impl.contactServiceImpl;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +52,8 @@ public class searchController {
         }
         else if(classify.equals(2)){
             //图片
-            
+            this.selectByIdAndType(id, "image", content);
+
         }
         else if(classify.equals(3)){
             //视频
@@ -62,6 +65,27 @@ public class searchController {
             return Response.error("查询错误，请刷新重试");
         }
         return Response.ok("/search",res);
+    }
+
+    private List<Object> selectByIdAndType(Integer id,String type, String content){
+        List<FileStorage> allFiles=fileDataService.selectById(id);
+        List<Integer> allKeys=new LinkedList<>();
+        for(FileStorage file : allFiles){
+            allKeys.add(file.getNo());
+        }
+        List<videoThumbnail> fileInfo=videoThumbnailService.listByIds(allKeys);
+        //同时遍历文件和信息
+        for(int index=0;index<allFiles.size();index++){
+            String fileType=fileInfo.get(index).getType().split("/")[0];
+            if(!fileType.equals(type)){
+                allFiles.remove(allFiles.get(index));
+                fileInfo.remove(fileInfo.get(index));
+            }
+            else{
+                
+            }
+        }
+        return null;
     }
 
 }

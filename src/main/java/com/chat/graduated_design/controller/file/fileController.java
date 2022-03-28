@@ -116,11 +116,12 @@ public class fileController {
      * @param userId 用户id
      * @param contactId 联系人id
      * @return
+     * @throws IOException
      */
     @PostMapping("/uploadMultipleFiles/{userId}/{contactId}")
     public Response uploadMultipleFiles(@RequestParam("files") MultipartFile[] files,
                                         @PathVariable("userId") Integer userId,
-                                        @PathVariable("contactId") Integer contactId) {
+                                        @PathVariable("contactId") Integer contactId) throws IOException {
         Map<String, List<String>> stringListMap = fileService.storeFiles(files);
         List<Map<String,Object>> responseInfo=new LinkedList<>();
         Date saveDate=DateUtil.getCurrentTime();
@@ -191,7 +192,7 @@ public class fileController {
                 sendInfo.put("fileStorageNo", fileStorageNo);
 
                 String jsonObject= new JSONObject(sendInfo).toString();
-                toSession.getAsyncRemote().sendObject(jsonObject);
+                toSession.getBasicRemote().sendText(jsonObject);
             }
 
         }

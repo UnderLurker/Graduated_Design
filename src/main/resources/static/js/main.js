@@ -388,9 +388,11 @@ let vue = new Vue({
                 col = vue.contactSelect.contactActive;
             if (typeof message === 'string') {
                 let JsonObject = JSON.parse(message);
+                if(addFriendInfo(JsonObject)) return;
                 JsonObject.time = formatDate(JsonObject.time, false);
                 this.contact[row][col].chatInfo.push(JsonObject);
             } else {
+                if(addFriendInfo(message)) return;
                 message.time = formatDate(message.time, true);
                 this.contact[row][col].chatInfo.push(message);
             }
@@ -517,10 +519,11 @@ let vue = new Vue({
             sendPost('/addContact/'+getCookie('id'),{
                 'id':contact.id,
                 'headportrait':headportrait,
+                'nickname':contact.nickname,
             },{
                 'Content-Type': "application/json;charset=UTF-8",
             },(msg)=>{
-                console.log(msg.data);
+                // $('#addfriend-info').removeClass('add-hint-unactive').addClass('add-hint-active');
             })
         }
     },
@@ -547,6 +550,23 @@ function getCookie(name) {
  */
 function phoneStyle(phone){
     return '+86 ' + phone.slice(0, 3) + ' ' + phone.slice(3, 7) + ' ' + phone.slice(7);
+}
+/**
+ * 新添加好友的提示
+ * @param {object} msg 
+ * @returns msg是否是添加好友信息
+ */
+function addFriendInfo(msg){
+    if(msg.friend){
+        $('#addfriend-frame img').attr('src','/headportrait/'+msg.headportrait);
+        $('hint-info').text(msg.nickname+' 想要添加您为好友');
+        $('#addfriend-info').removeClass('add-hint-unactive').addClass('add-hint-active');
+        setTimeout(()=>{
+            $('#addfriend-info').removeClass('add-hint-active').addClass('add-hint-unactive');
+        },6000);
+        return true;
+    }
+    return false;
 }
 
 function Contact(contactId, headPortrait, nickname, doNotDisturb, phone, index, chatInfo,misTiming) {

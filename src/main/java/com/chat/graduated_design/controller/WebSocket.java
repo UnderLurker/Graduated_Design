@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.chat.graduated_design.controller.code.ServerEncoder;
 import org.springframework.boot.json.JsonParseException;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -39,12 +38,8 @@ public class WebSocket {
     private static CopyOnWriteArraySet<WebSocket> webSocketSet = new CopyOnWriteArraySet<WebSocket>();
     //用来记录id和该session进行绑定
     private static Map<Integer, Session> map = new HashMap<Integer, Session>();
-    //与某个客户端的连接会话，需要通过它来给客户端发送数据
-    private Session session;
-    //用户id
-    private Integer userid;
     //获取全局容器
-    private ApplicationContext applicationContext;
+    // private ApplicationContext applicationContext;
 
     private chatInfoServiceImpl chatInfoService;
 
@@ -65,14 +60,12 @@ public class WebSocket {
 
         User user = (User) httpSession.getAttribute("user");
 
-        this.applicationContext = applicationContext;
-        this.session = session;
-        this.userid=user.getId();
+        // this.applicationContext = applicationContext;
         this.chatInfoService = (chatInfoServiceImpl) applicationContext.getBean("chatInfoServiceImpl");
         this.contactService=(contactServiceImpl) applicationContext.getBean("contactServiceImpl");
 
         //绑定username与session
-        map.put(userid, session);
+        map.put(user.getId(), session);
 
         webSocketSet.add(this);     //加入set中
 
@@ -157,17 +150,6 @@ public class WebSocket {
     @OnError
     public void onError(Session session, Throwable error) {
         error.printStackTrace();
-    }
-
-    /**
-     * 群发自定义消息
-     */
-    public void broadcast(String message) {
-        for (WebSocket item : webSocketSet) {
-
-            //异步发送消息.
-            item.session.getAsyncRemote().sendText(message);
-        }
     }
 
     public Date CSTToGMT(Date CSTTime){

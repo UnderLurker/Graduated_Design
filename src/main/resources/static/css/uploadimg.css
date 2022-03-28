@@ -262,3 +262,51 @@
     border-radius: 50%;
     background-color: aqua;
 }
+#addfriend-info{
+    position: absolute;
+    transition: all ease .5s;
+    width: 20rem;
+    height: 4rem;
+    background-color: white;
+    left: 50%;
+    transform: translateX(-50%);
+    display: block;
+    border-radius: 6px;
+}
+.add-hint-unactive{
+    top: -4.3rem;
+    opacity: 0;
+}
+.add-hint-active{
+    top: 5px;
+    opacity: 1;
+}
+#addfriend-info .ion-icon-center{
+    transition: all ease .25s;
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+#addfriend-info .ion-icon-center:hover{
+    background-color: whitesmoke;
+    transform: rotate(180deg);
+    border-radius: 0 2px 2px grey;
+}
+#addfriend-frame{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+#addfriend-frame>div{
+    margin: 0 1rem;
+}
+#hint-info{
+    word-wrap: break-word;
+    max-width: 10rem;
+    max-height: 3rem;
+    overflow: hidden;
+    font-size: 17px;
+}
