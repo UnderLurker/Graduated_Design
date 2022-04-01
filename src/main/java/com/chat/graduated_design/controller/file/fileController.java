@@ -19,7 +19,6 @@ import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
-import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,7 +31,6 @@ import javax.websocket.Session;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
@@ -96,8 +94,7 @@ public class fileController {
         //看数据库中是否有头像信息
         //如果有就更新，否则添加
         QueryWrapper<FileStorage> fileStorageQueryWrapper=new QueryWrapper<>();
-        fileStorageQueryWrapper.eq("Id",id)
-                                .eq("folder",fileServiceImpl.HEAD_PORTRAIT_PATH);
+        fileStorageQueryWrapper.eq("Id",id).eq("folder",fileServiceImpl.HEAD_PORTRAIT_PATH);
         FileStorage queryFileStorage=fileDataService.getOne(fileStorageQueryWrapper);
         if(queryFileStorage!=null){
             fileService.deleteFile(queryFileStorage.getUuid(),fileServiceImpl.HEAD_PORTRAIT_PATH);
@@ -143,13 +140,8 @@ public class fileController {
             Integer chatNo=info.getChatNo();
 
             //获得存储视频封面的图片
-            String root=null;
-            try {
-                root = ResourceUtils.getURL("classpath:static/image").getPath().replace("%20", " ").substring(1);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            VideoUtil videoUtil=new VideoUtil(root+"/"+suffix,fileService.getPath(fileServiceImpl.THUMBNAIL_PATH));
+            String root=fileServiceImpl.getClassPath();
+            VideoUtil videoUtil=new VideoUtil(root+suffix,fileService.getPath(fileServiceImpl.THUMBNAIL_PATH));
             String thumbnail=videoUtil.CreateJPGByFileType(fileType, fileUuid);
 
             if(thumbnail!=null){

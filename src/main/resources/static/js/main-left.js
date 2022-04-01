@@ -17,7 +17,6 @@ function searchFrameOnClick(e) {
             slider.style.width = width + "px";
             slider.style.left = left - vue.frame.first_left + "px";
 
-            let contactList = document.getElementsByClassName('contact-list');
             let searchResultList = document.getElementsByClassName('search-result-list');
             searchResultList[searchFrameActive].style.width = "0";
             searchResultList[searchFrameActive].style.opacity = "0";

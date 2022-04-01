@@ -149,4 +149,16 @@ public class contactServiceImpl extends ServiceImpl<contactMapper, contact> impl
         return result;
     }
 
+    /**
+     * 删除联系人列表
+     * @param userId
+     * @param contactId
+     */
+    public void removeContact(Integer userId,Integer contactId){
+        QueryWrapper<contact> query=new QueryWrapper<>();
+        query.eq("userid", userId).eq("contactid", contactId)
+            .or()
+            .eq("userid", contactId).eq("contactid", userId);
+        this.remove(query);
+    }
 }

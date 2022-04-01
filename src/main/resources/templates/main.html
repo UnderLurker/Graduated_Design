@@ -20,6 +20,7 @@
     <script src="./js/riff.js"></script>
     <script src="./js/Jcrop.js"></script>
     <script src="./js/emoji.min.js"></script>
+    <script src="./js/contact.js"></script>
     <title>首页</title>
 </head>
 
@@ -104,18 +105,21 @@
                                     <div class="first-info">
                                         <h3 style="margin-right: 1rem;">{{item.nickname}}</h3>
                                         <!--                                        <ion-icon v-if="item.doNotDisturb==" name="notifications-outline"></ion-icon>-->
-                                        <ion-icon v-if="item.doNotDisturb" name="notifications-off-outline"></ion-icon>
+                                        <ion-icon v-if="item.misTiming!=null&&item.doNotDisturb" name="notifications-off-outline"></ion-icon>
                                     </div>
-                                    <div class="second-info">hello world!!!fhdasfhiuasdhifuhsadiufhisuadhf</div>
+                                    <div v-if="item.misTiming!==null" class="second-info">hello world!!!fhdasfhiuasdhifuhsadiufhisuadhf</div>
                                 </div>
                             </div>
-                            <div class="hint">
+                            <div v-if="item.misTiming!==null" class="hint">
                                 <div class="hint-time">11:10</div>
                                 <div class="unread-num-frame">
                                     <div class="unread-num" v-if="item.unread!==0">
                                         {{item.unread}}
                                     </div>
                                 </div>
+                            </div>
+                            <div v-else="item.misTiming!==null" class="ion-icon-center contact-add" @click="userAddContact(item)">
+                                <ion-icon name="person-add-outline"></ion-icon>
                             </div>
                         </div>
                     </div>
@@ -662,7 +666,7 @@
                         </div>
                         <span>编辑联系人信息</span>
                     </div>
-                    <div class="edit-items">
+                    <div class="edit-items" @click="deleteContact">
                         <div>
                             <ion-icon name="trash-outline"></ion-icon>
                         </div>
@@ -871,7 +875,7 @@
                 <img src="./image/1.jpeg" width="100%" height="100%" alt="">
             </div>
             <p id="hint-info"></p>
-            <div class="ion-icon-center">
+            <div class="ion-icon-center" @click="userAddContact">
                 <ion-icon name="add-circle-outline"></ion-icon>
             </div>
         </div>

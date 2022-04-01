@@ -11,7 +11,13 @@ function connectWebSocket() {
     //连接发生错误的回调方法
     websocket.onerror = function () {
         setMessageInnerHTML("error");
-    };
+        let timeId=setInterval(()=>{
+            websocket.open();
+            if(websocket.readyState===1){
+                clearInterval(timeId);
+            }
+        },700);
+    }
     //连接成功建立的回调方法
     websocket.onopen = function (event) {
         setMessageInnerHTML("Loc MSG: 建立连接");

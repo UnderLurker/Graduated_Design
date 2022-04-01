@@ -40,13 +40,8 @@ public class fileServiceImpl implements fileService {
             } catch (FileNotFoundException e) {
                 //若此地址下没有该文件夹，新建
                 String folderName=ymlPath[index].split("/")[ymlPath[index].split("/").length-1];
-                String root=null;
-                try {
-                    root=ResourceUtils.getURL("classpath:static/image").getPath().replace("%20", " ").substring(1);
-                } catch (FileNotFoundException ex) {
-                    ex.printStackTrace();
-                }
-                root+="/"+folderName;
+                String root=fileServiceImpl.getClassPath();
+                root+=folderName;
                 File folder=new File(root);
                 if(!folder.exists()){
                     folder.mkdir();
@@ -55,6 +50,20 @@ public class fileServiceImpl implements fileService {
                 // e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * 
+     * @return 以/结尾的classpath绝对路径
+     */
+    public static String getClassPath(){
+        String root="";
+        try {
+            root=ResourceUtils.getURL("classpath:static/image/").getPath().replace("%20", " ").substring(1);
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        }
+        return root;
     }
 
     /**
@@ -118,12 +127,7 @@ public class fileServiceImpl implements fileService {
 
     @Override
     public Map<String,List<String>> storeFiles(MultipartFile[] files){
-        String rootPath="";
-        try {
-            rootPath=ResourceUtils.getURL("classpath:static/image/").getPath().replace("%20"," ").substring(1);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        String rootPath=fileServiceImpl.getClassPath();
         Map<String,List<String>> result=new HashMap<>();
         result.put("path",new LinkedList<>());
         result.put("uuid",new LinkedList<>());
@@ -156,6 +160,12 @@ public class fileServiceImpl implements fileService {
     @Override
     public void deleteFile(String uuid, Integer target) {
         File file=new File(this.path[target]+"/"+uuid);
+        file.delete();
+    }
+
+    @Override
+    public void deleteFile(String path){
+        File file=new File(path);
         file.delete();
     }
 

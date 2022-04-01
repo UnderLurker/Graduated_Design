@@ -95,9 +95,6 @@
         if(type.equals("video")){
             return grabberVideoFramer(videoFileName);
         }
-        else if(type.equals("image")){
-
-        }
         return null;
     }
 

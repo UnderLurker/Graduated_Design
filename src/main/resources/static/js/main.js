@@ -32,10 +32,10 @@ function sendGet(url, param, headers, callback) {
 }
 
 //发送消息
-function send(fromUser, toUser, cotent, file) {
+function send(fromUser, toUser, content, file) {
     //获取输入的文本信息进行发送
     const chatMsg = {
-        content: cotent,
+        content: content,
         dest: toUser,
         origin: fromUser,
         file: file
@@ -144,7 +144,7 @@ let vue = new Vue({
             first_left: 36,
         },
         contactSelect: {
-            frameActive: -1,
+            frameActive: 0,
             contactActive: -1,
         },
         sendInfo: {
@@ -234,6 +234,47 @@ let vue = new Vue({
                     }
                 });
                 $('#media').val('');
+            }
+            else if(vue.messagebox.option === 4){
+                //删除联系人
+                let id=this.currentChat.contactInfo.contactid;
+                sendPost('/contact/delete/'+getCookie('id'),{
+                    'id':id
+                }, {
+                    'Content-Type': "application/json;charset=UTF-8",
+                },(msg)=>{
+                    let response=msg.data;
+                    if(response.status===200){
+                        for(let i=0;i<this.contact.length-1;i++){
+                            for(let j=0;j<this.contact[i].length;j++){
+                                let person=this.contact[i][j];
+                                if(person.contactid===response.obj.id){
+                                    this.contact[i].splice(this.contact[i].indexOf(person),1);
+                                }
+                            }
+                        }
+                        this.currentChat.contactInfo={};
+                        $('.ordinary:eq(0)').css({
+                            'width': '0',
+                            'opacity': '0'
+                        });
+                        $('.right-info:eq(0)').css({
+                            'width': '0',
+                            'opacity': '0'
+                        });
+                        //隐藏提示词
+                        $('.reminder:eq(0)').css('display', 'block');
+                        //显示聊天主界面
+                        $('.top:eq(0)').css('height', '0');
+                        //显示聊天输入框
+                        $('.input-frame:eq(0)').css('height', '0');
+                        Vue.set(this.messagebox, 'option', 1);
+                        Vue.set(this.messagebox, 'title', "删除联系人");
+                        Vue.set(this.messagebox, 'msg', "已成功删除 "+response.obj.nickname);
+                        $('.create-chat-folder').css('display', 'block');
+                        $('.cancel').css('display', 'none');
+                    }
+                });
             }
         },
         searchSubmit() {
@@ -345,6 +386,7 @@ let vue = new Vue({
             this.frame.frameActive = index;
         },
         contactClick(index, e) {
+            if (this.frame.frameActive===(this.contact.length-1)) return;
             if (this.contactSelect.frameActive === this.frame.frameActive && this.contactSelect.contactActive === index) return;
             if (this.contactSelect.contactActive >= 0) {
                 $('.contact-list:eq(' + this.contactSelect.frameActive + ') ' + '.contact-items:eq(' + this.contactSelect.contactActive + ')').removeClass('active');
@@ -522,9 +564,33 @@ let vue = new Vue({
                 'nickname':contact.nickname,
             },{
                 'Content-Type': "application/json;charset=UTF-8",
+            },null);
+        },
+        userAddContact(person){
+            let userheadportrait=this.userInfo.headportrait.split('/')[this.userInfo.headportrait.split('/').length-1];
+            let contactheadportrait=person.headportrait.split('/')[person.headportrait.split('/').length-1];
+            //用户确认添加联系人
+            sendPost('/'+getCookie('id')+'/userAddContact',{
+                'contactId':person.contactid,
+                'contactHeadportrait':contactheadportrait,
+                'userHeadportrait':userheadportrait,
+            },{
+                'Content-Type': "application/json;charset=UTF-8",
             },(msg)=>{
-                // $('#addfriend-info').removeClass('add-hint-unactive').addClass('add-hint-active');
-            })
+                if(msg.data.status===200){
+                    this.contact[this.contact.length-1].splice(this.contact[this.contact.length-1].indexOf(person),1);
+                    let response=msg.data.obj;
+                    vueAddContact(response);
+                }
+            });
+        },
+        deleteContact(){
+            let nickname=this.currentChat.contactInfo.nickname;
+            Vue.set(this.messagebox, 'option', 4);
+            Vue.set(this.messagebox, 'title', "删除联系人");
+            Vue.set(this.messagebox, 'msg', "您确定删除 "+nickname+" 吗？");
+            $('.create-chat-folder').css('display', 'block');
+            $('.cancel').css('display', 'block');
         }
     },
     components: {},
@@ -559,17 +625,36 @@ function phoneStyle(phone){
 function addFriendInfo(msg){
     if(msg.friend){
         $('#addfriend-frame img').attr('src','/headportrait/'+msg.headportrait);
-        $('hint-info').text(msg.nickname+' 想要添加您为好友');
+        $('#hint-info').text(msg.nickname+' 想要添加您为好友');
         $('#addfriend-info').removeClass('add-hint-unactive').addClass('add-hint-active');
         setTimeout(()=>{
             $('#addfriend-info').removeClass('add-hint-active').addClass('add-hint-unactive');
+            vue.contact[vue.contact.length-1].push(new Contact(msg.id,'/headportrait/'+msg.headportrait,msg.nickname,false,msg.phone,1,null,null));
         },6000);
         return true;
+    }
+    else if(msg.sure){
+        vueAddContact(msg);
     }
     return false;
 }
 
-function Contact(contactId, headPortrait, nickname, doNotDisturb, phone, index, chatInfo,misTiming) {
+function vueAddContact(contact){
+    let img = null;
+    if (contact.headportrait !== '1.jpeg') {
+        img = '/headportrait/' + contact.headportrait;
+    }
+    else{
+        img = './image/1.jpeg';
+    }
+    vue.contact[0].push(new Contact(contact.contactid,
+        img,
+        contact.nickname,
+        false,contact.phone,0,null,
+        contact.misTiming));
+}
+
+function Contact(contactId, headPortrait, nickname, doNotDisturb, phone, index, chatInfo, misTiming) {
     this.contactid = contactId;
     this.headportrait = headPortrait;
     this.nickname = nickname;
@@ -610,22 +695,22 @@ function Contact(contactId, headPortrait, nickname, doNotDisturb, phone, index, 
         vue.contactClassify = msg.data.obj.folder;
 
         for (let folder in vue.contactClassify) {
-            vue.contact.push([]);
+            vue.contact.push(new Array());
         }
 
         //遍历服务器发送回的数据
         //将数据分类存储
-        for (let p in msg.data.obj.contact) {
-            let person = msg.data.obj.contact[p];
+        for (let person of msg.data.obj.contact) {
             let index = 0;
             for (let name of vue.contactClassify) {
                 if (person.folder === name)
                     break;
                 index++;
             }
+            if(person.folder===null) index--;
             let img = null;
             if (person.headportrait == null) {
-                img = './image/1.jpeg';
+                img = '/image/1.jpeg';
             } else {
                 img = '/headportrait/' + person.headportrait;
             }

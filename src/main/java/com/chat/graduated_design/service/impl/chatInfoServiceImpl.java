@@ -1,5 +1,6 @@
 package com.chat.graduated_design.service.impl;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -20,27 +21,6 @@ public class chatInfoServiceImpl extends ServiceImpl<chatInfoMapper, chatInfo> i
 
     /**
      * 
-     * @param info 需要存储的实体信息
-     * @return 存储的信息的主键值
-     */
-    // public Integer saveInfo(chatInfo info){
-    //     this.save(info);
-
-    //     Map<String,Object> query=new HashMap<>();
-    //     query.put("read_flag", info.isReadFlag());
-    //     query.put("content", info.getContent());
-    //     query.put("time", info.getTime());
-    //     query.put("dest", info.getDest());
-    //     query.put("origin", info.getOrigin());
-    //     query.put("file", info.isReadFlag());
-
-    //     List<chatInfo> queryResult=this.listByMap(query);
-
-    //     return queryResult.get(0).getChatNo();
-    // }
-
-    /**
-     * 
      * @param id 用户Id
      * @return 接收或者发送为id的信息列表
      */
@@ -50,4 +30,35 @@ public class chatInfoServiceImpl extends ServiceImpl<chatInfoMapper, chatInfo> i
         return this.list(queryInfo);
     }
 
+    /**
+     * 删除聊天记录(不能删除物理存储的文件)
+     * @param userId
+     * @param contactId
+     */
+    public void removeChatInfo(Integer userId,Integer contactId){
+        QueryWrapper<chatInfo> query=new QueryWrapper<>();
+        query.eq("dest", userId).eq("origin", contactId)
+            .or()
+            .eq("dest", contactId).eq("origin", userId);
+        this.remove(query);
+    }
+
+    /**
+     * 获取聊天所发送的文件的主键
+     * @param userId
+     * @param contactId
+     * @return
+     */
+    public List<Integer> getFileId(Integer userId,Integer contactId){
+        QueryWrapper<chatInfo> query=new QueryWrapper<>();
+        query.eq("dest", userId).eq("origin", contactId).eq("file", true)
+            .or()
+            .eq("dest", contactId).eq("origin", userId).eq("file", true);
+        List<chatInfo> list=this.list(query);
+        List<Integer> result=new LinkedList<>();
+        for(chatInfo info : list){
+            result.add(info.getChatNo());
+        }
+        return result;
+    }
 }

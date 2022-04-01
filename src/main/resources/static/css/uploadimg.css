@@ -287,11 +287,13 @@
     height: 3rem;
     font-size: 1.5rem;
     cursor: pointer;
+    border-radius: 5px;
 }
 #addfriend-info .ion-icon-center:hover{
+    border-radius: 50%;
     background-color: whitesmoke;
     transform: rotate(180deg);
-    border-radius: 0 2px 2px grey;
+    box-shadow: 0 0 2px grey;
 }
 #addfriend-frame{
     width: 100%;

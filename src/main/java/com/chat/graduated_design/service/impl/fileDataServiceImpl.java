@@ -59,25 +59,36 @@ public class fileDataServiceImpl  extends ServiceImpl<fileMapper, FileStorage> i
         return this.list(query);
     }
 
-    // /**
-    //  * 保存信息到数据库并返回生成的主键值
-    //  * @param fileInfo FileStorage实体
-    //  * @return 存储到数据库中的主键值
-    //  */
-    // public Integer saveFile(FileStorage fileInfo){
-    //     this.save(fileInfo);
+    /**
+     * 查询用户存储文件的位置
+     * @param userId
+     * @param contactId
+     * @return key:no value:absolute_path
+     */
+    public Map<Integer,String> getFileInfo(Integer userId,Integer contactId){
+        Map<Integer,String> result=new HashMap<>();
+        QueryWrapper<FileStorage> query=new QueryWrapper<>();
+        query.eq("Id", userId).eq("receive_id", contactId)
+            .or()
+            .eq("Id", contactId).eq("receive_id", userId);
+        List<FileStorage> files=this.list(query);
+        for(FileStorage file : files){
+            String root=fileServiceImpl.getClassPath()+file.getPath()+"/"+file.getUuid();
+            result.put(file.getNo(), root);
+        }
+        return result;
+    }
 
-    //     Map<String,Object> query=new HashMap<>();
-    //     query.put("id", fileInfo.getId());
-    //     query.put("receive_id", fileInfo.getReceiveId());
-    //     query.put("uuid", fileInfo.getUuid());
-    //     query.put("originname", fileInfo.getOriginname());
-    //     query.put("datetime", fileInfo.getDatetime());
-    //     query.put("type", fileInfo.getType());
-    //     query.put("folder", fileInfo.getFolder());
-    //     query.put("path", fileInfo.getPath());
-
-    //     List<FileStorage> queryResult=this.listByMap(query);
-    //     return queryResult.get(0).getNo();
-    // }
+    /**
+     * 删除信息
+     * @param userId
+     * @param contactId
+     */
+    public void removeFileStorage(Integer userId,Integer contactId){
+        QueryWrapper<FileStorage> query=new QueryWrapper<>();
+        query.eq("Id", userId).eq("receive_id", contactId)
+            .or()
+            .eq("Id", contactId).eq("receive_id", userId);
+        this.remove(query);
+    }
 }

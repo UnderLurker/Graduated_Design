@@ -10,6 +10,8 @@ import com.chat.graduated_design.util.DateUtil;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.chat.graduated_design.controller.code.ServerEncoder;
+
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.boot.json.JsonParseException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -163,5 +165,14 @@ public class WebSocket {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public static void sendObject(Integer destId,Map<String,Object> info) throws IOException{
+        WebSocket webSocket=new WebSocket();
+        Session toSession=webSocket.getSessionById(destId);
+        if(toSession!=null&&toSession.isOpen()){
+            String jsonObject=new JSONObject(info).toString();
+            toSession.getBasicRemote().sendText(jsonObject);
+        }
     }
 }

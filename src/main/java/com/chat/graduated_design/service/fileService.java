@@ -36,5 +36,11 @@ public interface fileService {
      */
     public void deleteFile(String uuid,Integer target);
 
+    /**
+     * 删除文件
+     * @param path 文件的绝对路径
+     */
+    public void deleteFile(String path);
+
 }
 
