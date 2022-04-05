@@ -1,10 +1,13 @@
 package com.chat.graduated_design.service.impl;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.chat.graduated_design.entity.file.FileStorage;
 import com.chat.graduated_design.entity.file.videoThumbnail;
 import com.chat.graduated_design.mapper.videoThumbnailMapper;
 import com.chat.graduated_design.service.videoThumbnailService;
@@ -36,5 +39,21 @@ public class videoThumbnailServiceImpl extends ServiceImpl<videoThumbnailMapper,
             thumbnailMap.put(item.getChatNo(), info);
         }
         return thumbnailMap;
+    }
+
+    /**
+     * 查找所有符合fileStorageNos的实体
+     * @param fileStorageNos
+     * @return
+     */
+    public List<videoThumbnail> listByFileStorageNo(List<Integer> fileStorageNos){
+        List<videoThumbnail> result=new LinkedList<>();
+        for(Integer no : fileStorageNos){
+            QueryWrapper<videoThumbnail> query=new QueryWrapper<>();
+            query.eq("file_storage_no", no);
+            videoThumbnail entity=this.getOne(query);
+            result.add(entity);
+        }
+        return result;
     }
 }

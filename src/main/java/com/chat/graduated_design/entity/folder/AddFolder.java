@@ -17,4 +17,5 @@ public class AddFolder {
     private Integer contactid;
     private String headportrait;
     private boolean doNotDisturb;
+    private String nickname;
 }

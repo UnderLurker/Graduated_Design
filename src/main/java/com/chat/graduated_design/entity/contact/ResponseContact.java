@@ -29,7 +29,8 @@ public class ResponseContact extends contact{
                 person.getFolder(),
                 person.getHeadportrait(),
                 person.isDoNotDisturb(),
-                person.getUnread());
+                person.getUnread(),
+                person.getName());
         this.nickname=nickname;
         this.phone=phone;
         this.chatInfoList=chatInfoList;

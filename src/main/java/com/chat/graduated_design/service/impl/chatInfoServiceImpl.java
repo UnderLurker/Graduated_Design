@@ -29,7 +29,6 @@ public class chatInfoServiceImpl extends ServiceImpl<chatInfoMapper, chatInfo> i
         queryInfo.eq("dest",id).or().eq("origin",id);
         return this.list(queryInfo);
     }
-
     /**
      * 删除聊天记录(不能删除物理存储的文件)
      * @param userId
@@ -41,6 +40,10 @@ public class chatInfoServiceImpl extends ServiceImpl<chatInfoMapper, chatInfo> i
             .or()
             .eq("dest", contactId).eq("origin", userId);
         this.remove(query);
+    }
+
+    public String getSizeByField(Integer no){
+        return this.getById(no).getSize();
     }
 
     /**

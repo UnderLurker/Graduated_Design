@@ -53,9 +53,11 @@ public class fileDataServiceImpl  extends ServiceImpl<fileMapper, FileStorage> i
      * @param userId
      * @return
      */
-    public List<FileStorage> selectById(Integer userId){
+    public List<FileStorage> selectById(Integer userId,String content){
         QueryWrapper<FileStorage> query=new QueryWrapper<>();
-        query.eq("Id", userId).isNotNull("receive_id").or().eq("receive_id", userId);
+        query.eq("Id", userId).isNotNull("receive_id").like("originname", content)
+                .or()
+                .eq("receive_id", userId).like("originname", content);
         return this.list(query);
     }
 

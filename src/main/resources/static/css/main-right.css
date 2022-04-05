@@ -37,8 +37,16 @@
     overflow: hidden;
 }
 .file-info-items{
+    font-size: .3rem;
     display: flex;
+    align-items: center;
     cursor: pointer;
+}
+.file-info-items h4{
+    font-size: 1rem;
+}
+.search-result-list .file-info-items:hover{
+    background-color: transparent;
 }
 .file-info-items:hover{
     background-color: #bbb;
@@ -223,4 +231,11 @@
 .edit-items:hover,
 .statistics-items:hover{
     background-color: #bbb;
+}
+.up-load,
+.create-chat-folder,
+.video-player,
+.photo-player,
+#addfriend-info{
+    z-index: 2;
 }

@@ -39,7 +39,7 @@ body{
     border: 0.1rem solid #dfe0e4;
     border-radius: 0.5rem;
     box-shadow: 0.1rem 0.1rem 0.3rem rgba(128, 128, 128, 0.3);
-    transition: all.5s ease;
+    transition: all .5s ease;
 }
 
 .warning{

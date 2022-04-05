@@ -104,7 +104,6 @@
                                 <div class="contact-info">
                                     <div class="first-info">
                                         <h3 style="margin-right: 1rem;">{{item.nickname}}</h3>
-                                        <!--                                        <ion-icon v-if="item.doNotDisturb==" name="notifications-outline"></ion-icon>-->
                                         <ion-icon v-if="item.misTiming!=null&&item.doNotDisturb" name="notifications-off-outline"></ion-icon>
                                     </div>
                                     <div v-if="item.misTiming!==null" class="second-info">hello world!!!fhdasfhiuasdhifuhsadiufhisuadhf</div>
@@ -123,8 +122,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="search-result-list" v-for="(search,ind) in searchResult" :key="ind">
-                        <div class="search-result-items" v-for="(item,index) in search" :key="index">
+                    <div class="search-result-list">
+                        <div class="search-result-items" v-for="(item,index) in searchResult.user" :key="index">
                             <div class="portrait small-3" style="margin-left: 2rem;margin-right: 2rem;">
                                 <img :src="item.headportrait" alt="头像">
                             </div>
@@ -138,6 +137,96 @@
                             </div>
                             <div class="ion-icon-center contact-add" @click="addContact(item)">
                                 <ion-icon name="person-add-outline"></ion-icon>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="search-result-list">
+                        <div class="search-result-items" v-for="(item,index) in searchResult.file" :key="index">
+                            <div class="file-info-items">
+                                <div class="file-info-items-img">
+                                    <span>file</span>
+                                </div>
+                                <div class="file-info-items-introduce">
+                                    <div class="file-info-items-title">
+                                        <h4>{{item.originName}}</h4>
+                                    </div>
+                                    <div class="file-info-items-size">
+                                        <span>{{item.size}}</span>
+                                    </div>
+                                    <div class="file-info-items-time">
+                                        <span>{{item.time.year+'/'+item.time.mouth+'/'+item.time.day}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ion-icon-center contact-add" @click="download(item.fileStorageNo,item.originName)">
+                                <ion-icon name="cloud-download-outline"></ion-icon>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="search-result-list">
+                        <div class="search-result-items" v-for="(item,index) in searchResult.photo" :key="index">
+                            <div class="file-info-items" @click="photoPreview(item.fileStorageNo,item.originName)">
+                                <div class="file-info-items-img">
+                                    <img :src="'/photo/dim/'+item.fileStorageNo" height="100%" alt="">
+                                </div>
+                                <div class="file-info-items-introduce">
+                                    <div class="file-info-items-title">
+                                        <h4>{{item.originName}}</h4>
+                                    </div>
+                                    <div class="file-info-items-size">
+                                        <span>{{item.size}}</span>
+                                    </div>
+                                    <div class="file-info-items-time">
+                                        <span>{{item.time.year+'/'+item.time.mouth+'/'+item.time.day+' '+item.time.hour+':'+item.time.minute}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ion-icon-center contact-add" @click="download(item.fileStorageNo,item.originName)">
+                                <ion-icon name="cloud-download-outline"></ion-icon>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="search-result-list">
+                        <div class="search-result-items" v-for="(item,index) in searchResult.video" :key="index">
+                            <div class="video-info-items" @click="videoPreview(item.fileStorageNo,'/thumbnail/'+item.uuid)">
+                                <div class="duration">
+                                    <div>
+                                        <ion-icon name="caret-forward-outline"></ion-icon>
+                                        <span>12:39</span>
+                                    </div>
+                                </div>
+                                <img :src="'/thumbnail/'+item.uuid" width="100%" height="100%" alt="">
+                            </div>
+                            <div class="file-info-items-introduce" style="font-size: 1rem;">
+                                <div class="file-info-items-title">
+                                    <h4>{{item.originName}}</h4>
+                                </div>
+                                <div class="file-info-items-size">
+                                    <span>{{item.size}}</span>
+                                </div>
+                                <div class="file-info-items-time">
+                                    <span>{{item.time.year+'/'+item.time.mouth+'/'+item.time.day}}</span>
+                                </div>
+                            </div>
+                            <div class="ion-icon-center contact-add" @click="download(item.fileStorageNo,item.originName)">
+                                <ion-icon name="cloud-download-outline"></ion-icon>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="search-result-list">
+                        <div class="search-result-items" v-for="(item,index) in searchResult.music" :key="index">
+                            <div class="music-info-items" @click="audioPreview(item.fileStorageNo,item.originName)">
+                                <div class="music-icon">
+                                    <ion-icon name="caret-forward-outline"></ion-icon>
+                                </div>
+                                <div class="music-info-introduce">
+                                    <h5>{{item.originName}}</h5>
+                                    <span>时长</span>
+                                    <span>{{item.size}}</span>
+                                </div>
+                            </div>
+                            <div class="ion-icon-center contact-add" @click="download(item.fileStorageNo,item.originName)">
+                                <ion-icon name="cloud-download-outline"></ion-icon>
                             </div>
                         </div>
                     </div>
@@ -660,11 +749,11 @@
                         </div>
                         <span>分享联系人信息</span>
                     </div>
-                    <div class="edit-items">
+                    <div class="edit-items" id="editContactNickName">
                         <div>
                             <ion-icon name="options-outline"></ion-icon>
                         </div>
-                        <span>编辑联系人信息</span>
+                        <span>编辑联系人昵称</span>
                     </div>
                     <div class="edit-items" @click="deleteContact">
                         <div>
@@ -672,11 +761,11 @@
                         </div>
                         <span>删除联系人</span>
                     </div>
-                    <div class="edit-items">
+                    <div class="edit-items" @click="deleteChatInfo">
                         <div>
                             <ion-icon name="trash-outline"></ion-icon>
                         </div>
-                        <span>删除聊天内容</span>
+                        <span>删除聊天记录</span>
                     </div>
                     <div class="edit-items">
                         <div>
@@ -880,6 +969,24 @@
             </div>
         </div>
     </div>
+    <div id="reset-contact-name">
+        <div class="img-frame shadow" style="width: 200px;">
+            <h3>更改联系人昵称</h3>
+            <div class="input-group" style="margin: 1rem 0;">
+                <input class="input-style" type="text" name="resetName" id="resetName" maxLength="50">
+                <div class="underline"></div>
+                <label for="resetName">新的昵称</label>
+            </div>
+            <div class="options">
+                <div class="cancel" @click="cancelOption">
+                    取消
+                </div>
+                <div class="ok" id="submitResetName">
+                    确定
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
@@ -896,6 +1003,7 @@
 <script src="./js/file.js"></script>
 <script src="./js/video.js"></script>
 <script src="./js/photo.js"></script>
+<script src="./js/contact.js"></script>
 <script>
 </script>
 </body>

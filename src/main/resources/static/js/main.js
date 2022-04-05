@@ -2,6 +2,8 @@ let statisticsActive = -1;
 let websocket = null; //websocket连接服务器使用
 let emojiActive = 0;
 let activeLeft;
+let sendByJson= { 'Content-Type': "application/json;charset=UTF-8"};
+let sendByForm={ 'Content-Type': 'multipart/form-data' };
 
 function sendPost(url, data, headers, callback) {
     axios({
@@ -132,7 +134,6 @@ let vue = new Vue({
         },
         searchContent: {
             content: '',
-            classify: 0,
         },
         selected: {
             folderName: '',
@@ -158,9 +159,7 @@ let vue = new Vue({
     },
     methods: {
         changeInfo(e) {
-            sendPost('/changeInfo', this.userInfo, {
-                'Content-Type': "application/json;charset=UTF-8",
-            }, (msg) => {
+            sendPost('/changeInfo', this.userInfo, sendByJson,(msg) => {
                 let response = msg.data;
                 let responseInfo = response.obj;
                 Vue.set(vue.messagebox, 'option', 1);
@@ -182,9 +181,11 @@ let vue = new Vue({
         cancelOption: function () {
             //取消提交联系人分类表单
             $('.create-chat-folder').css('display', 'none');
+            $('#reset-contact-name').css('display', 'none');
             //清空input内容
             $('#newFolderName').val("");
             $('#media').val('');
+            $('#resetName').val('')
         },
         okOption: function () {
             $('.create-chat-folder').css('display', 'none');
@@ -194,9 +195,7 @@ let vue = new Vue({
             } else if (vue.messagebox.option === 2) {
                 //提交新增联系人分类表单
                 sendPost('/folder/put/' + getCookie('id'),
-                    this.selected, {
-                        'Content-Type': "application/json;charset=UTF-8",
-                    }, (msg) => {
+                    this.selected, sendByJson, (msg) => {
                         let response = msg.data;
                         if (response.status === 200) {
                             Vue.set(this.messagebox, 'option', -1);
@@ -225,65 +224,43 @@ let vue = new Vue({
                 for (let file of files) {
                     formData.append('files', file);
                 }
-                sendPost('/uploadMultipleFiles/' + getCookie('id') + '/' + this.currentChat.contactInfo.contactid, formData, {
-                    'Content-Type': 'multipart/form-data',
-                }, (msg) => {
+                sendPost('/uploadMultipleFiles/' + getCookie('id') + '/' + this.currentChat.contactInfo.contactid, formData, sendByForm, (msg) => {
                     let response = msg.data.obj;
                     for (let item of response) {
                         this.putMessage(item);
                     }
                 });
                 $('#media').val('');
-            }
-            else if(vue.messagebox.option === 4){
+            } else if(vue.messagebox.option === 4){
                 //删除联系人
                 let id=this.currentChat.contactInfo.contactid;
                 sendPost('/contact/delete/'+getCookie('id'),{
                     'id':id
-                }, {
-                    'Content-Type': "application/json;charset=UTF-8",
-                },(msg)=>{
+                }, sendByJson,(msg)=>{
                     let response=msg.data;
                     if(response.status===200){
-                        for(let i=0;i<this.contact.length-1;i++){
-                            for(let j=0;j<this.contact[i].length;j++){
-                                let person=this.contact[i][j];
-                                if(person.contactid===response.obj.id){
-                                    this.contact[i].splice(this.contact[i].indexOf(person),1);
-                                }
-                            }
-                        }
-                        this.currentChat.contactInfo={};
-                        $('.ordinary:eq(0)').css({
-                            'width': '0',
-                            'opacity': '0'
-                        });
-                        $('.right-info:eq(0)').css({
-                            'width': '0',
-                            'opacity': '0'
-                        });
-                        //隐藏提示词
-                        $('.reminder:eq(0)').css('display', 'block');
-                        //显示聊天主界面
-                        $('.top:eq(0)').css('height', '0');
-                        //显示聊天输入框
-                        $('.input-frame:eq(0)').css('height', '0');
-                        Vue.set(this.messagebox, 'option', 1);
-                        Vue.set(this.messagebox, 'title', "删除联系人");
-                        Vue.set(this.messagebox, 'msg', "已成功删除 "+response.obj.nickname);
-                        $('.create-chat-folder').css('display', 'block');
-                        $('.cancel').css('display', 'none');
+                        vueDeleteContact(response.obj);
                     }
                 });
+            } else if(vue.messagebox.option === 5){
+                //删除聊天记录
+                // sendPost('/chatInfo/delete/'+getCookie('id'),)
             }
         },
         searchSubmit() {
             if (this.searchContent.content === '') return;
-            this.searchContent.classify=searchFrameActive;
             sendGet('/search/' + getCookie('id'),
                 this.searchContent,null, (msg) => {
                     let data = msg.data.obj;
                     this.searchResult.user = data.user;
+                    formatDateList(data.file);
+                    formatDateList(data.photo);
+                    formatDateList(data.video);
+                    formatDateList(data.music);
+                    this.searchResult.file=data.file;
+                    this.searchResult.photo=data.photo;
+                    this.searchResult.video=data.video;
+                    this.searchResult.music=data.music;
                 });
         },
         clearSearch() {
@@ -431,10 +408,18 @@ let vue = new Vue({
             if (typeof message === 'string') {
                 let JsonObject = JSON.parse(message);
                 if(addFriendInfo(JsonObject)) return;
+                if(JsonObject.deleteContact){
+                    vueDeleteContact(JsonObject);
+                    return;
+                }
                 JsonObject.time = formatDate(JsonObject.time, false);
                 this.contact[row][col].chatInfo.push(JsonObject);
             } else {
                 if(addFriendInfo(message)) return;
+                if(message.deleteContact){
+                    vueDeleteContact(message);
+                    return;
+                }
                 message.time = formatDate(message.time, true);
                 this.contact[row][col].chatInfo.push(message);
             }
@@ -481,10 +466,8 @@ let vue = new Vue({
         upLoadMedia() {
             $('#media').click();
         },
-        download(no) {
-            sendGet('/file/' + no, null, null, (msg) => {
-                console.log(msg);
-            });
+        download(no,filename) {
+            handleExport('/file/' + no, filename);
         },
         audioPreview(fileStorageNo, filename) {
             // showMedia();
@@ -562,9 +545,15 @@ let vue = new Vue({
                 'id':contact.id,
                 'headportrait':headportrait,
                 'nickname':contact.nickname,
-            },{
-                'Content-Type': "application/json;charset=UTF-8",
-            },null);
+            },sendByJson,(msg)=>{
+                if(msg.data.status===200){
+                    Vue.set(vue.messagebox, 'option', -1);
+                    Vue.set(vue.messagebox, 'title', "发送好友请求");
+                    Vue.set(vue.messagebox, 'msg', contact.nickname+" 好友请求成功");
+                    $('.create-chat-folder').css('display', 'block');
+                    $('.cancel').css('display', 'none');
+                }
+            });
         },
         userAddContact(person){
             let userheadportrait=this.userInfo.headportrait.split('/')[this.userInfo.headportrait.split('/').length-1];
@@ -574,9 +563,7 @@ let vue = new Vue({
                 'contactId':person.contactid,
                 'contactHeadportrait':contactheadportrait,
                 'userHeadportrait':userheadportrait,
-            },{
-                'Content-Type': "application/json;charset=UTF-8",
-            },(msg)=>{
+            },sendByJson,(msg)=>{
                 if(msg.data.status===200){
                     this.contact[this.contact.length-1].splice(this.contact[this.contact.length-1].indexOf(person),1);
                     let response=msg.data.obj;
@@ -591,7 +578,15 @@ let vue = new Vue({
             Vue.set(this.messagebox, 'msg', "您确定删除 "+nickname+" 吗？");
             $('.create-chat-folder').css('display', 'block');
             $('.cancel').css('display', 'block');
-        }
+        },
+        deleteChatInfo(){
+            let nickname=this.currentChat.contactInfo.nickname;
+            Vue.set(this.messagebox, 'option', 5);
+            Vue.set(this.messagebox, 'title', "删除聊天记录");
+            Vue.set(this.messagebox, 'msg', "您确定删除与 "+nickname+" 的聊天记录吗？");
+            $('.create-chat-folder').css('display', 'block');
+            $('.cancel').css('display', 'block');
+        },
     },
     components: {},
 });
@@ -638,7 +633,12 @@ function addFriendInfo(msg){
     }
     return false;
 }
-
+//格式化数组时间
+function formatDateList(obj){
+    for(let item of obj){
+        item.time=formatDate(item.time,true);
+    }
+}
 function vueAddContact(contact){
     let img = null;
     if (contact.headportrait !== '1.jpeg') {
@@ -653,7 +653,37 @@ function vueAddContact(contact){
         false,contact.phone,0,null,
         contact.misTiming));
 }
-
+function vueDeleteContact(response){
+    for(let i=0;i<vue.contact.length-1;i++){
+        for(let j=0;j<vue.contact[i].length;j++){
+            let person=vue.contact[i][j];
+            if(person.contactid===response.id){
+                vue.contact[i].splice(vue.contact[i].indexOf(person),1);
+            }
+        }
+    }
+    $('.left-nav-expand').click();
+    vue.currentChat.contactInfo={};
+    $('.ordinary:eq(0)').css({
+        'width': '0',
+        'opacity': '0'
+    });
+    $('.right-info:eq(0)').css({
+        'width': '0',
+        'opacity': '0'
+    });
+    //隐藏提示词
+    $('.reminder:eq(0)').css('display', 'block');
+    //显示聊天主界面
+    $('.top:eq(0)').css('height', '0');
+    //显示聊天输入框
+    $('.input-frame:eq(0)').css('height', '0');
+    Vue.set(vue.messagebox, 'option', 1);
+    Vue.set(vue.messagebox, 'title', "删除联系人");
+    Vue.set(vue.messagebox, 'msg', response.deleteContact===true?"已被 "+response.nickname+" 删除":"已成功删除 "+response.nickname);
+    $('.create-chat-folder').css('display', 'block');
+    $('.cancel').css('display', 'none');
+}
 function Contact(contactId, headPortrait, nickname, doNotDisturb, phone, index, chatInfo, misTiming) {
     this.contactid = contactId;
     this.headportrait = headPortrait;
@@ -717,7 +747,7 @@ function Contact(contactId, headPortrait, nickname, doNotDisturb, phone, index, 
             vue.contact[index].push(new Contact(
                 person.contactid,
                 img,
-                person.nickname,
+                person.name,
                 person.doNotDisturb,
                 phoneStyle(person.phone), index,
                 person.chatInfoList,

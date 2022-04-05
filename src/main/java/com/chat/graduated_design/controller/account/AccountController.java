@@ -1,5 +1,6 @@
 package com.chat.graduated_design.controller.account;
 
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.chat.graduated_design.controller.WebSocket;
 import com.chat.graduated_design.entity.contact.ResponseContact;
 import com.chat.graduated_design.entity.contact.contact;
@@ -8,12 +9,10 @@ import com.chat.graduated_design.entity.file.FileStorage;
 import com.chat.graduated_design.entity.file.videoThumbnail;
 import com.chat.graduated_design.entity.user.User;
 import com.chat.graduated_design.message.Response;
-import com.chat.graduated_design.service.fileService;
 import com.chat.graduated_design.service.impl.*;
 import com.chat.graduated_design.util.DateUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,8 +27,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import javax.websocket.Session;
 
 /**
  * @program: Graduated_Design
@@ -90,7 +87,7 @@ public class AccountController {
         for(Integer requestId : requester){
             FileStorage info=fileDataService.getUserPortrait(requestId);
             User request=userService.getById(requestId);
-            contact temp=new contact(null,null,requestId,null,info.getUuid(),false,null);
+            contact temp=new contact(null,null,requestId,null,info.getUuid(),false,null,request.getNickname());
             resList.add(new ResponseContact(temp,request.getNickname(),request.getPhone(),null,null));
         }
 
@@ -127,7 +124,7 @@ public class AccountController {
         toInfo.put("phone", user.getPhone());
         WebSocket.sendObject(contactId, toInfo);
 
-        return Response.ok("/addContact",info);
+        return Response.ok("/addContact");
     }
 
     //用户确认添加联系人
@@ -142,9 +139,9 @@ public class AccountController {
         User receiver=userService.getById(userId);
 
         // 添加联系人到数据库
-        contact receive=new contact(null,userId,contactId,"所有",contactHeadPortrait,false,0);
+        contact receive=new contact(null,userId,contactId,"所有",contactHeadPortrait,false,0,requester.getNickname());
         contactService.save(receive);
-        contact request=new contact(null,contactId,userId,"所有",userHeadPortrait,false,0);
+        contact request=new contact(null,contactId,userId,"所有",userHeadPortrait,false,0,receiver.getNickname());
         contactService.save(request);
         // 删除请求好友表中的项
         friendRequestService.deleteApply(userId, contactId);
@@ -173,9 +170,10 @@ public class AccountController {
     @ResponseBody
     @PostMapping("/contact/delete/{userId}")
     public Response deleteContact(@PathVariable("userId") Integer userId,
-                                    @RequestBody Map<String,Object> contactInfo){
+                                    @RequestBody Map<String,Object> contactInfo) throws IOException{
         Integer contactId=(Integer) contactInfo.get("id");
-        User contact=userService.getById(contactId);
+        String contactNickName=contactService.getUserSettingNickName(userId, contactId);
+        String userNickName=contactService.getUserSettingNickName(contactId, userId);
         //删除文件
         removeFile(userId, contactId);
         //删除聊天信息
@@ -185,10 +183,16 @@ public class AccountController {
         //删除联系人列表
         contactService.removeContact(userId, contactId);
 
-
         Map<String,Object> userResponse=new HashMap<>();
+        userResponse.put("id", userId);
+        userResponse.put("nickname", userNickName);
+        userResponse.put("deleteContact", true);
+
+        WebSocket.sendObject(contactId, userResponse);
+
+        userResponse.remove("deleteContact");
         userResponse.put("id", contactId);
-        userResponse.put("nickname", contact.getNickname());
+        userResponse.put("nickname",contactNickName);
         return Response.ok("/contact/delete/"+userId,userResponse);
     }
 
@@ -205,5 +209,17 @@ public class AccountController {
         for(videoThumbnail item : entity){
             fileService.deleteFile(item.getUuid(), fileServiceImpl.THUMBNAIL_PATH);
         }
+    }
+
+    @ResponseBody
+    @PostMapping("/resetName/{userId}")
+    public Response resetContactName(@PathVariable("userId") Integer userId,
+                                        @RequestBody Map<String,Object> info){
+        Integer contactId=(Integer) info.get("contactId");
+        String name=(String) info.get("name");
+
+        contactService.updateName(userId, contactId, name);
+
+        return Response.ok("/resetName/"+userId);
     }
 }

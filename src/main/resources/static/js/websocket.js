@@ -2,7 +2,6 @@ function connectWebSocket() {
     //这里需要的路径需要配置相对应的路径
     // const target = "ws://192.168.137.1:8080/chat";
     const target = "ws://localhost:8080/chat";
-    //判断当前浏览器是否支持WebSocket
     if ('WebSocket' in window) {
         websocket = new WebSocket(target);
     } else {
@@ -11,12 +10,16 @@ function connectWebSocket() {
     //连接发生错误的回调方法
     websocket.onerror = function () {
         setMessageInnerHTML("error");
+        let time=[];
         let timeId=setInterval(()=>{
-            websocket.open();
+            connectWebSocket();
+            time.push(timeId);
             if(websocket.readyState===1){
-                clearInterval(timeId);
+                for(let item of time){
+                    clearInterval(item);
+                }
             }
-        },700);
+        },500);
     }
     //连接成功建立的回调方法
     websocket.onopen = function (event) {
@@ -26,7 +29,9 @@ function connectWebSocket() {
     websocket.onmessage = function (event) {
         let message=event.data;
         vue.putMessage(message);
-        scrollToBottom();
+        setTimeout(()=>{
+            scrollToBottom();
+        },200);
     }
     //连接关闭的回调方法
     websocket.onclose = function () {
@@ -39,13 +44,6 @@ function connectWebSocket() {
     return websocket.readyState;
 }
 
-// let timeId=setInterval(function (){
-//     let status=connectWebSocket();
-//     Vue.set(vue.webSocket,'status',status);
-//     if(status===1){
-//         clearInterval(timeId);
-//     }
-// },1000);
 connectWebSocket();
 //将消息显示在网页上
 function setMessageInnerHTML(innerHTML) {

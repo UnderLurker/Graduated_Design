@@ -1,8 +1,11 @@
 package com.chat.graduated_design.controller;
 
+import com.chat.graduated_design.entity.chat.chatInfo;
 import com.chat.graduated_design.entity.file.FileStorage;
+import com.chat.graduated_design.entity.file.ResponseFile;
 import com.chat.graduated_design.entity.file.videoThumbnail;
 import com.chat.graduated_design.message.Response;
+import com.chat.graduated_design.service.impl.chatInfoServiceImpl;
 import com.chat.graduated_design.service.impl.contactServiceImpl;
 import com.chat.graduated_design.service.impl.fileDataServiceImpl;
 import com.chat.graduated_design.service.impl.userServiceImpl;
@@ -36,56 +39,68 @@ public class searchController {
     private contactServiceImpl contactService;
     @Autowired
     private videoThumbnailServiceImpl videoThumbnailService;
+    @Autowired
+    private chatInfoServiceImpl chatInfoService;
 
     @GetMapping("/search/{id}")
     public Response search(@PathVariable("id") Integer id,
-                            @RequestParam("content") String content,
-                            @RequestParam("classify") Integer classify){
+                            @RequestParam("content") String content){
         Map<String,Object> res=new HashMap<>();
-        if(classify.equals(0)){
             //查找相似用户
-            List<Map<String,Object>> queryUser=userService.querylike("nickname",content,fileDataService);
-            res.put("user",queryUser);
-        }
-        else if(classify.equals(1)){
-            //文件
-        }
-        else if(classify.equals(2)){
-            //图片
-            this.selectByIdAndType(id, "image", content);
-
-        }
-        else if(classify.equals(3)){
-            //视频
-        }
-        else if(classify.equals(4)){
-            //音频
-        }
-        else{
-            return Response.error("查询错误，请刷新重试");
-        }
+        List<Map<String,Object>> queryUser=userService.querylike("nickname",content,fileDataService);
+        res.put("user",queryUser);
+        //文件
+        List<ResponseFile> responseFile=new LinkedList<>();
+        res.put("file", responseFile);
+        //图片
+        List<ResponseFile> responsePhoto=this.selectByIdAndType(id, "image", content);
+        res.put("photo", responsePhoto);
+        //视频
+        List<ResponseFile> responseVideo=this.selectByIdAndType(id, "video", content);
+        res.put("video", responseVideo);
+        //音频
+        List<ResponseFile> responseMusic=this.selectByIdAndType(id, "audio", content);
+        res.put("music", responseMusic);
         return Response.ok("/search",res);
     }
 
-    private List<Object> selectByIdAndType(Integer id,String type, String content){
-        List<FileStorage> allFiles=fileDataService.selectById(id);
+    private List<ResponseFile> selectByIdAndType(Integer id,String type, String content){
+        List<ResponseFile> result=new LinkedList<>();
+        List<FileStorage> allFiles=fileDataService.selectById(id,content);
         List<Integer> allKeys=new LinkedList<>();
         for(FileStorage file : allFiles){
             allKeys.add(file.getNo());
         }
-        List<videoThumbnail> fileInfo=videoThumbnailService.listByIds(allKeys);
+        List<videoThumbnail> fileInfo=videoThumbnailService.listByFileStorageNo(allKeys);
         //同时遍历文件和信息
-        for(int index=0;index<allFiles.size();index++){
-            String fileType=fileInfo.get(index).getType().split("/")[0];
+        for(int index1=0,index2=0;index1<allFiles.size()&&index2<fileInfo.size();){
+            Integer no1=allFiles.get(index1).getNo();
+            Integer no2=fileInfo.get(index2).getFileStorageNo();
+            if(no1>no2){
+                fileInfo.remove(fileInfo.get(index2));
+                continue;
+            }else if(no1<no2){
+                allFiles.remove(allFiles.get(index1));
+                continue;
+            }
+            String fileType=fileInfo.get(index2).getType().split("/")[0];
             if(!fileType.equals(type)){
-                allFiles.remove(allFiles.get(index));
-                fileInfo.remove(fileInfo.get(index));
+                allFiles.remove(allFiles.get(index1));
+                fileInfo.remove(fileInfo.get(index2));
+                continue;
             }
             else{
-                
+                String thumbnailUuid=fileInfo.get(index2).getUuid();
+                String fileUuid=allFiles.get(index1).getUuid();
+                String uuid=thumbnailUuid==null?fileUuid:thumbnailUuid;
+                String size=chatInfoService.getSizeByField(fileInfo.get(index2).getChatNo());
+                ResponseFile info=new ResponseFile(uuid,allFiles.get(index1).getOriginname(),no2,allFiles.get(index1).getDatetime(),size);
+                result.add(info);
+                index1++;
+                index2++;
             }
         }
-        return null;
+        return result;
     }
 
 }

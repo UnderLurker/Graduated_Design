@@ -24,6 +24,8 @@ public class contact implements Comparable<contact>{
     private String headportrait=null;
     private boolean doNotDisturb=false;
     private Integer unread;
+    //用户为联系人所设置的昵称
+    private String name=null;
 
     @Override
     public int compareTo(contact o) {

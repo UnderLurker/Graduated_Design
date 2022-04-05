@@ -1,6 +1,7 @@
 package com.chat.graduated_design.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chat.graduated_design.entity.chat.ResponseChat;
 import com.chat.graduated_design.entity.chat.chatInfo;
@@ -147,6 +148,26 @@ public class contactServiceImpl extends ServiceImpl<contactMapper, contact> impl
             result.add(person.getContactid());
         }
         return result;
+    }
+
+    /**
+     * 获取userId对contactId设置的昵称
+     * @param userId 用户ID
+     * @param contactId 联系人ID
+     * @return userId对contactId设置的nickname
+     */
+    public String getUserSettingNickName(Integer userId, Integer contactId){
+        QueryWrapper<contact> query=new QueryWrapper<>();
+        query.eq("userid", userId).eq("contactid", contactId);
+        return this.getOne(query).getName();
+    }
+
+    public boolean updateName(Integer userId, Integer contactId,String name){
+        UpdateWrapper<contact> qWrapper=new UpdateWrapper<>();
+        qWrapper.eq("userid", userId).eq("contactid", contactId);
+        contact person=new contact();
+        person.setName(name);
+        return this.update(person, qWrapper);
     }
 
     /**

@@ -573,6 +573,12 @@ input:focus {
     cursor: pointer;
     transition: all ease .5s;
 }
+.search-result-list .contact-add{
+    position: absolute !important;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
 .contact-add:hover{
     background-color: rgba(31, 143, 255,.5);
     color: whitesmoke;
