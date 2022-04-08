@@ -3,6 +3,7 @@
 # Tools
 framework: springboot2<br>
 开发工具：IDEA<br>
-视图解析器：Thymeleaf
+视图解析器：Thymeleaf<br>
+人脸识别： opencv v3.4.3 RELEASE
 # Database
 Mysql + Navicat
