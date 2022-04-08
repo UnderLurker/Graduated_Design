@@ -30,7 +30,8 @@ public class ResponseContact extends contact{
                 person.getHeadportrait(),
                 person.isDoNotDisturb(),
                 person.getUnread(),
-                person.getName());
+                person.getName(),
+                person.getBlackList());
         this.nickname=nickname;
         this.phone=phone;
         this.chatInfoList=chatInfoList;

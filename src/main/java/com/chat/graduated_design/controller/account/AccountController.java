@@ -1,6 +1,5 @@
 package com.chat.graduated_design.controller.account;
 
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.chat.graduated_design.controller.WebSocket;
 import com.chat.graduated_design.entity.contact.ResponseContact;
 import com.chat.graduated_design.entity.contact.contact;
@@ -52,7 +51,7 @@ public class AccountController {
     private fileServiceImpl fileService;
     @Autowired
     private videoThumbnailServiceImpl videoThumbnailService;
-
+    
     @GetMapping("/user/active/{id}/")
     public String active(@PathVariable(value = "id") Integer id){
         User queryUser=userService.getById(id);
@@ -74,6 +73,7 @@ public class AccountController {
         userService.updateLoginTime(id);
         //查询用户头像信息
         FileStorage fileStorage=fileDataService.getUserPortrait(id);
+        String headPortrait=fileStorage==null?null:fileStorage.getUuid();
         //查询用户分类列表
         List<Map<String,Object>> folderList=folderTableService.selectUserClassify(id);
         List<String> folders=new LinkedList<>();
@@ -86,8 +86,9 @@ public class AccountController {
         HashSet<Integer> requester=friendRequestService.selectRequester(id);
         for(Integer requestId : requester){
             FileStorage info=fileDataService.getUserPortrait(requestId);
+            String uuid=info==null?null:info.getUuid();
             User request=userService.getById(requestId);
-            contact temp=new contact(null,null,requestId,null,info.getUuid(),false,null,request.getNickname());
+            contact temp=new contact(null,null,requestId,null,uuid,false,null,request.getNickname(),contact.NORMAL);
             resList.add(new ResponseContact(temp,request.getNickname(),request.getPhone(),null,null));
         }
 
@@ -96,7 +97,7 @@ public class AccountController {
 
         Map<String,Object> res=new HashMap<>();
         res.put("user",user);
-        res.put("headportrait",fileStorage.getUuid());
+        res.put("headportrait",headPortrait);
         res.put("folder",folders);
         res.put("contact",resList);
         res.put("emojiList",emojiList);
@@ -114,7 +115,8 @@ public class AccountController {
 
         //发送给要添加的联系人
         User user=userService.getById(userId);
-        String headPortrait=fileDataService.getById(userId).getUuid();//仅仅是uuid
+        FileStorage fileStorage=fileDataService.getById(userId);
+        String headPortrait=fileStorage==null?null:fileStorage.getUuid();//仅仅是uuid
 
         Map<String,Object> toInfo=new HashMap<>();
         toInfo.put("friend", true);
@@ -139,9 +141,9 @@ public class AccountController {
         User receiver=userService.getById(userId);
 
         // 添加联系人到数据库
-        contact receive=new contact(null,userId,contactId,"所有",contactHeadPortrait,false,0,requester.getNickname());
+        contact receive=new contact(null,userId,contactId,"所有",contactHeadPortrait,false,0,requester.getNickname(),contact.NORMAL);
         contactService.save(receive);
-        contact request=new contact(null,contactId,userId,"所有",userHeadPortrait,false,0,receiver.getNickname());
+        contact request=new contact(null,contactId,userId,"所有",userHeadPortrait,false,0,receiver.getNickname(),contact.NORMAL);
         contactService.save(request);
         // 删除请求好友表中的项
         friendRequestService.deleteApply(userId, contactId);
@@ -222,4 +224,21 @@ public class AccountController {
 
         return Response.ok("/resetName/"+userId);
     }
+
+    @ResponseBody
+    @PostMapping("/black/{userId}")
+    public Response blackContact(@PathVariable("userId") Integer userId,
+                                @RequestBody Map<String,Object> info) throws IOException{
+        Integer contactId=(Integer) info.get("contactId");
+        boolean flag=contactService.userBlackContact(userId, contactId);
+        if(!flag) return Response.error("/black/"+userId);
+        //联系人对user的昵称
+        String nickname=contactService.getUserSettingNickName(contactId, userId);
+        Map<String,Object> contactInfo=new HashMap<>();
+        contactInfo.put("black", true);
+        contactInfo.put("nickname",nickname);
+        WebSocket.sendObject(contactId, contactInfo);
+        return Response.ok("/black/"+userId);
+    }
+
 }

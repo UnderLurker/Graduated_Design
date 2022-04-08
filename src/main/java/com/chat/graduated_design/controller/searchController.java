@@ -1,6 +1,5 @@
 package com.chat.graduated_design.controller;
 
-import com.chat.graduated_design.entity.chat.chatInfo;
 import com.chat.graduated_design.entity.file.FileStorage;
 import com.chat.graduated_design.entity.file.ResponseFile;
 import com.chat.graduated_design.entity.file.videoThumbnail;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;

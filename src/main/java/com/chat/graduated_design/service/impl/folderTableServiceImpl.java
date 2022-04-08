@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
  * @create: 2022-02-14 13:01
  **/
 @Service
-public class folderTableServiceImpl  extends ServiceImpl<folderTableMapper, folderTable> implements folderTableService {
+public class folderTableServiceImpl extends ServiceImpl<folderTableMapper, folderTable> implements folderTableService {
     /**
      * 
      * @param id
@@ -28,5 +28,13 @@ public class folderTableServiceImpl  extends ServiceImpl<folderTableMapper, fold
         folderTableQueryWrapper.eq("user_id",id);
         return this.listMaps(folderTableQueryWrapper);
     }
-    
+    /**
+     * 分类数据库新增分类
+     * @param userId
+     * @param folderName
+     */
+    public void folderInit(Integer userId,String folderName){
+        folderTable folder=new folderTable(null,userId,folderName);
+        this.save(folder);
+    }
 }

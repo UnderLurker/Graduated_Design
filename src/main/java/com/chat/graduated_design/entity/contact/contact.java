@@ -16,6 +16,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class contact implements Comparable<contact>{
+
+    public static final int NORMAL = 0;     //正常
+    public static final int ACTIVE = 1;     //主动拉黑
+    public static final int PASSIVE = 2;    //被拉黑
+    public static final int MUTUAL = 3;     //都拉黑
+
     @TableId(type = IdType.AUTO)
     private Integer contactNo=null;
     private Integer userid;
@@ -26,6 +32,8 @@ public class contact implements Comparable<contact>{
     private Integer unread;
     //用户为联系人所设置的昵称
     private String name=null;
+    //黑名单
+    private Integer blackList;
 
     @Override
     public int compareTo(contact o) {

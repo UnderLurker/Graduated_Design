@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="./css/common.css">
     <link rel="stylesheet" href="./css/input.css">
     <link rel="stylesheet" href="./css/register.css">
+    <script src="./js/request.js"></script>
     <title>登录</title>
 </head>
 <body>
@@ -66,10 +67,12 @@
             <!-- 刷脸登录 -->
             <form action="#" method="post">
                 <div class="input-group">
-                    <input type="text" id="UserNameFace" required>
+                    <input type="text" id="UserNameFace" name="name" maxLength="50" required>
                     <div class="underline"></div>
-                    <label for="UserName">刷脸</label>
+                    <label for="UserName">姓名</label>
                 </div>
+                <video id="video" src="" width="100%" height="100%"></video>
+                <canvas id="canvas" width="100%" height="100%"></canvas>
             </form>
         </div>
         <span>{{Message.message}}</span>
@@ -111,16 +114,14 @@
         }
         let vue=new Vue({
             el:"#login",
-            data(){
-                return {
-                    Message:{
-                        message:"报错",
-                    },
-                    url:{
-                        emailUrl:'/emaillogin',
-                        phoneUrl:'/phonelogin',
-                        faceUrl:'/facelogin'
-                    }
+            data:{
+                Message:{
+                    message:"报错",
+                },
+                url:{
+                    emailUrl:'/emaillogin',
+                    phoneUrl:'/phonelogin',
+                    faceUrl:'/facelogin'
                 }
             },
             methods: {
@@ -142,10 +143,14 @@
                         }
                         sendData(data,vue.url.phoneUrl);
                     }
+                    else if(active==2){
+                        uploadImg('/facelogin')
+                    }
                     e.preventDefault();
                 },
             },
         });
+        let mediaStreamTrack;
         let li=document.getElementsByTagName('li');
         let form=document.getElementsByTagName('form');
         let initLeft=li[0].getBoundingClientRect().left;
@@ -163,6 +168,15 @@
                     }
                     $('.flex-box > span').css('width','0%');
                 }
+                if (j === 2) {
+                    if (!openCamera()) {
+                        //开启摄像机成功
+                        alert('摄像头开启失败');
+                    }
+                }
+                else {
+                    mediaStreamTrack && mediaStreamTrack.stop();
+                }
                 let left=this.getBoundingClientRect().left;
                 let slider=document.getElementById('slider');
                 this.style.color="dodgerblue";
@@ -177,5 +191,6 @@
             }
         }
     </script>
+    <script src="./js/face-recognition.js"></script>
 </body>
 </html>

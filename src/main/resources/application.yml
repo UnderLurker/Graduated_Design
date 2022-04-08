@@ -40,4 +40,7 @@ mybatis-plus:
     map-underscore-to-camel-case: true
 file:
   upload:
-    paths: classpath:static/image/headportrait,classpath:static/image/emoji,classpath:static/image/thumbnail
+    paths: classpath:static/image/headportrait,classpath:static/image/emoji,classpath:static/image/thumbnail,classpath:static/image/face
+
+opencv:
+  xml: F:/opencv/opencv/sources/data/haarcascades/haarcascade_frontalface_alt.xml

@@ -162,6 +162,13 @@ public class contactServiceImpl extends ServiceImpl<contactMapper, contact> impl
         return this.getOne(query).getName();
     }
 
+    /**
+     * 更新用户设置的昵称
+     * @param userId
+     * @param contactId
+     * @param name
+     * @return 更新成功或失败
+     */
     public boolean updateName(Integer userId, Integer contactId,String name){
         UpdateWrapper<contact> qWrapper=new UpdateWrapper<>();
         qWrapper.eq("userid", userId).eq("contactid", contactId);
@@ -182,4 +189,49 @@ public class contactServiceImpl extends ServiceImpl<contactMapper, contact> impl
             .eq("userid", contactId).eq("contactid", userId);
         this.remove(query);
     }
+
+    /**
+     * 更新用户与联系人之间的拉黑关系
+     * @param userId
+     * @param contactId
+     * @return
+     */
+    public boolean userBlackContact(Integer userId, Integer contactId){
+        //先更改用户对联系人的状态
+        QueryWrapper<contact> query1=new QueryWrapper<>();
+        query1.eq("userid", userId).eq("contactid", contactId);
+        List<contact> accordWithList1=this.list(query1);
+
+        if(accordWithList1.size()==0) return false;
+
+        int blackState1=accordWithList1.get(0).getBlackList();
+        int finalState1=blackState1==contact.NORMAL?contact.ACTIVE:contact.MUTUAL;
+
+        UpdateWrapper<contact> uWrapper1=new UpdateWrapper<>();
+        uWrapper1.eq("userid", userId).eq("contactid", contactId);
+        contact finalContact1=new contact();
+        finalContact1.setBlackList(finalState1);
+        this.update(finalContact1, uWrapper1);
+
+        //更改联系人对用户的状态
+        QueryWrapper<contact> query2=new QueryWrapper<>();
+        query2.eq("userid", contactId).eq("contactid", userId);
+        List<contact> accordWithList2=this.list(query2);
+
+        if(accordWithList2.size()==0) return false;
+
+        int blackState2=accordWithList2.get(0).getBlackList();
+        int finalState2=blackState2==contact.NORMAL?contact.PASSIVE:contact.MUTUAL;
+
+        UpdateWrapper<contact> uWrapper2=new UpdateWrapper<>();
+        uWrapper2.eq("userid", contactId).eq("contactid", userId);
+        contact finalContact2=new contact();
+        finalContact2.setBlackList(finalState2);
+        this.update(finalContact2, uWrapper2);
+        return true;
+    }
+
+
+
+    
 }

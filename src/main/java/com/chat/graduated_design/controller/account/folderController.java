@@ -38,7 +38,7 @@ public class folderController {
         List<contact> contactBatch=new LinkedList<>();
         for(AddFolder item : customFolder.getSelectedPerson()){
             contact person=new contact(null,id, item.getContactid(),
-                    customFolder.getFolderName(), item.getHeadportrait().split("/")[2], item.isDoNotDisturb(),0,item.getNickname());
+                    customFolder.getFolderName(), item.getHeadportrait().split("/")[2], item.isDoNotDisturb(),0,item.getNickname(),item.getBlackList());
             contactBatch.add(person);
         }
         contactService.saveBatch(contactBatch);

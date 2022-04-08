@@ -41,7 +41,7 @@ public class baseController {
         String responseUrl="./image/1.jpeg";
         //看是否激活
         User user=(User) session.getAttribute("user");
-        User queryUser=userService.getOneByEmail(user.getEmail());
+        User queryUser=userService.getById(user.getId());
         if(!queryUser.isActive()){
             return "redirect:/login.html";
         }

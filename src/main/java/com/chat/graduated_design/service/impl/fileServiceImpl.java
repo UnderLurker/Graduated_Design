@@ -30,8 +30,9 @@ public class fileServiceImpl implements fileService {
     public static final Integer HEAD_PORTRAIT_PATH = 0;   //头像存储位置
     public static final Integer EMOJI_PATH = 1;          //视频存储位置
     public static final Integer THUMBNAIL_PATH = 2;       //视频文件的展示图片
+    public static final Integer FACE_PATH = 3;              //保存的用户面部图片
 
-    private String[] path = new String[3];              // 文件在本地存储的地址
+    private String[] path = new String[4];              // 文件在本地存储的地址
 
     public fileServiceImpl(@Value("${file.upload.paths}") String[] ymlPath) {
         for(int index=0;index<ymlPath.length;index++){

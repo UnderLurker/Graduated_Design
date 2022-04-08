@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="./css/main-middle.css">
     <link rel="stylesheet" href="./css/main-right.css">
     <link rel="stylesheet" href="./css/input.css">
-    <link rel="stylesheet" href="./css/folder.css">
     <link rel="stylesheet" href="./css/uploadimg.css">
     <link rel="stylesheet" href="./css/general-setting.css">
     <link rel="stylesheet" href="./css/Jcrop.min.css">
@@ -21,6 +20,7 @@
     <script src="./js/Jcrop.js"></script>
     <script src="./js/emoji.min.js"></script>
     <script src="./js/contact.js"></script>
+    <script src="./js/request.js"></script>
     <title>首页</title>
 </head>
 
@@ -252,7 +252,7 @@
                         <img :src="userInfo.headportrait" alt="">
                     </div>
                     <div id="user-name">
-                        <h4>用户名字</h4>
+                        <h4 v-html="userInfo.nickname"></h4>
                     </div>
                     <div id="user-phone-number">
                         <span>{{userPhone}}</span>
@@ -767,7 +767,7 @@
                         </div>
                         <span>删除聊天记录</span>
                     </div>
-                    <div class="edit-items">
+                    <div class="edit-items" id="blackContact">
                         <div>
                             <ion-icon name="heart-dislike-outline"></ion-icon>
                         </div>

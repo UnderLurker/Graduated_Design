@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="./css/register.css">
     <link rel="stylesheet" href="./css/common.css">
     <link rel="stylesheet" href="./css/input.css">
+    <script src="./js/request.js"></script>
     <title>注册</title>
 </head>
 
@@ -28,7 +29,7 @@
                 </li>
             </ul>
         </div>
-        
+
         <div class="register-main" style="margin-bottom: -1rem">
             <!-- 邮箱注册 -->
             <form action="/emailRegister" method="post">
@@ -77,17 +78,20 @@
                         <label for="code">验证码</label>
                     </div>
                     <div style="display: inline-block;cursor: pointer">
-                        <img src="http://localhost:8080/kaptcha/getKaptchaImage" @click="reload" class="reloadImage" id="reloadImage" width="121" height="40"/>
+                        <img src="http://localhost:8080/kaptcha/getKaptchaImage" @click="reload" class="reloadImage"
+                            id="reloadImage" width="121" height="40" />
                     </div>
                 </div>
             </form>
             <!-- 刷脸注册 -->
             <form action="#" method="post">
                 <div class="input-group">
-                    <input type="text" id="UserNameFace" required>
+                    <input type="text" id="UserNameFace" name="name" maxLength="50" required>
                     <div class="underline"></div>
-                    <label for="UserName">刷脸</label>
+                    <label for="UserName">姓名</label>
                 </div>
+                <video id="video" src="" width="100%" height="100%"></video>
+                <canvas id="canvas" width="100%" height="100%"></canvas>
             </form>
         </div>
         <span>{{Message.message}}</span>
@@ -102,112 +106,124 @@
     <script src="./js/axios.js"></script>
     <script src="./js/jquery.js"></script>
     <script>
-        let active=0;
-        function sendData(data,url){
+        let active = 0;
+        function sendData(data, url) {
             axios({
-                url:url,
-                method:'post',
-                data:data,
+                url: url,
+                method: 'post',
+                data: data,
                 headers: {
                     'Content-Type': "application/json;charset=UTF-8",
                 },
-            }).then((res)=>{
-                let data=res.data;
-                if(data.email==null&&data.phone==null&&data.face==null){
+            }).then((res) => {
+                let data = res.data;
+                if (data.email == null && data.phone == null && data.face == null) {
                     // $(window).attr('location','/login.html');
-                    Vue.set(vue.Message,'message','请到你的邮箱激活账户');
+                    Vue.set(vue.Message, 'message', '请到你的邮箱激活账户');
                 }
-                else{
-                    if(data.phone=='success'){
-                        Vue.set(vue.Message,'message','注册成功');
-                        $(window).attr('location','/login.html')
+                else {
+                    if (data.phone === 'success' || data.face === 'success') {
+                        Vue.set(vue.Message, 'message', '注册成功');
+                        $(window).attr('location', '/login.html')
                     }
-                    else if(data.email!=null) Vue.set(vue.Message,'message',''+data.email);
-                    else if(data.phone!=null) Vue.set(vue.Message,'message',''+data.phone);
-                    else if(data.face!=null) Vue.set(vue.Message,'message',''+data.face);
+                    else if (data.email != null) Vue.set(vue.Message, 'message', '' + data.email);
+                    else if (data.phone != null) Vue.set(vue.Message, 'message', '' + data.phone);
+                    else if (data.face != null) Vue.set(vue.Message, 'message', '' + data.face);
                 }
-                $('.flex-box > span').css('width','100%');
+                $('.flex-box > span').css('width', '100%');
             });
         }
 
-        let vue=new Vue({
-            el:"#app",
-            data(){
-                return {
-                    Message:{
-                        message:"报错",
-                    },
-                    url:{
-                        emailUrl:'/emailRegister',
-                        phoneUrl:'/phoneRegister',
-                        faceUrl:'/faceRegister'
-                    }
+        let vue = new Vue({
+            el: "#app",
+            data:{
+                Message: {
+                    message: "报错",
+                },
+                url: {
+                    emailUrl: '/emailRegister',
+                    phoneUrl: '/phoneRegister',
+                    faceUrl: '/faceRegister'
                 }
             },
             methods: {
-                Register:function (e) {
-                   let data=null;
-                   if(active==0){
-                       data={
-                           name:$('#UserName').val(),
-                           email:$('#UserEmail').val(),
-                           password:$('#UserPasswordFirst').val(),
-                           passwordConfirm:$('#UserPasswordSecond').val()
-                       }
-                       sendData(data,vue.url.emailUrl);
-                   }
-                   else if(active==1){
-                       data={
-                           name:$('#UserPhone').val(),
-                           phone:$('#UserPhone').val(),
-                           password:$('#UserPasswordFirst').val(),
-                           passwordConfirm:$('#UserPasswordSecond').val(),
-                           code:$('#code').val()
-                       }
-                       sendData(data,vue.url.phoneUrl);
-                   }
-                   e.preventDefault();
+                Register: function (e) {
+                    let data = null;
+                    if (active == 0) {
+                        data = {
+                            name: $('#UserName').val(),
+                            email: $('#UserEmail').val(),
+                            password: $('#UserPasswordFirst').val(),
+                            passwordConfirm: $('#UserPasswordSecond').val()
+                        }
+                        sendData(data, vue.url.emailUrl);
+                    }
+                    else if (active == 1) {
+                        data = {
+                            name: $('#UserPhone').val(),
+                            phone: $('#UserPhone').val(),
+                            password: $('#UserPasswordFirst').val(),
+                            passwordConfirm: $('#UserPasswordSecond').val(),
+                            code: $('#code').val()
+                        }
+                        sendData(data, vue.url.phoneUrl);
+                    }
+                    else if (active === 2) {
+                        uploadImg('/faceRegister');
+                    }
+                    e.preventDefault();
                 },
-                reload:function (){
+                reload: function () {
                     let timeNow = new Date().getTime();
                     $('#reloadImage').attr("src", "http://127.0.0.1:8080/kaptcha/getKaptchaImage?date=" + timeNow);
                 }
             },
-            created:{
+            created: {
                 // this.errorEmailMsg=session
             }
         });
-        let li=document.getElementsByTagName('li');
-        let form=document.getElementsByTagName('form');
-        let initLeft=li[0].getBoundingClientRect().left;
-        for(let i=0;i<li.length;i++){
-            li[i].onclick=function(){
-                let j=0;
-                for(j=0;j<li.length;j++){
-                    if(li[j]==this) break;
+        let mediaStreamTrack;
+        let li = document.getElementsByTagName('li');
+        let form = document.getElementsByTagName('form');
+        let initLeft = li[0].getBoundingClientRect().left;
+        for (let i = 0; i < li.length; i++) {
+            li[i].onclick = function () {
+                let j = 0;
+                for (j = 0; j < li.length; j++) {
+                    if (li[j] == this) break;
                 }
-                if(j==active) return;
-                if(active==0||active==1){
-                    let input=document.getElementsByTagName('input');
-                    for(let i=active*4;i<(active+1)*4;i++){
-                        input[i].value="";
+                if (j == active) return;
+                if (active === 0 || active === 1) {
+                    let input = document.getElementsByTagName('input');
+                    for (let i = active * 4; i < (active + 1) * 4; i++) {
+                        input[i].value = "";
                     }
-                    $('.flex-box > span').css('width','0%');
+                    $('.flex-box > span').css('width', '0%');
                 }
-                let left=this.getBoundingClientRect().left;
-                let slider=document.getElementById('slider');
-                this.style.color="dodgerblue";
-                li[active].style.color="silver";
-                slider.style.left=left-initLeft+"px";
+                if (j === 2) {
+                    if (!openCamera()) {
+                        //开启摄像机成功
+                        alert('摄像头开启失败');
+                    }
+                }
+                else {
+                    mediaStreamTrack && mediaStreamTrack.stop();
+                }
+                let left = this.getBoundingClientRect().left;
+                let slider = document.getElementById('slider');
+                this.style.color = "dodgerblue";
+                li[active].style.color = "silver";
+                slider.style.left = left - initLeft + "px";
 
                 //展开表单
-                form[active].style.width="0";
-                form[j].style.width="100%";
+                form[active].style.width = "0";
+                form[j].style.width = "100%";
 
-                active=j;
+                active = j;
             }
         }
     </script>
+    <script src="./js/face-recognition.js"></script>
 </body>
 
 </html>

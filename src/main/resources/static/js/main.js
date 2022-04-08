@@ -2,37 +2,6 @@ let statisticsActive = -1;
 let websocket = null; //websocket连接服务器使用
 let emojiActive = 0;
 let activeLeft;
-let sendByJson= { 'Content-Type': "application/json;charset=UTF-8"};
-let sendByForm={ 'Content-Type': 'multipart/form-data' };
-
-function sendPost(url, data, headers, callback) {
-    axios({
-        url: url,
-        method: 'post',
-        data: data,
-        headers: headers,
-    }).then(function (msg) {
-        callback(msg);
-    });
-}
-/**
- * 
- * @param {string} url 
- * @param {object} param 
- * @param {object} headers 
- * @param {func} callback 
- */
-function sendGet(url, param, headers, callback) {
-    axios({
-        url: url,
-        method: 'get',
-        params: param,
-        headers: headers,
-    }).then(function (msg) {
-        callback(msg);
-    });
-}
-
 //发送消息
 function send(fromUser, toUser, content, file) {
     //获取输入的文本信息进行发送
@@ -406,23 +375,18 @@ let vue = new Vue({
             let row = vue.contactSelect.frameActive,
                 col = vue.contactSelect.contactActive;
             if (typeof message === 'string') {
-                let JsonObject = JSON.parse(message);
-                if(addFriendInfo(JsonObject)) return;
-                if(JsonObject.deleteContact){
-                    vueDeleteContact(JsonObject);
-                    return;
-                }
-                JsonObject.time = formatDate(JsonObject.time, false);
-                this.contact[row][col].chatInfo.push(JsonObject);
-            } else {
-                if(addFriendInfo(message)) return;
-                if(message.deleteContact){
-                    vueDeleteContact(message);
-                    return;
-                }
-                message.time = formatDate(message.time, true);
-                this.contact[row][col].chatInfo.push(message);
+                message = JSON.parse(message);
             }
+            if(addFriendInfo(message)) return;
+            if(message.deleteContact){
+                vueDeleteContact(message);
+                return;
+            }else if(message.black){
+                blackContact(message.nickname);
+                return;
+            }
+            message.time = formatDate(message.time, true);
+            this.contact[row][col].chatInfo.push(message);
         },
         submitHeadPortrait() {
             let formData = new FormData();
@@ -435,9 +399,7 @@ let vue = new Vue({
             formData.append('h', $('#h').val());
             formData.append('originWidth', originWidth);
             formData.append('originHeight', originHeight);
-            sendPost('/' + this.userInfo.id + '/headportrait', formData, {
-                'Content-Type': 'multipart/form-data',
-            }, (msg) => {
+            sendPost('/' + this.userInfo.id + '/headportrait', formData, sendByForm, (msg) => {
                 this.userInfo.headportrait = msg.data.obj;
             });
         },
@@ -558,6 +520,7 @@ let vue = new Vue({
         userAddContact(person){
             let userheadportrait=this.userInfo.headportrait.split('/')[this.userInfo.headportrait.split('/').length-1];
             let contactheadportrait=person.headportrait.split('/')[person.headportrait.split('/').length-1];
+            contactheadportrait=contactheadportrait==='1.jpeg'?null:contactheadportrait;
             //用户确认添加联系人
             sendPost('/'+getCookie('id')+'/userAddContact',{
                 'contactId':person.contactid,
@@ -610,6 +573,7 @@ function getCookie(name) {
  * @returns 
  */
 function phoneStyle(phone){
+    if(phone===null) return '';
     return '+86 ' + phone.slice(0, 3) + ' ' + phone.slice(3, 7) + ' ' + phone.slice(7);
 }
 /**
@@ -619,12 +583,13 @@ function phoneStyle(phone){
  */
 function addFriendInfo(msg){
     if(msg.friend){
-        $('#addfriend-frame img').attr('src','/headportrait/'+msg.headportrait);
+        let headImage=msg.headportrait===null?'/image/1.jpeg':msg.headportrait;
+        $('#addfriend-frame img').attr('src',headImage);
         $('#hint-info').text(msg.nickname+' 想要添加您为好友');
         $('#addfriend-info').removeClass('add-hint-unactive').addClass('add-hint-active');
         setTimeout(()=>{
             $('#addfriend-info').removeClass('add-hint-active').addClass('add-hint-unactive');
-            vue.contact[vue.contact.length-1].push(new Contact(msg.id,'/headportrait/'+msg.headportrait,msg.nickname,false,msg.phone,1,null,null));
+            vue.contact[vue.contact.length-1].push(new Contact(msg.id,headImage,msg.nickname,false,msg.phone,1,null,null));
         },6000);
         return true;
     }
@@ -638,73 +603,6 @@ function formatDateList(obj){
     for(let item of obj){
         item.time=formatDate(item.time,true);
     }
-}
-function vueAddContact(contact){
-    let img = null;
-    if (contact.headportrait !== '1.jpeg') {
-        img = '/headportrait/' + contact.headportrait;
-    }
-    else{
-        img = './image/1.jpeg';
-    }
-    vue.contact[0].push(new Contact(contact.contactid,
-        img,
-        contact.nickname,
-        false,contact.phone,0,null,
-        contact.misTiming));
-}
-function vueDeleteContact(response){
-    for(let i=0;i<vue.contact.length-1;i++){
-        for(let j=0;j<vue.contact[i].length;j++){
-            let person=vue.contact[i][j];
-            if(person.contactid===response.id){
-                vue.contact[i].splice(vue.contact[i].indexOf(person),1);
-            }
-        }
-    }
-    $('.left-nav-expand').click();
-    vue.currentChat.contactInfo={};
-    $('.ordinary:eq(0)').css({
-        'width': '0',
-        'opacity': '0'
-    });
-    $('.right-info:eq(0)').css({
-        'width': '0',
-        'opacity': '0'
-    });
-    //隐藏提示词
-    $('.reminder:eq(0)').css('display', 'block');
-    //显示聊天主界面
-    $('.top:eq(0)').css('height', '0');
-    //显示聊天输入框
-    $('.input-frame:eq(0)').css('height', '0');
-    Vue.set(vue.messagebox, 'option', 1);
-    Vue.set(vue.messagebox, 'title', "删除联系人");
-    Vue.set(vue.messagebox, 'msg', response.deleteContact===true?"已被 "+response.nickname+" 删除":"已成功删除 "+response.nickname);
-    $('.create-chat-folder').css('display', 'block');
-    $('.cancel').css('display', 'none');
-}
-function Contact(contactId, headPortrait, nickname, doNotDisturb, phone, index, chatInfo, misTiming) {
-    this.contactid = contactId;
-    this.headportrait = headPortrait;
-    this.nickname = nickname;
-    this.doNotDisturb = doNotDisturb;
-    this.phone = phone;
-    if (index === 0) {
-        this.select = false;
-    }
-    this.chatInfo = [];
-    if (chatInfo !== null && chatInfo !== undefined) {
-        for (let item of chatInfo) {
-            item.time = formatDate(item.time, true);
-            //item.content=item.content.replace(/(<svg class="coolapk-emotion" aria-hidden="true">[^]*?<\/svg>)/g,'"</p>$1<p>"');
-            if (item.file) {
-                item.suffix = item.content.split('.').slice(-1)[0];
-            }
-            this.chatInfo.push(item);
-        }
-    }
-    this.misTiming=misTiming;
 }
 //向服务器请求用户信息（除密码）
 (function () {
@@ -739,7 +637,7 @@ function Contact(contactId, headPortrait, nickname, doNotDisturb, phone, index, 
             }
             if(person.folder===null) index--;
             let img = null;
-            if (person.headportrait == null) {
+            if (person.headportrait == null||person.headportrait==='null') {
                 img = '/image/1.jpeg';
             } else {
                 img = '/headportrait/' + person.headportrait;

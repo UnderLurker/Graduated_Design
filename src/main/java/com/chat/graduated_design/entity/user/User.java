@@ -16,7 +16,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @ToString
 public class User implements Comparable<User>{
-    private String name;
+    private String name=null;
     @TableId(type = IdType.AUTO)
     private Integer id=null;
     private String password=null;
@@ -28,6 +28,7 @@ public class User implements Comparable<User>{
     private boolean active=false;
     private Date loginTime;
     private Date preLoginTime;
+    private String faceImageUuid=null;
 //    private boolean inline=false;
 
     public User(Map<String,Object> map){

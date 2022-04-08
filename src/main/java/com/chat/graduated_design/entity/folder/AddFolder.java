@@ -18,4 +18,5 @@ public class AddFolder {
     private String headportrait;
     private boolean doNotDisturb;
     private String nickname;
+    private Integer blackList;
 }

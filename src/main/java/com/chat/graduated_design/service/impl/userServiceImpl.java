@@ -60,6 +60,17 @@ public class userServiceImpl extends ServiceImpl<userMapper, User> implements us
     }
 
     /**
+     * 查询用户（通过name）
+     * @param name
+     * @return
+     */    
+    public List<User> selectByName(String name){
+        QueryWrapper<User> nameQuery=new QueryWrapper<>();
+        nameQuery.eq("name",name);
+        return this.list(nameQuery);
+    }
+
+    /**
      * 查询用户（通过phone）
      * @param phone
      * @return
