@@ -29,7 +29,6 @@ public class ResponseContact extends contact{
                 person.getFolder(),
                 person.getHeadportrait(),
                 person.isDoNotDisturb(),
-                person.getUnread(),
                 person.getName(),
                 person.getBlackList());
         this.nickname=nickname;

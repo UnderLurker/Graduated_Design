@@ -2,7 +2,6 @@ package com.chat.graduated_design.controller;
 
 import com.chat.graduated_design.config.WebSocketConfig;
 import com.chat.graduated_design.entity.chat.chatInfo;
-import com.chat.graduated_design.entity.contact.contact;
 import com.chat.graduated_design.entity.user.User;
 import com.chat.graduated_design.service.impl.chatInfoServiceImpl;
 import com.chat.graduated_design.service.impl.contactServiceImpl;
@@ -121,17 +120,16 @@ public class WebSocket {
                 //发送给dest
                 toSession.getAsyncRemote().sendObject(sendInfo);
             }
-            else{
-                //当发送的目的用户未登录，将未读+1
-                Map<String,Object> query=new HashMap<>();
-                query.put("userid",chatMsg.getOrigin());
-                query.put("contactid",chatMsg.getDest());
-                List<contact> queryResult=contactService.listByMap(query);
-                for (contact person: queryResult) {
-                    person.setUnread(person.getUnread()+1);
-                }
-                contactService.updateBatchById(queryResult);
-            }
+            // else{
+            //     Map<String,Object> query=new HashMap<>();
+            //     query.put("userid",chatMsg.getOrigin());
+            //     query.put("contactid",chatMsg.getDest());
+            //     List<contact> queryResult=contactService.listByMap(query);
+            //     for (contact person: queryResult) {
+            //         person.setUnread(person.getUnread()+1);
+            //     }
+            //     contactService.updateBatchById(queryResult);
+            // }
             //保存聊天记录信息
             chatInfoService.save(chatMsg);
 

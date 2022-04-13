@@ -34,7 +34,7 @@ ul div{
     transition: all .5s ease;
 }
 .register-main{
-    height: 62%;
+    /* height: 62%; */
     display: flex;
     overflow: hidden;
 }

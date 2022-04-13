@@ -110,6 +110,7 @@ function leftSearchOnClick() {
 
     }
     searchCloseBtn.onclick = function () {
+        vue.clearSearch();
         settingBtn.style.height = "45px";
         searchCloseBtn.style.height = "0";
         settingBtn.style.opacity = "1";

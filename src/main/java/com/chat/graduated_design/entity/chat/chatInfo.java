@@ -32,7 +32,8 @@ public class chatInfo implements Comparable<chatInfo>{
     private Integer origin=null;
     //false为聊天 true为文件
     private boolean file=false;
-    private String size;
+    private String size=null;
+    private Integer share=null;
 
     @Override
     public int compareTo(chatInfo o) {

@@ -1,4 +1,4 @@
-function Contact(contactId, headPortrait, nickname, doNotDisturb, phone, index, chatInfo, misTiming) {
+function Contact(contactId, headPortrait, nickname, doNotDisturb, phone, index, chatInfo, misTiming,relative) {
     this.contactid = contactId;
     this.headportrait = headPortrait;
     this.nickname = nickname;
@@ -19,8 +19,32 @@ function Contact(contactId, headPortrait, nickname, doNotDisturb, phone, index, 
         }
     }
     this.misTiming=misTiming;
+    this.relative=relative;
+}
+/**
+ * 联系人的坐标
+ * @param {number} row classify
+ * @param {number} col 该列第几个
+ */
+function Coordinate(row,col){
+    this.row=row;
+    this.col=col;
 }
 
+/**
+ * 每个联系人的所有位置
+ * @param {number} contactId id
+ * @param {number} row classify
+ * @param {number} col 该列第几个
+ */
+function Index(contactId,row,col){
+    this.contactId=contactId,
+    this.coordinate=new Array();
+    this.coordinate.push(new Coordinate(row,col));
+    this.addCoordinate=function (row,col){
+        this.coordinate.push(new Coordinate(row,col));
+    }
+}
 
 function vueAddContact(contact){
     let img = null;
@@ -34,7 +58,8 @@ function vueAddContact(contact){
         img,
         contact.nickname,
         false,contact.phone,0,null,
-        contact.misTiming));
+        contact.misTiming,0));
+    table.push(new Index(contact.contactid,0,vue.contact[0].length-1));
 }
 function vueDeleteContact(response){
     for(let i=0;i<vue.contact.length-1;i++){
@@ -43,6 +68,11 @@ function vueDeleteContact(response){
             if(person.contactid===response.id){
                 vue.contact[i].splice(vue.contact[i].indexOf(person),1);
             }
+        }
+    }
+    for(let person of table){
+        if(person.contactId===response.id){
+            table.splice(table.indexOf(person),1);
         }
     }
     if(emojiShow)
@@ -71,6 +101,7 @@ function vueDeleteContact(response){
 }
 
 $('#editContactNickName').click(function(){
+    $('#resetName').val(vue.currentChat.contactInfo.nickname);
     $('#reset-contact-name').css('display','block');
     $('#resetName').keydown(function(e){
         if(e.keyCode===13){
@@ -78,6 +109,11 @@ $('#editContactNickName').click(function(){
         }
     })
 });
+
+$('#cancelResetName').click(function(){
+    vue.cancelOption(); 
+});
+
 $('#submitResetName').click(function(){
     let resetName=$('#resetName').val().trim();
     if(resetName==='') return;
@@ -104,22 +140,19 @@ $('#submitResetName').click(function(){
         }
     });
 });
-$('#blackContact').click(function(){
-    sendPost('/black/'+getCookie('id'),{
-        contactId:vue.currentChat.contactInfo.contactid
-    },sendByJson,(msg)=>{
-        Vue.set(vue.messagebox, 'option', -1);
-        Vue.set(vue.messagebox, 'title', "拉黑联系人");
-        $('.create-chat-folder').css('display', 'block');
-        $('.cancel').css('display', 'none');
-        if(msg.data.status==200){
-            Vue.set(vue.messagebox, 'msg', "成功拉黑 "+vue.currentChat.contactInfo.nickname+" !!!");
+//修改联系人关系
+changeRelative=function(relative){
+    for(let item of table){
+        if(item.contactId===vue.currentChat.contactInfo.contactid){
+            for(let obj of item.coordinate){
+                let row=obj.row,col=obj.col;
+                vue.contact[row][col].relative=relative;
+            }
+            break;
         }
-        else{
-            Vue.set(vue.messagebox, 'msg', "拉黑 "+vue.currentChat.contactInfo.nickname+" 失败!!! 请稍后重试。");
-        }
-    });
-});
+    }
+    
+}
 
 blackContact = function(nickname){
     Vue.set(vue.messagebox, 'option', -1);
@@ -127,4 +160,16 @@ blackContact = function(nickname){
     Vue.set(vue.messagebox, 'msg', "被 " + nickname + " 拉黑!!!");
     $('.create-chat-folder').css('display', 'block');
     $('.cancel').css('display', 'none');
+}
+//还原被选中删除的人
+reductionSelectedPerson=function(){
+    //将tempSelectedPerson里的数据重新添加回vue.selected.selectedPerson中
+    // {
+    //     local:location,
+    //     person:person
+    // }
+    for(let i=tempSelectedPerson.length-1;i>=0;i--){
+        vue.selected.selectedPerson.splice(tempSelectedPerson[i].local,0,tempSelectedPerson[i].person);
+    }
+    tempSelectedPerson=[];
 }

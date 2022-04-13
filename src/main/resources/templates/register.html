@@ -30,7 +30,7 @@
             </ul>
         </div>
 
-        <div class="register-main" style="margin-bottom: -1rem">
+        <div class="register-main">
             <!-- 邮箱注册 -->
             <form action="/emailRegister" method="post">
                 <div class="input-group">
@@ -90,8 +90,10 @@
                     <div class="underline"></div>
                     <label for="UserName">姓名</label>
                 </div>
-                <video id="video" src="" width="100%" height="100%"></video>
-                <canvas id="canvas" width="100%" height="100%"></canvas>
+                <div id="video-container">
+                    <video id="video" src="" width="100%" height="100%" style="object-fit: fill;"></video>
+                    <canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
+                </div>
             </form>
         </div>
         <span>{{Message.message}}</span>

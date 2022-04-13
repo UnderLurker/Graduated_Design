@@ -96,7 +96,7 @@
                 <div class="line"></div>
                 <div class="contact" id="scroll">
                     <div class="contact-list" v-for="(classify,contactIndex) in contact" :key="contactIndex">
-                        <div class="contact-items" v-for="(item,index) in classify" :key="index" @click="contactClick(index,$event)">
+                        <div class="contact-items" v-for="(item,index) in classify" :key="index" @click="contactClick(item,index,$event)">
                             <div class="portrait">
                                 <img :src="item.headportrait" alt="头像">
                             </div>
@@ -106,15 +106,13 @@
                                         <h3 style="margin-right: 1rem;">{{item.nickname}}</h3>
                                         <ion-icon v-if="item.misTiming!=null&&item.doNotDisturb" name="notifications-off-outline"></ion-icon>
                                     </div>
-                                    <div v-if="item.misTiming!==null" class="second-info">hello world!!!fhdasfhiuasdhifuhsadiufhisuadhf</div>
+                                    <div v-if="item.misTiming!==null" class="second-info">{{showContent(item)}}</div>
                                 </div>
                             </div>
                             <div v-if="item.misTiming!==null" class="hint">
-                                <div class="hint-time">11:10</div>
-                                <div class="unread-num-frame">
-                                    <div class="unread-num" v-if="item.unread!==0">
-                                        {{item.unread}}
-                                    </div>
+                                <div class="hint-time">{{showContentTime(item)}}</div>
+                                <div class="unread-num-frame" v-if="(item.chatInfo.length!==0&&!item.chatInfo[item.chatInfo.length-1].readFlag)&&(item.chatInfo[item.chatInfo.length-1].origin!==userInfo.id)">
+                                    <div class="unread-num" v-html="showUnread(item)"></div>
                                 </div>
                             </div>
                             <div v-else="item.misTiming!==null" class="ion-icon-center contact-add" @click="userAddContact(item)">
@@ -370,14 +368,21 @@
                     <div class="folder-title">
                         <span>分类</span>
                     </div>
-                    <div class="folder-items" v-for="(classify,index) in contactClassify" @click="deleteContactFromFolder(index,$event)">
-                        <div class="classify-name">
-                            <span>{{classify}}</span>
+                    <template v-for="(classify,index) in contactClassify">
+                        <div v-if="classify!='新的朋友'&&classify!='所有'" class="folder-items" @click.self="deleteContactFromFolder(index,$event)">
+                            <div class="classify-name">
+                                <span>{{classify}}</span>
+                            </div>
+                            <div class="classify-statistics">
+                                <span>{{contact[index].length}}人</span>
+                            </div>
+                            <div class="folder-delete" @click.stop="deleteFolder(classify)">
+                                <div class="small-2 ion-icon-center">
+                                    <ion-icon name="trash-outline"></ion-icon>
+                                </div>
+                            </div>
                         </div>
-                        <div class="classify-statistics">
-                            <span>{{contact[index].length}}人</span>
-                        </div>
-                    </div>
+                    </template>
                 </div>
             </div>
             <div class="user-setting-hidden">
@@ -443,9 +448,9 @@
                         <h4 v-else="addOrEdit">编辑分类</h4>
                     </div>
                     <div class="folder-setting ion-icon-center" @click="folderSubmit">
-                        <ion-icon name="checkmark-outline" v-if="addOrEdit"></ion-icon>
+                        <ion-icon name="checkmark-outline"></ion-icon>
                         <!-- 删除 -->
-                        <ion-icon name="trash-outline" v-else="addOrEdit"></ion-icon>
+                        <!-- <ion-icon name="trash-outline" v-else="addOrEdit"></ion-icon> -->
                     </div>
                 </div>
                 <div class="bg-img-bg">
@@ -479,7 +484,7 @@
                                         <img :src="person.headportrait" alt="">
                                     </div>
                                     <span>{{person.nickname}}</span>
-                                    <div v-if="!addOrEdit" class="small-2 ion-icon-center">
+                                    <div class="small-2 ion-icon-center" @click="deleteContactFromNewFolder(person)">
                                         <ion-icon name="trash-outline"></ion-icon>
                                     </div>
                                 </div>
@@ -570,32 +575,36 @@
             </div>
             <!-- 展示聊天信息 -->
             <div id="chat-main">
-                <template v-for="(info,index) in currentChat.contactInfo.chatInfo" :key="index">
+                <template v-for="(info,index) in currentChat.contactInfo.chatInfo">
                     <!-- 自己信息 -->
                     <div v-if="info.origin===userInfo.id" class="user-info-items info-items">
-                        <div class="share riff">
+                        <!-- <div class="share riff" @click="shareInfo()">
                             <ion-icon name="arrow-redo-outline"></ion-icon>
-                        </div>
+                        </div> -->
                         <div class="chat-info-main shadow">
                             <template v-if="info.file">
                                 <div class="file">
-                                    <div class="file-icon" :class="{'shadow':info.filetype!=='audio'}"> <!--@click="download(info.fileStorageNo)"-->
-                                        <p v-if="info.filetype==='application'">{{info.suffix}}</p>
+                                    <div class="file-icon" :class="{'shadow':info.filetype!=='audio','share-contact-img':info.share}">
+                                        <p v-if="info.filetype==='application'" @click="download(info.fileStorageNo,info.content)">{{info.suffix}}</p>
                                         <img v-if="info.filetype==='video'" :src="'/thumbnail/'+info.thumbnail" width="100%" height="100%" alt="" onload="autoSize(event)" @click="videoPreview(info.fileStorageNo,'/thumbnail/'+info.thumbnail)">
                                         <div v-if="info.filetype==='audio'" class="ion-icon-center chat-audio shadow" @click="audioPreview(info.fileStorageNo,info.content)">
                                             <ion-icon name="caret-forward-outline"></ion-icon>
                                         </div>
                                         <img v-if="info.filetype==='image'" :src="'/photo/dim/'+info.fileStorageNo" width="100%" height="100%" alt="" onload="autoSize(event)" @click="photoPreview(info.fileStorageNo,info.content)">
+                                        <img v-if="info.filetype===null" :src="'/headportrait/'+info.content" width="100%" height="100%" alt="" @click="searchShare(info.shareContactNickName)">
                                     </div>
-                                    <div class="chat-file-info">
+                                    <div class="chat-file-info user-select" v-if="info.filetype!==null">
                                         <p class="file-name">{{info.content}}</p>
                                         <p style="font-size: .5rem;padding-top: 0;padding-bottom: 0;">发送时间：{{info.time.year+'-'+info.time.mouth+'-'+info.time.day}}</p>
                                         <p style="font-size: .5rem;padding-top: 0;padding-bottom: 0;">文件大小：{{info.size}}</p>
                                     </div>
+                                    <div class="chat-file-info" v-else="info.filetype!==null">
+                                        <p class="file-name user-select" style="margin-left: 1rem;">{{info.shareContactNickName}}</p>
+                                    </div>
                                 </div>
                             </template>
                             <template v-else="info.file">
-                                <p v-html="info.content"></p>
+                                <p class="user-select" v-html="info.content"></p>
                             </template>
                             <div class="current-time">
                                 <span>{{info.time.hour+':'+info.time.minute}}</span>
@@ -613,31 +622,35 @@
                         <div class="chat-info-main shadow">
                             <template v-if="info.file">
                                 <div class="file">
-                                    <div class="file-icon" :class="{'shadow':info.filetype!=='audio'}"> <!--@click="download(info.fileStorageNo)"-->
-                                        <p v-if="info.filetype==='application'">{{info.suffix}}</p>
+                                    <div class="file-icon" :class="{'shadow':info.filetype!=='audio','share-contact-img':info.share}">
+                                        <p v-if="info.filetype==='application'" @click="download(info.fileStorageNo,info.content)">{{info.suffix}}</p>
                                         <img v-if="info.filetype==='video'" :src="'/thumbnail/'+info.thumbnail" width="100%" height="100%" alt="" onload="autoSize(event)" @click="videoPreview(info.fileStorageNo,'/thumbnail/'+info.thumbnail)">
                                         <div v-if="info.filetype==='audio'" class="ion-icon-center chat-audio shadow" @click="audioPreview(info.fileStorageNo,info.content)">
                                             <ion-icon name="caret-forward-outline"></ion-icon>
                                         </div>
                                         <img v-if="info.filetype==='image'" :src="'/photo/dim/'+info.fileStorageNo" width="100%" height="100%" alt="" onload="autoSize(event)" @click="photoPreview(info.fileStorageNo,info.content)">
+                                        <img v-if="info.filetype===null" :src="'/headportrait/'+info.content" width="100%" height="100%" alt="" @click="searchShare(info.shareContactNickName)">
                                     </div>
-                                    <div class="chat-file-info">
+                                    <div class="chat-file-info user-select" v-if="info.filetype!==null">
                                         <p class="file-name">{{info.content}}</p>
                                         <p style="font-size: .5rem;padding-top: 0;padding-bottom: 0;">发送时间：{{info.time.year+'-'+info.time.mouth+'-'+info.time.day}}</p>
                                         <p style="font-size: .5rem;padding-top: 0;padding-bottom: 0;">文件大小：{{info.size}}</p>
                                     </div>
+                                    <div class="chat-file-info" v-else="info.filetype!==null">
+                                        <p class="file-name user-select" style="margin-left: 1rem;">{{info.shareContactNickName}}</p>
+                                    </div>
                                 </div>
                             </template>
                             <template v-else="info.file">
-                                <p v-html="info.content"></p>
+                                <p class="user-select" v-html="info.content"></p>
                             </template>
                             <div class="current-time">
                                 <span>{{info.time.hour+':'+info.time.minute}}</span>
                             </div>
                         </div>
-                        <div class="share riff">
+                        <!-- <div class="share riff" @click="shareInfo">
                             <ion-icon name="arrow-redo-outline"></ion-icon>
-                        </div>
+                        </div> -->
                     </div>
                 </template>
             </div>
@@ -648,7 +661,7 @@
                         <ion-icon name="happy-outline"></ion-icon>
                     </div>
                     <div style="width: 100%;display: flex;justify-content: center;">
-                        <textarea name="" id="editor" @keydown.enter="sendMsg(false)"></textarea>
+                        <textarea name="" id="editor" @keydown.enter="sendMsg(false,$event)"></textarea>
                     </div>
                     <!-- <div id="editor" placeholder="消息" style="height: 2.5rem;overflow-y: scroll;max-width: 100%;user-select: all" contenteditable="true"></div> -->
                     <div id="send-file" class="riff" @click="upLoadMedia" style="resize: none;">
@@ -656,18 +669,19 @@
                         <input type="file" id="media" hidden multiple name="media" accept="*/*">
                     </div>
                 </div>
-                <div class="input-frame-right shadow riff">
+                <!-- 语音 -->
+                <!-- <div class="input-frame-right shadow riff">
                     <ion-icon name="mic-outline"></ion-icon>
-                </div>
+                </div> -->
             </div>
             <div id="emoji">
                 <!-- 展示表情 -->
                 <div style="display: flex">
                     <!-- 系统-->
-                    <template v-for="(item,index) in emojiArr" :key="index">
+                    <template v-for="(item,index) in emojiArr">
                         <div class="emoji-container" style="width: 0;">
                             <div class="emoji">
-                                <template v-for="(icon,ind) in item.iconArr" :key="ind">
+                                <template v-for="(icon,ind) in item.iconArr">
                                     <div :class="icon.className" class="emoji-icon" style="display: inline-block;">{{icon.icon}}</div>
                                 </template>
                             </div>
@@ -681,7 +695,7 @@
                 <!-- 表情分类 -->
                 <div style="overflow: hidden;">
                     <div style="position: relative;display: flex;white-space: nowrap;">
-                        <template v-for="(item,index) in emojiArr" :key="index">
+                        <template v-for="(item,index) in emojiArr">
                             <div @click="emojiSwitch(index,$event)" class="emoji-list">{{item.name}}</div>
                         </template>
                     </div>
@@ -743,7 +757,7 @@
                     </div>
                 </div>
                 <div class="edit-contact">
-                    <div class="edit-items">
+                    <div class="edit-items" id="share-contact-info">
                         <div>
                             <ion-icon name="paper-plane-outline"></ion-icon>
                         </div>
@@ -761,17 +775,17 @@
                         </div>
                         <span>删除联系人</span>
                     </div>
-                    <div class="edit-items" @click="deleteChatInfo">
-                        <div>
-                            <ion-icon name="trash-outline"></ion-icon>
-                        </div>
-                        <span>删除聊天记录</span>
-                    </div>
-                    <div class="edit-items" id="blackContact">
+                    <div class="edit-items" id="blackContact" @click="userBlackContact" v-if="currentChat.contactInfo.relative===0||currentChat.contactInfo.relative===2">
                         <div>
                             <ion-icon name="heart-dislike-outline"></ion-icon>
                         </div>
                         <span>拉黑联系人</span>
+                    </div>
+                    <div class="edit-items" id="whiteContact" @click="userWhiteContact" v-else="currentChat.contactInfo.relative===0||currentChat.contactInfo.relative===2">
+                        <div>
+                            <ion-icon name="heart-outline"></ion-icon>
+                        </div>
+                        <span>移出黑名单</span>
                     </div>
                 </div>
             </div>
@@ -780,8 +794,8 @@
                     <ion-icon class="statistics-close-icon" name="arrow-forward-outline"></ion-icon>
                 </div>
                 <div class="statistics-frame">
-                    <template v-for="(item,index) in currentChat.contactInfo.chatInfo" :key="index">
-                        <div class="file-info-items" v-if="item.file&&item.filetype!=='audio'&&item.filetype!=='video'&&item.filetype!=='image'">
+                    <template v-for="(item,index) in currentChat.contactInfo.chatInfo">
+                        <div class="file-info-items" @click="download(item.fileStorageNo,item.content)" v-if="item.file&&item.filetype!=='audio'&&item.filetype!=='video'&&item.filetype!=='image'&&item.share===null">
                             <div class="file-info-items-img">
                                 <span>{{item.suffix}}</span>
                             </div>
@@ -805,8 +819,8 @@
                     <ion-icon class="statistics-close-icon" name="arrow-forward-outline"></ion-icon>
                 </div>
                 <div class="statistics-frame">
-                    <template v-for="(item,index) in currentChat.contactInfo.chatInfo" :key="index">
-                        <div class="file-info-items" v-if="item.file&&item.filetype==='image'" @click="photoPreview(item.fileStorageNo,item.content)">
+                    <template v-for="(item,index) in currentChat.contactInfo.chatInfo">
+                        <div class="file-info-items" v-if="item.file&&item.filetype==='image'&&item.share===null" @click="photoPreview(item.fileStorageNo,item.content)">
                             <div class="file-info-items-img">
                                 <img :src="'/photo/dim/'+item.fileStorageNo" height="100%" alt="">
                             </div>
@@ -830,8 +844,8 @@
                     <ion-icon class="statistics-close-icon" name="arrow-forward-outline"></ion-icon>
                 </div>
                 <div class="statistics-frame">
-                    <template v-for="(item,index) in currentChat.contactInfo.chatInfo" :key="index">
-                        <div class="video-info-items" v-if="item.file&&item.thumbnail!==null" @click="videoPreview(item.fileStorageNo,'/thumbnail/'+item.thumbnail)">
+                    <template v-for="(item,index) in currentChat.contactInfo.chatInfo">
+                        <div class="video-info-items" v-if="item.file&&item.thumbnail!==null&&item.share===null" @click="videoPreview(item.fileStorageNo,'/thumbnail/'+item.thumbnail)">
                             <div class="duration">
                                 <div>
                                     <ion-icon name="caret-forward-outline"></ion-icon>
@@ -848,8 +862,8 @@
                     <ion-icon class="statistics-close-icon" name="arrow-forward-outline"></ion-icon>
                 </div>
                 <div class="statistics-frame">
-                    <template v-for="(item,index) in currentChat.contactInfo.chatInfo" :key="index">
-                        <div class="music-info-items" v-if="item.file&&item.filetype==='audio'" @click="audioPreview(item.fileStorageNo,item.content)">
+                    <template v-for="(item,index) in currentChat.contactInfo.chatInfo">
+                        <div class="music-info-items" v-if="item.file&&item.filetype==='audio'&&item.share===null" @click="audioPreview(item.fileStorageNo,item.content)">
                             <div class="music-icon">
                                 <ion-icon name="caret-forward-outline"></ion-icon>
                             </div>
@@ -978,13 +992,40 @@
                 <label for="resetName">新的昵称</label>
             </div>
             <div class="options">
-                <div class="cancel" @click="cancelOption">
+                <div class="cancel" id="canclResetName">
                     取消
                 </div>
                 <div class="ok" id="submitResetName">
                     确定
                 </div>
             </div>
+        </div>
+    </div>
+    <div id="share-list">
+        <div class="img-frame shadow" style="box-sizing: content-box;width: 300px;">
+            <div class="img-frame-head">
+                <div class="ion-icon-center" id="share-list-close">
+                    <ion-icon name="close-outline"></ion-icon>
+                </div>
+                <span>选择</span>
+            </div>
+            <form @submit.prevent="shareContact" method="get">
+                <div class="share-list-item" style="max-height: 350px;overflow-y: scroll;">
+                    <template v-for="person in contact[0]">
+                        <div v-if="currentChat.contactInfo.contactid!=person.contactid" class="select-mumbers-items">
+                            <div class="portrait small-3">
+                                <img :src="person.headportrait" alt="">
+                            </div>
+                            <label>{{person.nickname}}</label>
+                            <input class="checkbox-mumbers" type="checkbox" v-model="person.select">
+                        </div>
+                    </template>
+                </div>
+                <div class="submit ion-icon-center shadow">
+                    <ion-icon name="checkmark-outline"></ion-icon>
+                </div>
+                <input id="share-send" type="submit" value=" ">
+            </form>
         </div>
     </div>
 </div>
@@ -1004,6 +1045,7 @@
 <script src="./js/video.js"></script>
 <script src="./js/photo.js"></script>
 <script src="./js/contact.js"></script>
+<script src="./js/share.js"></script>
 <script>
 </script>
 </body>

@@ -3,8 +3,6 @@ package com.chat.graduated_design.entity.contact;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 
-import org.apache.ibatis.jdbc.Null;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

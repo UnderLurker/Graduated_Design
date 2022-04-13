@@ -37,4 +37,17 @@ public class folderTableServiceImpl extends ServiceImpl<folderTableMapper, folde
         folderTable folder=new folderTable(null,userId,folderName);
         this.save(folder);
     }
+
+    /**
+     * 删除分类数据库的分类
+     * @param userId
+     * @param folderName
+     * @return
+     */
+    public boolean folderDelete(Integer userId,String folderName){
+        QueryWrapper<folderTable> query=new QueryWrapper<>();
+        query.eq("user_id", userId).eq("folder", folderName);
+        return this.remove(query);
+    }
+
 }

@@ -31,8 +31,9 @@ public class userServiceImpl extends ServiceImpl<userMapper, User> implements us
             item.remove("name");
             QueryWrapper<FileStorage> fileStorageQueryWrapper=new QueryWrapper<>();
             fileStorageQueryWrapper.eq("Id",item.get("id"));
-            Map<String, Object> fileStorge=fileDataService.getMap(fileStorageQueryWrapper);
-            item.put("headportrait","/headportrait/"+fileStorge.get("uuid"));
+            Map<String, Object> fileStorage=fileDataService.getMap(fileStorageQueryWrapper);
+            String uuid = fileStorage==null?"1.jpeg":(String) fileStorage.get("uuid");
+            item.put("headportrait","/headportrait/"+uuid);
         }
         return queryResult;
     }

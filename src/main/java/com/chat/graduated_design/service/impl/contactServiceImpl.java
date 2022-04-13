@@ -11,11 +11,14 @@ import com.chat.graduated_design.entity.user.User;
 import com.chat.graduated_design.mapper.contactMapper;
 import com.chat.graduated_design.service.contactService;
 import com.chat.graduated_design.util.DateUtil;
+import com.chat.graduated_design.util.ObjectUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -80,7 +83,7 @@ public class contactServiceImpl extends ServiceImpl<contactMapper, contact> impl
                 chatInfoMap.get(tempId).add(info);
             }
             //如果为文件将chat_no添加到chatNoList
-            if(info.isFile()){
+            if(info.isFile()&&info.getShare()==null){
                 chatNoList.add(info.getChatNo());
             }
         }
@@ -102,14 +105,19 @@ public class contactServiceImpl extends ServiceImpl<contactMapper, contact> impl
                 List<ResponseChat> responseChat=new LinkedList<>();
                 if(chat!=null){
                     for(chatInfo item : chat){
-                        if(!item.isFile()||thumbnailMap.get(item.getChatNo())==null){
-                            responseChat.add(new ResponseChat(item,null,null,null));
+                        if((!item.isFile()||thumbnailMap.get(item.getChatNo())==null)&&item.getShare()==null){
+                            responseChat.add(new ResponseChat(item,null,null,null,null));
                         }
                         else{
-                            responseChat.add(new ResponseChat(item,
-                                    thumbnailMap.get(item.getChatNo()).get("uuid"),
-                                    thumbnailMap.get(item.getChatNo()).get("fileStorageNo"),
-                                    thumbnailMap.get(item.getChatNo()).get("filetype")));
+                            String nickname=null;
+                            if(item.getShare()!=null){
+                                nickname=userService.getById(item.getShare()).getNickname();
+                            }
+                            Map<String,Object> temp=thumbnailMap.get(item.getChatNo());
+                            Object uuid=temp==null?"1.jpeg":temp.get("uuid");
+                            Object fileStorageNo=temp==null?null:temp.get("fileStorageNo");
+                            Object filetype=temp==null?null:temp.get("filetype");
+                            responseChat.add(new ResponseChat(item,uuid,fileStorageNo,filetype,nickname));
                         }
                     }
                 }
@@ -191,47 +199,213 @@ public class contactServiceImpl extends ServiceImpl<contactMapper, contact> impl
     }
 
     /**
-     * 更新用户与联系人之间的拉黑关系
+     * 更新用户与联系人之间的拉黑关系(拉黑)
      * @param userId
      * @param contactId
      * @return
      */
-    public boolean userBlackContact(Integer userId, Integer contactId){
+    public Map<String,Integer> userBlackContact(Integer userId, Integer contactId){
+        Map<String,Integer> res=new HashMap<>();
         //先更改用户对联系人的状态
         QueryWrapper<contact> query1=new QueryWrapper<>();
         query1.eq("userid", userId).eq("contactid", contactId);
         List<contact> accordWithList1=this.list(query1);
 
-        if(accordWithList1.size()==0) return false;
+        if(accordWithList1.size()==0) return res;
 
         int blackState1=accordWithList1.get(0).getBlackList();
+        if(blackState1==contact.ACTIVE||blackState1==contact.MUTUAL) return res;
         int finalState1=blackState1==contact.NORMAL?contact.ACTIVE:contact.MUTUAL;
 
-        UpdateWrapper<contact> uWrapper1=new UpdateWrapper<>();
-        uWrapper1.eq("userid", userId).eq("contactid", contactId);
-        contact finalContact1=new contact();
-        finalContact1.setBlackList(finalState1);
-        this.update(finalContact1, uWrapper1);
+        res.put("userState", finalState1);
+
+        this.updateBlackList(userId, contactId, finalState1);
 
         //更改联系人对用户的状态
         QueryWrapper<contact> query2=new QueryWrapper<>();
         query2.eq("userid", contactId).eq("contactid", userId);
         List<contact> accordWithList2=this.list(query2);
 
-        if(accordWithList2.size()==0) return false;
+        if(accordWithList2.size()==0) return res;
 
         int blackState2=accordWithList2.get(0).getBlackList();
         int finalState2=blackState2==contact.NORMAL?contact.PASSIVE:contact.MUTUAL;
 
-        UpdateWrapper<contact> uWrapper2=new UpdateWrapper<>();
-        uWrapper2.eq("userid", contactId).eq("contactid", userId);
-        contact finalContact2=new contact();
-        finalContact2.setBlackList(finalState2);
-        this.update(finalContact2, uWrapper2);
-        return true;
+        res.put("contactState", finalState2);
+
+        this.updateBlackList(contactId, userId, finalState2);
+        return res;
     }
 
+    /**
+     * 更新用户与联系人之间的拉黑关系(移出)
+     * @param userId
+     * @param contactId
+     * @return
+     */
+    public Map<String,Integer> userWhiteContact(Integer userId, Integer contactId){
+        Map<String,Integer> res=new HashMap<>();
+        //先更改用户对联系人的状态
+        QueryWrapper<contact> query1=new QueryWrapper<>();
+        query1.eq("userid", userId).eq("contactid", contactId);
+        List<contact> accordWithList1=this.list(query1);
 
+        if(accordWithList1.size()==0) return res;
 
-    
+        int blackState1=accordWithList1.get(0).getBlackList();
+        if(blackState1==contact.NORMAL||blackState1==contact.PASSIVE) return res;
+        int finalState1=blackState1==contact.ACTIVE?contact.NORMAL:contact.PASSIVE;
+
+        res.put("userState", finalState1);
+
+        this.updateBlackList(userId, contactId, finalState1);
+
+        //更改联系人对用户的状态
+        QueryWrapper<contact> query2=new QueryWrapper<>();
+        query2.eq("userid", contactId).eq("contactid", userId);
+        List<contact> accordWithList2=this.list(query2);
+
+        if(accordWithList2.size()==0) return res;
+
+        int blackState2=accordWithList2.get(0).getBlackList();
+        int finalState2=blackState2==contact.PASSIVE?contact.NORMAL:contact.ACTIVE;
+
+        res.put("contactState", finalState2);
+
+        this.updateBlackList(contactId, userId, finalState2);
+        return res;
+    }
+
+    /**
+     * 更新联系人黑名单
+     * @param userId
+     * @param contactId
+     * @param finalState
+     */
+    public void updateBlackList(Integer userId, Integer contactId,Integer finalState){
+        UpdateWrapper<contact> uWrapper=new UpdateWrapper<>();
+        uWrapper.eq("userid", userId).eq("contactid", contactId);
+        contact finalContact=new contact();
+        finalContact.setBlackList(finalState);
+        this.update(finalContact, uWrapper);
+    }
+
+    /**
+     * 获得联系人的头像
+     * @param userId
+     * @param contactId
+     * @return
+     */
+    public String getHeadPortrait(Integer userId,Integer contactId){
+        QueryWrapper<contact> query=new QueryWrapper<>();
+        query.eq("userid", userId).eq("contactid", contactId);
+        contact person=this.getOne(query);
+        return person.getHeadportrait();
+    }
+
+    /**
+     * contact表中是否包含该联系人
+     * @param userId
+     * @param contactId
+     * @return
+     */
+    public boolean isContain(Integer userId,Integer contactId){
+        QueryWrapper<contact> query=new QueryWrapper<>();
+        query.eq("userid", userId).eq("contactid", contactId);
+        contact person=null;
+        person=this.getOne(query);
+        return person==null?false:true;
+    }
+
+    /**
+     * 删除folderName的分组
+     * @param userId
+     * @param folderName
+     * @return
+     */
+    public boolean folderDelete(Integer userId,String folderName){
+        QueryWrapper<contact> query=new QueryWrapper<>();
+        query.eq("userid", userId).eq("folder", folderName);
+        return this.remove(query);
+    }
+
+    /**
+     * 批量移除
+     * @param userId
+     * @param contactIds
+     * @param folderName
+     * @return
+     */
+    public boolean removeBatch(Integer userId,List<Object> contactIds,String folderName){
+        if(contactIds.size()==0) return true;
+        List<Integer> keyList=new LinkedList<>();
+
+        List<Integer> idList=new LinkedList<>();
+        for(Object obj : contactIds){
+            idList.add((Integer) obj);
+        }
+        Collections.sort(idList,new IntegerComparator());
+
+        QueryWrapper<contact> query=new QueryWrapper<>();
+        query.eq("userid", userId).eq("folder", folderName);
+        List<contact> list=this.list(query);
+        list.sort(null);
+
+        for (int index1 = 0, index2 = 0; index1 < idList.size() && index2 < list.size();) {
+            Integer id1=idList.get(index1);
+            Integer id2=list.get(index2).getContactid();
+            if(id1>id2){
+                index2++;
+            }
+            else if(id1<id2){
+                index1++;
+            }
+            else{
+                keyList.add(list.get(index2).getContactNo());
+                index1++;
+                index2++;
+            }
+        }
+
+        return this.removeByIds(keyList);
+    }
+
+    //比较器
+    class IntegerComparator implements Comparator<Integer>{
+        @Override
+        public int compare(Integer o1, Integer o2) {
+            return o1-o2;
+        }
+        
+    }
+
+    /**
+     * 批量保存
+     * @param userId
+     * @param selectedPerson
+     * @param folderName
+     * @return
+     */
+    public boolean saveBatch(Integer userId,List<Object> selectedPerson,String folderName){
+        List<contact> saveList=new LinkedList<>();
+        if(selectedPerson.size()==0) return true;
+        for(Object obj : selectedPerson){
+            Map<String,Object> person=null;
+            try {
+                person=(Map<String,Object>) obj;
+                String photoPath=(String) person.get("headportrait");
+                String headPortrait=photoPath.split("/")[photoPath.split("/").length-1];
+                contact savePerson=new contact(null,
+                                userId, (Integer) person.get("contactid"), 
+                                folderName, headPortrait, (boolean)person.get("doNotDisturb"), 
+                                (String) person.get("nickname"), (Integer) person.get("relative"));
+                saveList.add(savePerson);
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return this.saveBatch(saveList, 30);
+    }
+
 }
+

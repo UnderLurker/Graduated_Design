@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chat.graduated_design.entity.chat.chatInfo;
 import com.chat.graduated_design.mapper.chatInfoMapper;
@@ -42,6 +43,11 @@ public class chatInfoServiceImpl extends ServiceImpl<chatInfoMapper, chatInfo> i
         this.remove(query);
     }
 
+    /**
+     * 获得文件大小，通过主键
+     * @param no
+     * @return
+     */
     public String getSizeByField(Integer no){
         return this.getById(no).getSize();
     }
@@ -53,15 +59,39 @@ public class chatInfoServiceImpl extends ServiceImpl<chatInfoMapper, chatInfo> i
      * @return
      */
     public List<Integer> getFileId(Integer userId,Integer contactId){
-        QueryWrapper<chatInfo> query=new QueryWrapper<>();
-        query.eq("dest", userId).eq("origin", contactId).eq("file", true)
-            .or()
-            .eq("dest", contactId).eq("origin", userId).eq("file", true);
-        List<chatInfo> list=this.list(query);
+        List<chatInfo> list=this.getAllFile(userId, contactId);
         List<Integer> result=new LinkedList<>();
         for(chatInfo info : list){
             result.add(info.getChatNo());
         }
         return result;
     }
+
+    /**
+     * 获取所有文件
+     * @param userId
+     * @param contactId
+     * @return
+     */
+    public List<chatInfo> getAllFile(Integer userId,Integer contactId){
+        QueryWrapper<chatInfo> query=new QueryWrapper<>();
+        query.eq("dest", userId).eq("origin", contactId).eq("file", true).isNull("share")
+            .or()
+            .eq("dest", contactId).eq("origin", userId).eq("file", true).isNull("share");
+        return this.list(query);
+    }
+
+    /**
+     * 设置聊天信息为已读
+     * @param userId
+     * @param contactId
+     */
+    public void setRead(Integer userId,Integer contactId){
+        UpdateWrapper<chatInfo> query=new UpdateWrapper<>();
+        query.eq("dest",userId).eq("origin",contactId);
+        chatInfo chat=new chatInfo();
+        chat.setReadFlag(true);
+        this.update(chat, query);
+    }
+
 }

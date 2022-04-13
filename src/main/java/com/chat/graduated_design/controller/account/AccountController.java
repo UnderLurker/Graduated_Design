@@ -1,6 +1,7 @@
 package com.chat.graduated_design.controller.account;
 
 import com.chat.graduated_design.controller.WebSocket;
+import com.chat.graduated_design.entity.chat.chatInfo;
 import com.chat.graduated_design.entity.contact.ResponseContact;
 import com.chat.graduated_design.entity.contact.contact;
 import com.chat.graduated_design.entity.contact.friendRequest;
@@ -88,7 +89,7 @@ public class AccountController {
             FileStorage info=fileDataService.getUserPortrait(requestId);
             String uuid=info==null?null:info.getUuid();
             User request=userService.getById(requestId);
-            contact temp=new contact(null,null,requestId,null,uuid,false,null,request.getNickname(),contact.NORMAL);
+            contact temp=new contact(null,null,requestId,null,uuid,false,request.getNickname(),contact.NORMAL);
             resList.add(new ResponseContact(temp,request.getNickname(),request.getPhone(),null,null));
         }
 
@@ -111,6 +112,9 @@ public class AccountController {
     public Response addContact(@RequestBody Map<String,Object> info,
                                 @PathVariable("userId") Integer userId) throws IOException{
         Integer contactId=(Integer) info.get("id");
+        //看是否已经有此联系人
+        boolean contain=contactService.isContain(userId, contactId);
+        if(contain) return Response.error("/addContact/");
         friendRequestService.save(new friendRequest(null,userId,contactId));
 
         //发送给要添加的联系人
@@ -141,9 +145,9 @@ public class AccountController {
         User receiver=userService.getById(userId);
 
         // 添加联系人到数据库
-        contact receive=new contact(null,userId,contactId,"所有",contactHeadPortrait,false,0,requester.getNickname(),contact.NORMAL);
+        contact receive=new contact(null,userId,contactId,"所有",contactHeadPortrait,false,requester.getNickname(),contact.NORMAL);
         contactService.save(receive);
-        contact request=new contact(null,contactId,userId,"所有",userHeadPortrait,false,0,receiver.getNickname(),contact.NORMAL);
+        contact request=new contact(null,contactId,userId,"所有",userHeadPortrait,false,receiver.getNickname(),contact.NORMAL);
         contactService.save(request);
         // 删除请求好友表中的项
         friendRequestService.deleteApply(userId, contactId);
@@ -230,15 +234,75 @@ public class AccountController {
     public Response blackContact(@PathVariable("userId") Integer userId,
                                 @RequestBody Map<String,Object> info) throws IOException{
         Integer contactId=(Integer) info.get("contactId");
-        boolean flag=contactService.userBlackContact(userId, contactId);
-        if(!flag) return Response.error("/black/"+userId);
+        Map<String,Integer> flag=contactService.userBlackContact(userId, contactId);
+        if(flag.size()!=2) return Response.error("/black/"+userId);
         //联系人对user的昵称
         String nickname=contactService.getUserSettingNickName(contactId, userId);
         Map<String,Object> contactInfo=new HashMap<>();
         contactInfo.put("black", true);
         contactInfo.put("nickname",nickname);
+        contactInfo.put("relative", flag.get("contactState"));
+        contactInfo.put("userId",userId);
+        contactInfo.put("contactId", contactId);
         WebSocket.sendObject(contactId, contactInfo);
-        return Response.ok("/black/"+userId);
+        return Response.ok("/black/"+userId,flag.get("userState"));
     }
 
+    @ResponseBody
+    @PostMapping("/white/{userId}")
+    public Response whiteContact(@PathVariable("userId") Integer userId,
+                                @RequestBody Map<String,Object> info) throws IOException{
+        Integer contactId=(Integer) info.get("contactId");
+        Map<String,Integer> flag=contactService.userWhiteContact(userId, contactId);
+        if(flag.size()!=2) return Response.error("/white/"+userId);
+        
+        //联系人对user的昵称
+        String nickname=contactService.getUserSettingNickName(contactId, userId);
+        Map<String,Object> contactInfo=new HashMap<>();
+        contactInfo.put("black", true);
+        contactInfo.put("nickname",nickname);
+        contactInfo.put("relative", flag.get("contactState"));
+        contactInfo.put("userId",userId);
+        contactInfo.put("contactId", contactId);
+        WebSocket.sendObject(contactId, contactInfo);
+        return Response.ok("/white/"+userId,flag.get("userState"));
+    }
+
+
+    @ResponseBody
+    @PostMapping("/contact/share/{userId}/{contactId}")
+    public Response shareContact(@PathVariable("userId") Integer userId,
+                                @PathVariable("contactId") Integer contactId,
+                                @RequestBody List<Integer> idList) throws IOException{
+        String headPortrait=contactService.getHeadPortrait(userId,contactId);
+        String nickname=userService.getById(contactId).getNickname();
+        if(headPortrait==null) headPortrait="1.jpeg";
+        List<Map<String,Object>> list=new LinkedList<>();
+        Map<String,Object> info=new HashMap<>();
+        info.put("content", headPortrait);
+        info.put("origin", userId);
+        info.put("time", DateUtil.getCurrentTime());
+        info.put("share",contactId);
+        info.put("shareContactNickName",nickname);
+        info.put("file",true);
+        info.put("filetype", null);
+        for(Integer id : idList){
+            chatInfo chat=new chatInfo(null, false, headPortrait, DateUtil.getCurrentTime(), id, userId, true, null,contactId);
+            chatInfoService.save(chat);
+
+            info.put("dest", id);
+            info.put("chatNo", chat.getChatNo());
+
+            WebSocket.sendObject(id, info);
+            list.add(info);
+        }
+        return Response.ok("/contact/share/",list);
+    }
+
+    @ResponseBody
+    @GetMapping("/read/{userId}/{contactId}")
+    public void read(@PathVariable("userId") Integer userId,
+                    @PathVariable("contactId") Integer contactId){
+        chatInfoService.setRead(userId, contactId);
+    }
 }

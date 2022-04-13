@@ -63,6 +63,7 @@
         $('.user-setting-hidden:eq(1)').css({'width':'384px','opacity':'1'});
         folderPage.style.width="0";
         folderPage.style.opacity="0";
+        reductionSelectedPerson();
     }
 
 })();

@@ -5,7 +5,6 @@ import com.chat.graduated_design.entity.file.ResponseFile;
 import com.chat.graduated_design.entity.file.videoThumbnail;
 import com.chat.graduated_design.message.Response;
 import com.chat.graduated_design.service.impl.chatInfoServiceImpl;
-import com.chat.graduated_design.service.impl.contactServiceImpl;
 import com.chat.graduated_design.service.impl.fileDataServiceImpl;
 import com.chat.graduated_design.service.impl.userServiceImpl;
 import com.chat.graduated_design.service.impl.videoThumbnailServiceImpl;
@@ -34,8 +33,6 @@ public class searchController {
     @Autowired
     private fileDataServiceImpl fileDataService;
     @Autowired
-    private contactServiceImpl contactService;
-    @Autowired
     private videoThumbnailServiceImpl videoThumbnailService;
     @Autowired
     private chatInfoServiceImpl chatInfoService;
@@ -48,7 +45,7 @@ public class searchController {
         List<Map<String,Object>> queryUser=userService.querylike("nickname",content,fileDataService);
         res.put("user",queryUser);
         //文件
-        List<ResponseFile> responseFile=new LinkedList<>();
+        List<ResponseFile> responseFile=this.selectByIdAndType(id, "/", content);
         res.put("file", responseFile);
         //图片
         List<ResponseFile> responsePhoto=this.selectByIdAndType(id, "image", content);
@@ -82,7 +79,7 @@ public class searchController {
                 continue;
             }
             String fileType=fileInfo.get(index2).getType().split("/")[0];
-            if(!fileType.equals(type)){
+            if(!fileType.equals(type)&&!fileInfo.get(index2).getType().contains(type)){
                 allFiles.remove(allFiles.get(index1));
                 fileInfo.remove(fileInfo.get(index2));
                 continue;

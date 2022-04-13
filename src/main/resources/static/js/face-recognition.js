@@ -14,13 +14,6 @@ openCamera = function () {
         console.log("获取摄像头失败！！");
         res = false;
     });
-    setTimeout(()=>{
-        let video=document.getElementById('video').getBoundingClientRect();
-        $("canvas").eq(0).attr({
-            "width": video.width,
-            "height": video.height
-        });
-    },750);
     return res;
 }
 
