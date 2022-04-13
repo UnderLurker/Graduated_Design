@@ -11,7 +11,7 @@
  Target Server Version : 80024
  File Encoding         : 65001
 
- Date: 08/04/2022 18:22:01
+ Date: 13/04/2022 19:39:44
 */
 
 SET NAMES utf8mb4;
@@ -30,12 +30,13 @@ CREATE TABLE `chat_info`  (
   `origin` int(0) UNSIGNED NOT NULL COMMENT '发送用户',
   `file` tinyint(1) NOT NULL COMMENT '0聊天 1文件',
   `size` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '文件大小',
+  `share` int(0) UNSIGNED NULL DEFAULT NULL COMMENT '分享的联系人id',
   PRIMARY KEY (`chat_no`) USING BTREE,
   INDEX `dest`(`dest`) USING BTREE,
   INDEX `origin`(`origin`) USING BTREE,
   CONSTRAINT `chat_info_ibfk_1` FOREIGN KEY (`dest`) REFERENCES `user` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `chat_info_ibfk_2` FOREIGN KEY (`origin`) REFERENCES `user` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 204 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 267 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for contact
@@ -48,7 +49,6 @@ CREATE TABLE `contact`  (
   `folder` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '联系人分类',
   `headportrait` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '头像uuid',
   `do_not_disturb` tinyint(1) NOT NULL COMMENT '是否开启免打扰',
-  `unread` int(0) NOT NULL DEFAULT 0 COMMENT '未读条数',
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '昵称',
   `black_list` tinyint(0) UNSIGNED NULL DEFAULT 0 COMMENT '黑名单 0正常 1user黑contact 2contact黑user 3互相黑',
   PRIMARY KEY (`contact_no`) USING BTREE,
@@ -56,10 +56,9 @@ CREATE TABLE `contact`  (
   INDEX `contact_ibfk_4`(`headportrait`) USING BTREE,
   INDEX `userid`(`userid`) USING BTREE,
   INDEX `contactid`(`contactid`) USING BTREE,
-  CONSTRAINT `contact_ibfk_3` FOREIGN KEY (`folder`) REFERENCES `folder_table` (`folder`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `contact_ibfk_5` FOREIGN KEY (`userid`) REFERENCES `user` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `contact_ibfk_6` FOREIGN KEY (`contactid`) REFERENCES `user` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 106 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 150 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for file_storage
@@ -80,7 +79,7 @@ CREATE TABLE `file_storage`  (
   INDEX `receive_id`(`receive_id`) USING BTREE,
   CONSTRAINT `file_storage_ibfk_1` FOREIGN KEY (`Id`) REFERENCES `user` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `file_storage_ibfk_2` FOREIGN KEY (`receive_id`) REFERENCES `user` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 88 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 98 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for folder_table
@@ -94,7 +93,7 @@ CREATE TABLE `folder_table`  (
   INDEX `folder`(`folder`) USING BTREE,
   INDEX `user_id`(`user_id`) USING BTREE,
   CONSTRAINT `folder_table_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 47 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for friend_request
@@ -109,7 +108,7 @@ CREATE TABLE `friend_request`  (
   INDEX `receive_id`(`receive_id`) USING BTREE,
   CONSTRAINT `friend_request_ibfk_1` FOREIGN KEY (`request_id`) REFERENCES `user` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `friend_request_ibfk_2` FOREIGN KEY (`receive_id`) REFERENCES `user` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 40 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 52 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for general_setting
@@ -134,13 +133,13 @@ CREATE TABLE `user`  (
   `gender` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '性别',
   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '邮箱',
   `phone` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '电话号码',
-  `nickname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '昵称',
+  `nickname` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '昵称',
   `active` tinyint(1) NOT NULL DEFAULT 0 COMMENT '账户是否激活',
   `login_time` datetime(0) NULL DEFAULT NULL COMMENT '登录时间',
   `pre_login_time` datetime(0) NULL DEFAULT NULL COMMENT '上次登录时间',
   `face_image_uuid` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '存储脸部数据的名称',
   PRIMARY KEY (`Id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 22 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for video_thumbnail
