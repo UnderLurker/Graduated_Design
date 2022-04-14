@@ -19,6 +19,7 @@ body {
     position: relative;
 }
 .left-nav{
+    background-color: var(--theme-background);
     width: 384px;
     display: flex;
     transition: all .5s;
@@ -31,7 +32,7 @@ body {
     font-size: 1.8rem;
     opacity: 1;
     display: flex;
-    color: gray;
+    color: var(--special-font-color);
     align-content: center;
     justify-content: flex-start;
     flex-direction: column;
@@ -70,7 +71,7 @@ body {
     opacity: 0;
 }
 .search-left:hover {
-    background-color: rgb(236, 236, 236);
+    background-color: var(--move-on-background);
 }
 
 .search-left:active {}
@@ -112,8 +113,9 @@ body {
 .user-setting-close:hover,
 .hidden-head-setting:hover,
 .hidden-head-close:hover,
-.close:hover {
-    background-color: rgb(243, 243, 243);
+.close:hover,
+.search-right:hover {
+    background-color: var(--move-on-background);
 }
 
 .search-right {
@@ -125,10 +127,6 @@ body {
     position: relative;
     transition: 0.5s;
     overflow: hidden;
-}
-
-.search-right:hover {
-    background-color: rgb(236, 236, 236);
 }
 
 input {
@@ -169,7 +167,7 @@ input:focus {
     overflow: hidden;
 }
 .search-frame:first-child{
-    color: dodgerblue;
+    color: var(--general-final-color);
 }
 .search-frame,
 .frame{
@@ -184,17 +182,18 @@ input:focus {
     cursor: pointer;
     position: relative;
     transition: 0.5s;
+    color: var(--special-font-color);
 }
 .search-frame{
     min-width: 20%;
 }
 .list .search-frame:first-child,
 .list .frame:first-child {
-    color: dodgerblue;
+    color: var(--general-final-color);
 }
 .search-frame:hover,
 .frame:hover {
-    background-color: rgb(240, 239, 239);
+    background-color: var(--move-on-background);
 }
 
 .line {
@@ -206,7 +205,7 @@ input:focus {
     height: 0px;
     width: 60px;
     display: block;
-    border-bottom: 4px solid dodgerblue;
+    border-bottom: 4px solid var(--general-final-color);
     transition: 0.5s;
     position: relative;
     left: 0px;
@@ -294,7 +293,7 @@ input:focus {
 .select-list::-webkit-scrollbar-thumb,
 .contact-list::-webkit-scrollbar-thumb{
     border-radius: 1rem;
-    background-color: silver;
+    background-color: var(--scrollbar-thumb-color);
 }
 .share-list-item::-webkit-scrollbar-track,
 .emoji::-webkit-scrollbar-track,
@@ -341,7 +340,7 @@ input:focus {
     pointer-events: none;
 }
 .first-info{
-    color: black;
+    color: var(--general-font-color);
     display: flex;
     align-items: center;
 }
@@ -391,12 +390,12 @@ input:focus {
 .user-setting-info-items:hover,
 .search-result-items:hover,
 .contact-items:hover{
-    background-color: rgb(244, 244, 244);
+    background-color: var(--move-on-background);
     border-radius: 8px;
 }
 .contact-items.active{
     border-radius: 8px;
-    background-color: dodgerblue;
+    background-color: var(--general-final-color);
     color: white;
     transition: 0.75s;
 }
@@ -405,7 +404,7 @@ input:focus {
     height: 0;
     overflow: hidden;
     position: absolute;
-    background-color: white;
+    background-color: var(--theme-background);
     top: 4rem;
     left: 1rem;
     z-index: 10;
@@ -424,7 +423,7 @@ input:focus {
     position: relative;
 }
 .hidden-items:hover{
-    background-color: rgb(244, 244, 244);
+    background-color: var(--move-on-background);
 }
 .hidden-items-icon{
     width: 2rem;
@@ -457,7 +456,7 @@ input:focus {
     width: 1.3rem;
     height: 1.3rem;
     border-radius: 50%;
-    background-color: white;
+    background-color: var(--dark-model-btn);
     border: 2px solid silver;
     transition: all .5s;
 }
@@ -466,6 +465,8 @@ input:focus {
     opacity: 0;
     overflow: hidden;
     transition: all .5s;
+    background-color: var(--theme-background);
+    color: var(--setting-font-color);
 }
 .user-img{
     width: 8rem;
@@ -482,6 +483,7 @@ input:focus {
     font-size: 1.5rem;
     position: relative;
     border-bottom: 1px solid silver;
+    color: var(--setting-font-color);
 }
 .select-setting-close,
 #folder-setting-close,
@@ -531,6 +533,9 @@ input:focus {
     display: flex;
     cursor: pointer;
 }
+.user-setting-info-items ion-icon{
+    color: var(--setting-icon-color);
+}
 .user-setting-info-items div:nth-child(1){
     width: 3rem;
     height: 3rem;
@@ -548,10 +553,15 @@ input:focus {
     overflow: hidden;
     transition: all 0.5s;
     opacity: 0;
+    color: var(--setting-font-color);
+}
+#select-mumbers ion-icon,
+#folder-operation ion-icon{
+    color: var(--setting-font-color);
 }
 .transparent-camera{
     background-color: rgba(128, 128, 128,.3);
-    color: rgba(255, 255, 255,.7);
+    color: var(--head-portrait-icon-color);
     font-size: 5rem;
     width: 8rem;
     height: 8rem;
@@ -583,7 +593,7 @@ input:focus {
     transform: translateY(-50%);
 }
 .contact-add:hover{
-    background-color: rgba(31, 143, 255,.5);
+    background-color: var(--add-contact-color);
     color: whitesmoke;
 }
 .folder-delete{

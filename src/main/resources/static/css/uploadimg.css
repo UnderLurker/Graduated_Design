@@ -15,7 +15,8 @@
     box-sizing: content-box;
     padding: 2rem;
     width: 500px;
-    background-color: white;
+    background-color: var(--theme-background);
+    color: var(--theme-font-color);
     border-radius: 2rem;
     position: absolute;
     top: 50%;
@@ -75,7 +76,7 @@
 #add-folder{
     padding: .5rem 0;
     width: 8rem;
-    background-color: dodgerblue;
+    background-color: var(--input-frame-color);
     display: flex;
     justify-content: space-around;
     color: white;
@@ -112,15 +113,15 @@
 }
 .select-setting:hover,
 .folder-setting:hover{
-    background-color: rgba(30, 144, 255,.15);
+    background-color: var(--move-on-background);
     box-shadow: 0 0 .3rem gray;
 }
 .folder-items:hover{
-    background-color: rgb(243, 243, 243);
+    background-color: var(--move-on-background);
 }
 .folder-title{
     margin: 1rem;
-    color: dodgerblue;
+    color: var(--input-frame-color);
     font-size: 1.3rem;
 }
 .folder-items .classify-name{
@@ -129,7 +130,7 @@
     font-size: 1.1rem;
 }
 .bg-img-bg{
-    background-color: whitesmoke;
+    background-color: var(--bg-img-bg-color);
 }
 .folder-form{
     overflow-y: auto;
@@ -173,7 +174,7 @@
 }
 #folder-contact-add-btn{
     display: flex;
-    color: dodgerblue;
+    color: var(--input-frame-color);
     line-height: 2rem;
     font-size: 1.3rem;
     padding: .5rem;
@@ -186,14 +187,14 @@
 }
 .folder-contact-title{
     margin-left: .5rem;
-    color: dodgerblue;
+    color: var(--input-frame-color);
     font-size: 1.5rem;
 }
 #folder-contact-add-btn:hover{
     background-color: rgba(30, 144, 255,.08);
 }
 .folder-contact-items:hover{
-    background-color: rgb(243, 243, 243);
+    background-color: var(--move-on-background);
 }
 .input-shadow{
     /* margin: 0 3rem 3rem 3rem; */
@@ -204,7 +205,7 @@
 }
 .blank{
     height: 2.5rem;
-    background-color: whitesmoke;
+    background-color: var(--bg-img-bg-color);
 }
 .options{
     display: flex;
@@ -242,7 +243,7 @@
 }
 .select-setting-close:hover,
 .select-mumbers-items:hover{
-    background-color: rgb(243, 243, 243);
+    background-color: var(--move-on-background);
 }
 .select-mumbers-items .portrait{
     margin: 0 2rem 0 1rem;

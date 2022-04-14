@@ -1,16 +1,65 @@
 :root{
     --theme-background:white;
+    --theme-font-color: black;
     --theme-background-input:white;
     --theme-classify-font-color:dodgerblue;
     --theme-unread-color:silver;
     --theme-contact-name-color:white;
     --theme-search-framework:1px solid gainsboro;
+    --general-font-color: black;
+    --special-font-color: gray;
+    --right-font-color: black;
+    --move-on-background: #f0efef;
+    /* 选择联系人分类的颜色 */
+    --general-final-color: dodgerblue;
+    --scrollbar-thumb-color: silver;
+    --middle-chat-background: rgb(57, 141, 212);
+    --emoji-background:#eeeeee;
+    --emoji-hover-background:rgb(247, 247, 247);
+    --emoji-classify-font-color: black;
+    --emoji-classify-selected-font-color: dodgerblue;
+    --emoji-classify-select-background: white;
+    --setting-icon-color:black;
+    --setting-font-color:black;
+    --head-portrait-icon-color:rgba(255, 255, 255,.7);
+    --input-font-color: black;
+    --input-frame-color: #349EDF;
+    --bg-img-bg-color:whitesmoke;
+    --chat-font-color:black;
+    --chat-top:rgba(30, 144, 255, .5);
+    --chat-input-frame:white;
+    --audio-progress-bar-color:#649fec;
+    --add-contact-color:rgba(31, 143, 255,.5);
+    --dark-model-btn:white;
 }
 .night{
-    --theme-background:rgb(33,33,33);
+    --theme-background:#212121;
+    --theme-font-color:#e9e9e9;
     --theme-background-input:rgb(24,24,24);
     --theme-classify-font-color:rgb(134,105,197);
     --theme-unread-color:rgb(112,117,121);
     --theme-contact-name-color:white;
     --theme-search-framework:none;
+    --general-font-color: whitesmoke;
+    --right-font-color: silver;
+    --move-on-background:rgba(240, 239, 239,.15);
+    --general-final-color: #8774e0;
+    --scrollbar-thumb-color: #8774e0;
+    --middle-chat-background: #8774e0;
+    --emoji-background: #212121;
+    --emoji-hover-background:rgba(247, 247, 247,.15);
+    --emoji-classify-font-color: silver;
+    --emoji-classify-selected-font-color: #8774e0;
+    --emoji-classify-select-background: rgba(240, 239, 239,.15);
+    --setting-icon-color:#6c6c6c;
+    --setting-font-color:#e9e9e9;
+    --input-font-color: #e9e9e9;
+    --input-frame-color: #8774e0;
+    --bg-img-bg-color:#212121;
+    --chat-font-color:silver;
+    --chat-top:rgba(135, 116, 224,.5);
+    --chat-input-frame:silver;
+    --audio-progress-bar-color:#8774e0;
+    --add-contact-color:rgba(135, 116, 224,.5);
+    --dark-model-btn:#8774e0;
 }

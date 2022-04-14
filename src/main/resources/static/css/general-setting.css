@@ -21,7 +21,7 @@
     height: 2px;
     width: 50%;
     margin-top: 1rem;
-    background-color: dodgerblue;
+    background-color: var(--input-frame-color);
     z-index: 1;
     pointer-events: none;
 }
@@ -32,7 +32,7 @@
     padding-bottom: 1rem;
 }
 .general-setting-items>span{
-    color: dodgerblue;
+    color: var(--input-frame-color);
     font-size: 1.2rem;
     width: 90%;
     margin: 0 auto;

@@ -7,6 +7,8 @@
     overflow: hidden;
     position: relative;
     display: flex;
+    background-color: var(--theme-background);
+    color: var(--right-font-color);
 }
 .ordinary{
     position: relative;
@@ -27,7 +29,7 @@
     margin-left: 1rem;
 }
 .statistics-close ion-icon:hover{
-    background-color: rgb(240, 239, 239);
+    background-color: var(--move-on-background);
 }
 
 .file-info,
@@ -49,7 +51,7 @@
     background-color: transparent;
 }
 .file-info-items:hover{
-    background-color: #bbb;
+    background-color: var(--move-on-background);
 }
 .file-info-items-img{
     width: 5rem;
@@ -60,6 +62,7 @@
     margin: .5rem 1rem;
     background-color: lightskyblue;
     overflow: hidden;
+    color: black;
 }
 .file-info-items-img img{
     height: 100%;
@@ -230,7 +233,7 @@
 }
 .edit-items:hover,
 .statistics-items:hover{
-    background-color: #bbb;
+    background-color: var(--move-on-background);
 }
 .up-load,
 .create-chat-folder,

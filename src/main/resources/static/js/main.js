@@ -367,7 +367,7 @@ let vue = new Vue({
 
             let left = addRippleEffect(e, e.target, "rgba(30, 144, 255, .15)");
             let width = e.target.getBoundingClientRect().width;
-            $('.frame:eq(' + index + ')').css('color', 'dodgerblue');
+            $('.frame:eq(' + index + ')').css('color', 'var(--general-final-color)');
             $('.frame:eq(' + this.frame.frameActive + ')').css('color', 'gray');
 
             //改变滑条的位置和大小
@@ -521,11 +521,15 @@ let vue = new Vue({
             let currentWidth = e.target.getBoundingClientRect().width;
             $('.emoji-container').css({
                 'width': '0',
-                'color': 'black'
             });
             $('.emoji-container:eq(' + index + ')').css({
-                'width': '100%',
-                'color': 'dodgerblue'
+                'width': '100%'
+            });
+            $('.emoji-list:eq('+emojiActive+')').css({
+                'color': 'var(--emoji-classify-font-color)'
+            });
+            $('.emoji-list:eq('+index+')').css({
+                'color': 'var(--emoji-classify-selected-font-color)'
             });
             let left = (activeLeft === originLeft) ? (currentLeft - activeLeft) : currentLeft;
             $('#emoji-list-active').css({

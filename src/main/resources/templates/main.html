@@ -5,22 +5,23 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/main-left.css">
-    <link rel="stylesheet" href="./css/main-middle.css">
-    <link rel="stylesheet" href="./css/main-right.css">
-    <link rel="stylesheet" href="./css/input.css">
-    <link rel="stylesheet" href="./css/uploadimg.css">
-    <link rel="stylesheet" href="./css/general-setting.css">
+    <link rel="stylesheet" href="./css/root.min.css">
+    <link rel="stylesheet" href="./css/main-left.min.css">
+    <link rel="stylesheet" href="./css/main-middle.min.css">
+    <link rel="stylesheet" href="./css/main-right.min.css">
+    <link rel="stylesheet" href="./css/input.min.css">
+    <link rel="stylesheet" href="./css/uploadimg.min.css">
+    <link rel="stylesheet" href="./css/general-setting.min.css">
     <link rel="stylesheet" href="./css/Jcrop.min.css">
-    <link rel="stylesheet" href="./css/audio.css">
-    <link rel="stylesheet" href="./css/video.css">
-    <link rel="stylesheet" href="./css/photo.css">
-    <script src="./js/jquery.js"></script>
-    <script src="./js/riff.js"></script>
-    <script src="./js/Jcrop.js"></script>
+    <link rel="stylesheet" href="./css/audio.min.css">
+    <link rel="stylesheet" href="./css/video.min.css">
+    <link rel="stylesheet" href="./css/photo.min.css">
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/riff.min.js"></script>
+    <script src="./js/Jcrop.min.js"></script>
     <script src="./js/emoji.min.js"></script>
-    <script src="./js/contact.js"></script>
-    <script src="./js/request.js"></script>
+    <script src="./js/contact.min.js"></script>
+    <script src="./js/request.min.js"></script>
     <title>首页</title>
 </head>
 
@@ -1031,22 +1032,26 @@
 </div>
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-<script src="./js/vue.js"></script>
-<script src="./js/axios.js"></script>
-<script src="./js/audio.js"></script>
-<script src="./js/main.js"></script>
-<script src="./js/add-folder.js"></script>
-<script src="./js/main-left.js"></script>
-<script src="./js/general-setting.js"></script>
-<script src="./js/websocket.js"></script>
-<script src="./js/circle-tailoring.js"></script>
-<script src="./js/coolapk-emotion-svg.js"></script>
-<script src="./js/file.js"></script>
-<script src="./js/video.js"></script>
-<script src="./js/photo.js"></script>
-<script src="./js/contact.js"></script>
-<script src="./js/share.js"></script>
+<script src="./js/vue.min.js"></script>
+<script src="./js/axios.min.js"></script>
+<script src="./js/audio.min.js"></script>
+<script src="./js/main.min.js"></script>
+<script src="./js/add-folder.min.js"></script>
+<script src="./js/main-left.min.js"></script>
+<script src="./js/general-setting.min.js"></script>
+<script src="./js/websocket.min.js"></script>
+<script src="./js/circle-tailoring.min.js"></script>
+<script src="./js/coolapk-emotion-svg.min.js"></script>
+<script src="./js/file.min.js"></script>
+<script src="./js/video.min.js"></script>
+<script src="./js/photo.min.js"></script>
+<script src="./js/contact.min.js"></script>
+<script src="./js/share.min.js"></script>
 <script>
+    const isDarkTheme = window.matchMedia("(prefers-color-scheme: dark)"); // 是深色
+    if (isDarkTheme.matches) { // 是深色
+        $('#darkModel').click();
+    }
 </script>
 </body>
 

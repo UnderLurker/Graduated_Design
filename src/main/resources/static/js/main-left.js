@@ -10,7 +10,7 @@ function searchFrameOnClick(e) {
             var left = addRippleEffect(e, this, "rgba(30, 144, 255, .15)");
             if (searchFrameActive < 0 || i === searchFrameActive) return;
             let width = this.getBoundingClientRect().width;
-            this.style.color = "dodgerblue";
+            this.style.color = "var(--general-final-color)";
             search_frame[searchFrameActive].style.color = 'gray';
 
             //改变滑条的位置和大小
@@ -411,11 +411,12 @@ document.getElementById('emotion').onclick = function (e) {
         //重置表情包界面
         $('.emoji-container').css({
             'width': '0',
-            'color': 'black'
         });
         $('.emoji-container:eq(0)').css({
             'width': '100%',
-            'color': 'dodgerblue'
+        });
+        $('.emoji-list:eq(0)').css({
+            'color': 'var(--emoji-classify-selected-font-color)'
         });
         emojiActive = 0;
         $('#emoji').css('height', '10rem');
@@ -442,9 +443,11 @@ function darkModel() {
         let dark = document.getElementById('dark');
         if (flag) {
             dark.style.left = "20px";
+            $('#app').addClass('night');
             flag = false;
         } else {
             dark.style.left = "-2px";
+            $('#app').removeClass('night');
             flag = true;
         }
     }
