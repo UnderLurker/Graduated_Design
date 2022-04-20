@@ -253,7 +253,7 @@ let vue = new Vue({
                 for (let file of files) {
                     formData.append('files', file);
                 }
-                sendPost('/uploadMultipleFiles/' + getCookie('id') + '/' + this.currentChat.contactInfo.contactid, formData, sendByForm, (msg) => {
+                sendPost('/file/uploadMultipleFiles/' + getCookie('id') + '/' + this.currentChat.contactInfo.contactid, formData, sendByForm, (msg) => {
                     let response = msg.data.obj;
                     for (let item of response) {
                         this.putMessage(item);
@@ -263,7 +263,7 @@ let vue = new Vue({
             } else if(vue.messagebox.option === 4){
                 //删除联系人
                 let id=this.currentChat.contactInfo.contactid;
-                sendPost('/contact/delete/'+getCookie('id'),{
+                sendPost('/account/contact/delete/'+getCookie('id'),{
                     'id':id
                 }, sendByJson,(msg)=>{
                     let response=msg.data;
@@ -419,7 +419,7 @@ let vue = new Vue({
             },200);
             if(this.showUnread(item)>0){
                 //发送给服务器已读
-                sendGet('/read/'+getCookie('id')+'/'+item.contactid,null,sendByJson,()=>{});
+                sendGet('/account/read/'+getCookie('id')+'/'+item.contactid,null,sendByJson,()=>{});
             }
             for(let item of this.contact[this.frame.frameActive][index].chatInfo){
                 item.readFlag=true;
@@ -491,7 +491,7 @@ let vue = new Vue({
                 let row=obj.row,col=obj.col;
                 if(row===this.contactSelect.contactActive&&col===this.contactSelect.frameActive){
                     message.readFlag=true;
-                    sendGet('/read/'+getCookie('id')+'/'+this.contact[row][col].contactid,null,sendByJson,()=>{});
+                    sendGet('/account/read/'+getCookie('id')+'/'+this.contact[row][col].contactid,null,sendByJson,()=>{});
                 }
                 this.contact[row][col].chatInfo.push(message);
                 break;
@@ -508,7 +508,7 @@ let vue = new Vue({
             formData.append('h', $('#h').val());
             formData.append('originWidth', originWidth);
             formData.append('originHeight', originHeight);
-            sendPost('/' + this.userInfo.id + '/headportrait', formData, sendByForm, (msg) => {
+            sendPost('/file/' + this.userInfo.id + '/headportrait', formData, sendByForm, (msg) => {
                 this.userInfo.headportrait = msg.data.obj;
             });
         },
@@ -616,7 +616,7 @@ let vue = new Vue({
         },
         addContact(contact){
             let headportrait=contact.headportrait.split('/')[contact.headportrait.split('/').length-1];
-            sendPost('/addContact/'+getCookie('id'),{
+            sendPost('/account/addContact/'+getCookie('id'),{
                 'id':contact.id,
                 'headportrait':headportrait,
                 'nickname':contact.nickname,
@@ -642,7 +642,7 @@ let vue = new Vue({
             let contactheadportrait=person.headportrait.split('/')[person.headportrait.split('/').length-1];
             contactheadportrait=contactheadportrait==='1.jpeg'?null:contactheadportrait;
             //用户确认添加联系人
-            sendPost('/'+getCookie('id')+'/userAddContact',{
+            sendPost('/account/'+getCookie('id')+'/userAddContact',{
                 'contactId':person.contactid,
                 'contactHeadportrait':contactheadportrait,
                 'userHeadportrait':userheadportrait,
@@ -678,7 +678,7 @@ let vue = new Vue({
                     item.select=false;
                 }
             }
-            sendPost('/contact/share/'+getCookie('id')+'/'+this.currentChat.contactInfo.contactid,idList,sendByJson,(msg)=>{
+            sendPost('/account/contact/share/'+getCookie('id')+'/'+this.currentChat.contactInfo.contactid,idList,sendByJson,(msg)=>{
                 $('#share-list-close').click();
                 if(msg.data.status===200){
                     let response=msg.data.obj;
@@ -726,7 +726,7 @@ let vue = new Vue({
             return res;
         },
         userBlackContact(){
-            sendPost('/black/'+getCookie('id'),{
+            sendPost('/account/black/'+getCookie('id'),{
                 contactId:this.currentChat.contactInfo.contactid
             },sendByJson,(msg)=>{
                 Vue.set(vue.messagebox, 'option', -1);
@@ -743,7 +743,7 @@ let vue = new Vue({
             });
         },
         userWhiteContact(){
-            sendPost('/white/'+getCookie('id'),{
+            sendPost('/account/white/'+getCookie('id'),{
                 contactId:this.currentChat.contactInfo.contactid
             },sendByJson,(msg)=>{
                 Vue.set(vue.messagebox, 'option', -1);
@@ -836,8 +836,9 @@ function formatDateList(obj){
 }
 //向服务器请求用户信息（除密码）
 (function () {
+    axios.defaults.withCredentials = true
     axios({
-        url: '/prepare/' + getCookie('id'),
+        url: '/account/prepare/' + getCookie('id'),
         method: 'get',
     }).then(function (msg) {
         let userData = msg.data.obj.user;

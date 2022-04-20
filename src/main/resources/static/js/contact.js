@@ -117,7 +117,7 @@ $('#cancelResetName').click(function(){
 $('#submitResetName').click(function(){
     let resetName=$('#resetName').val().trim();
     if(resetName==='') return;
-    sendPost('/resetName/'+getCookie('id'),{
+    sendPost('/account/resetName/'+getCookie('id'),{
         name:resetName,
         contactId:vue.currentChat.contactInfo.contactid
     },sendByJson,(msg)=>{

@@ -1,6 +1,8 @@
 package com.chat.graduated_design.service.impl;
 
 import com.chat.graduated_design.service.mailService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -34,11 +36,11 @@ public class MailActiveImpl implements mailService {
     @Value("${mail.activeContent}")
     private String activeContent;
 
-    @Resource
+    @Autowired
     private JavaMailSenderImpl javaMailSenderImpl;
 
     @Override
-    public void sendMimeMail(String toEmail) {
+    public void sendMimeMail(String toEmail,String code) {
         MimeMessage mimeMessage = javaMailSenderImpl.createMimeMessage();
         try {
             // 开启文件上传

@@ -19,7 +19,7 @@ spring:
     #发送邮件的账户
     # 授权码（获取方式前文已描述）
     username: 1481167030@qq.com
-    password: wnrwumwmmgllhhdj
+    password: qqdxdkqxyxrvhhei
     host: smtp.qq.com
     properties:
       mail:
@@ -31,9 +31,9 @@ mail:
   activeSubject: 账户激活
   forgetCodeSubject: 忘记密码
   activeContent:
-  preActiveContent: <h3>请点击下面的链接激活你的账号</h3><br><a href="http://localhost:8080/user/active/
+  preActiveContent: <h3>请点击下面的链接激活你的账号</h3><br><a href="http://localhost:8080/account/user/active/
   subActiveContent: /">点击这里激活你的账户</a>
-  forgetCodeContent: ""
+  forgetCodeContent: 验证码：
 
 mybatis-plus:
   configuration:

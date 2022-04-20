@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/common.min.css">
+    <link rel="stylesheet" href="./css/input.min.css">
+    <link rel="stylesheet" href="./css/register.min.css">
+    <link rel="stylesheet" href="./css/root.min.css">
+    <title>忘记密码</title>
+</head>
+<body>
+    <div id="app" class="flex-box" style="height: 23rem;">
+        <div class="login-way">
+            <ul>
+                <li>
+                    <span>邮箱</span>
+                    <div id="slider"></div>
+                </li>
+                <li>
+                    <span>手机</span>
+                </li>
+            </ul>
+        </div>
+        <div class="register-main" style="flex-direction: column;">
+            <div style="display: flex;flex-direction: row;">
+                <form action="#" method="post">
+                    <div class="input-group">
+                        <input type="text" id="UserName" required>
+                        <div class="underline"></div>
+                        <label for="UserName">姓名</label>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="UserEmail" aria-describedby="emailHelp" required>
+                        <div class="underline"></div>
+                        <label for="UserEmail">邮箱</label>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="UserPasswordFirst" name="password" maxLength="20" required>
+                        <div class="underline"></div>
+                        <label for="UserPasswordFirst">密码</label>
+                    </div>
+                    <div style="white-space: nowrap;display: flex;align-items: flex-end;">
+                        <div class="input-group" style="display: inline-block;width: 50%">
+                            <input type="text" name="code" id="codeEmail">
+                            <div class="underline"></div>
+                            <label for="codeEmail">验证码</label>
+                        </div>
+                        <button @click.prevent="sendCodeEmail" class="btn" style="width: 50%;background-color: transparent;color: black;border: none;cursor: pointer;">发送验证码</button>
+                    </div>
+                </form>
+                <form action="#" method="post">
+                    <div class="input-group">
+                        <input type="text" id="UserNamePhone" required>
+                        <div class="underline"></div>
+                        <label for="UserName">姓名</label>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="UserPhone" required>
+                        <div class="underline"></div>
+                        <label for="UserPhone">手机号</label>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="UserPasswordFirstPhone" name="password" maxLength="20" required>
+                        <div class="underline"></div>
+                        <label for="UserPasswordFirst">密码</label>
+                    </div>
+                    <div style="white-space: nowrap;display: flex;align-items: flex-end;">
+                        <div class="input-group" style="display: inline-block;width: 50%">
+                            <input type="text" name="code" id="codePhone">
+                            <div class="underline"></div>
+                            <label for="codePhone">验证码</label>
+                        </div>
+                        <button @click.prevent="sendCodePhone" class="btn" style="width: 50%;background-color: transparent;color: black;border: none;cursor: pointer;">发送验证码</button>
+                    </div>
+                </form>
+            </div>
+            <span style="text-align: center;color: red;">{{errorMsg}}</span>
+            <div class="input-group" style="padding-top: 1rem;">
+                <button type="submit" @click.prevent="submitInfo" class="btn">确认</button>
+            </div>
+            <div style="text-align: center">
+                <a class="login" href="login.html">返回登录</a>
+            </div>
+        </div>
+    </div>
+    <script src="./js/vue.min.js"></script>
+    <script src="./js/axios.min.js"></script>
+    <script src="./js/jquery.min.js"></script>
+    <script>
+        let vue=new Vue({
+            el:'#app',
+            data:{
+                errorMsg:""
+            },
+            methods: {
+                sendCodeEmail(){
+                    axios({
+                        url: '/account/email/code',
+                        data:{
+                            mail:$('#UserEmail').val()
+                        },
+                        method: 'post',
+                    }).then((res) => {
+                        if(res.data.status===200){
+                            this.errorMsg='success';
+                        }
+                        else{
+                            this.errorMsg='出错请重试';
+                        }
+                    });
+                },
+                sendCodePhone(){
+                    axios({
+                        url: '/account/phone/code',
+                        data:{
+                            phone:$('#UserPhone').val()
+                        },
+                        method: 'post',
+                    }).then((res) => {
+                        if(res.data.status===200){
+                            this.errorMsg='success';
+                        }
+                        else{
+                            this.errorMsg='出错请重试';
+                        }
+                    });
+                },
+                submitInfo(){
+                    let data;
+                    if(active===0){
+                        data={
+                            name:$('#UserName').val(),
+                            email:$('#UserEmail').val(),
+                            password:$('#UserPasswordFirst').val(),
+                            code:$('#codeEmail').val()
+                        }
+                    }
+                    else if(active===1){
+                        data={
+                            name:$('#UserName').val(),
+                            phone:$('#UserPhone').val(),
+                            password:$('#UserPasswordFirstPhone').val(),
+                            code:$('#codePhone').val()
+                        }
+                    }
+                    axios({
+                        url:'/account/email/sure',
+                        data:data,
+                        method:'post'
+                    }).then((res)=>{
+                        if(res.data.status==200){
+                            $(window).attr('location','/login.html');
+                        }
+                        else{
+                            this.errorMsg='请刷新重试';
+                        }
+                    });
+                }
+            }
+        })
+
+        var active=0;
+        var li=document.getElementsByTagName('li');
+        var form=document.getElementsByTagName('form');
+        let initLeft=li[0].getBoundingClientRect().left;
+        for(var i=0;i<li.length;i++){
+            li[i].onclick=function(){
+                for(var j=0;j<li.length;j++){
+                    if(li[j]==this) break;
+                }
+                if(j==active) return;
+
+                let left=this.getBoundingClientRect().left;
+                let slider=document.getElementById('slider');
+                this.style.color="dodgerblue";
+                li[active].style.color="silver";
+                slider.style.left=left-initLeft+"px";
+
+                //展开表单
+                form[active].style.width="0";
+                form[j].style.width="100%";
+
+                active=j;
+            }
+        }
+    </script>
+</body>
+</html>

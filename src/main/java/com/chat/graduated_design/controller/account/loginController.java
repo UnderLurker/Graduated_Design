@@ -37,7 +37,7 @@ public class loginController {
     ErrorMessage errorMessage=new ErrorMessage();
     //邮箱登录
     @ResponseBody
-    @RequestMapping("/emaillogin")
+    @RequestMapping("/login/emaillogin")
     public ErrorMessage emailLogin(@RequestBody User user,
                                    HttpServletRequest request,
                                    HttpServletResponse response){
@@ -61,17 +61,23 @@ public class loginController {
         else{
             Map<String,Object> map=list.get(0);
             User sessionUser=new User(map);
+            Cookie pwd=new Cookie("pwd", sessionUser.getPassword());
+            Cookie id=new Cookie("id",sessionUser.getId().toString());
+            pwd.setPath("/");
+            pwd.setDomain("localhost");
+            id.setPath("/");
+            id.setDomain("localhost");
+            response.addCookie(id);
+            response.addCookie(pwd);
             sessionUser.setPassword("");
-            request.getSession().setAttribute("user",sessionUser);
-            Cookie cookie=new Cookie("id",sessionUser.getId().toString());
-            response.addCookie(cookie);
+            request.getSession().setAttribute("user", sessionUser);
             errorMessage.clear();
         }
         return errorMessage;
     }
     //手机登录
     @ResponseBody
-    @PostMapping("/phonelogin")
+    @PostMapping("/login/phonelogin")
     public ErrorMessage phoneLogin(@RequestBody User user,
                                    HttpServletRequest request,
                                    HttpServletResponse response){
@@ -95,17 +101,23 @@ public class loginController {
             errorMessage.clear();
             Map<String,Object> map=list.get(0);
             User sessionUser=new User(map);
-            sessionUser.setPassword("");
-            request.getSession().setAttribute("user",sessionUser);
+            Cookie pwd=new Cookie("pwd", sessionUser.getPassword());
             Cookie cookie=new Cookie("id",user.getId().toString());
+            pwd.setPath("/");
+            pwd.setDomain("localhost");
+            cookie.setPath("/");
+            cookie.setDomain("localhost");
             response.addCookie(cookie);
+            response.addCookie(pwd);
+            sessionUser.setPassword("");
+            request.getSession().setAttribute("user", sessionUser);
         }
         return errorMessage;
     }
 
     //刷脸登录
     @ResponseBody
-    @PostMapping("/facelogin")
+    @PostMapping("/login/facelogin")
     public ErrorMessage faceLogin(@RequestBody Map<String,Object> info,HttpServletRequest request,HttpServletResponse response){
         errorMessage.clear();
         String file=(String) info.get("faceBase");
@@ -129,8 +141,14 @@ public class loginController {
             double res=ImageUtil.isSame(path, stream);
             if(res>0.72){
                 request.getSession().setAttribute("user",user);
+                Cookie pwd=new Cookie("pwd", path);
                 Cookie cookie=new Cookie("id",user.getId().toString());
+                pwd.setPath("/");
+                pwd.setDomain("localhost");
+                cookie.setPath("/");
+                cookie.setDomain("localhost");
                 response.addCookie(cookie);
+                response.addCookie(pwd);
                 return errorMessage;
             }
         }

@@ -1,6 +1,7 @@
 package com.chat.graduated_design.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chat.graduated_design.entity.file.FileStorage;
 import com.chat.graduated_design.entity.user.User;
@@ -123,5 +124,13 @@ public class userServiceImpl extends ServiceImpl<userMapper, User> implements us
         QueryWrapper<User> queryWrapper=new QueryWrapper<>();
         queryWrapper.eq("email",email);
         return this.getOne(queryWrapper);
+    }
+
+    public boolean updatePassword(String key,String password){
+        UpdateWrapper<User> query=new UpdateWrapper<>();
+        query.eq("email", key).or().eq("phone", key);
+        User user=new User();
+        user.setPassword(password);
+        return this.update(user, query);
     }
 }

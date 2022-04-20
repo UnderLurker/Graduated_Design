@@ -65,7 +65,7 @@ public class fileController {
      * @param id
      * @return
      */
-    @PostMapping("/{id}/headportrait")
+    @PostMapping("/file/{id}/headportrait")
     public Response headPortrait(@RequestParam("headportrait") MultipartFile file,
                                  @RequestParam("scale") Double scale,
                                  @RequestParam("x") Double x,
@@ -115,7 +115,7 @@ public class fileController {
      * @return
      * @throws IOException
      */
-    @PostMapping("/uploadMultipleFiles/{userId}/{contactId}")
+    @PostMapping("/file/uploadMultipleFiles/{userId}/{contactId}")
     public Response uploadMultipleFiles(@RequestParam("files") MultipartFile[] files,
                                         @PathVariable("userId") Integer userId,
                                         @PathVariable("contactId") Integer contactId) throws IOException {

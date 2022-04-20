@@ -2,6 +2,7 @@ package com.chat.graduated_design;
 
 import java.io.FileNotFoundException;
 
+import com.chat.graduated_design.service.impl.MailForgetCodeImpl;
 import com.chat.graduated_design.service.impl.contactServiceImpl;
 import com.chat.graduated_design.util.VideoUtil;
 
@@ -31,5 +32,11 @@ class GraduatedDesignApplicationTests {
             e.printStackTrace();
         }
         System.out.println(rootPath);
+    }
+    @Autowired
+    private MailForgetCodeImpl mail;
+    @Test
+    void forgetText(){
+        mail.sendMimeMail("1481167030@qq.com", "1111");
     }
 }

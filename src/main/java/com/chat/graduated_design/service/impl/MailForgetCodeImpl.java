@@ -1,13 +1,14 @@
 package com.chat.graduated_design.service.impl;
 
 import com.chat.graduated_design.service.mailService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
@@ -28,11 +29,11 @@ public class MailForgetCodeImpl implements mailService {
     @Value("${mail.forgetCodeContent}")
     private String forgetCodeContent;
 
-    @Resource
+    @Autowired
     private JavaMailSenderImpl javaMailSenderImpl;
 
     @Override
-    public void sendMimeMail(String toEmail) {
+    public void sendMimeMail(String toEmail,String code) {
         MimeMessage mimeMessage = javaMailSenderImpl.createMimeMessage();
         try {
             // 开启文件上传
@@ -40,7 +41,7 @@ public class MailForgetCodeImpl implements mailService {
             // 设置文件主题
             mimeMessageHelper.setSubject(this.forgetCodeSubject);
             // 设置文件内容 第二个参数设置是否支持html
-            mimeMessageHelper.setText(this.forgetCodeContent, true);
+            mimeMessageHelper.setText(this.forgetCodeContent+"<br><h3>"+code+"</h3>", true);
             // 设置发送到的邮箱
             mimeMessageHelper.setTo(toEmail);
             // 设置发送人和配置文件中邮箱一致

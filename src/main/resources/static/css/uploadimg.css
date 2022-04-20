@@ -271,7 +271,7 @@
     transition: all ease .5s;
     width: 20rem;
     height: 4rem;
-    background-color: white;
+    background-color: var(--theme-background);
     left: 50%;
     transform: translateX(-50%);
     display: block;

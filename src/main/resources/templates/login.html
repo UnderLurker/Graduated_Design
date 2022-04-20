@@ -95,6 +95,7 @@
     <script>
         let active=0;
         function sendData(data,url){
+            axios.defaults.withCredentials = true
             axios({
                 url:url,
                 method:'post',
@@ -122,9 +123,9 @@
                     message:"报错",
                 },
                 url:{
-                    emailUrl:'/emaillogin',
-                    phoneUrl:'/phonelogin',
-                    faceUrl:'/facelogin'
+                    emailUrl:'/login/emaillogin',
+                    phoneUrl:'/login/phonelogin',
+                    faceUrl:'/login/facelogin'
                 }
             },
             methods: {
@@ -147,7 +148,7 @@
                         sendData(data,vue.url.phoneUrl);
                     }
                     else if(active==2){
-                        uploadImg('/facelogin')
+                        uploadImg('/login/facelogin')
                     }
                     e.preventDefault();
                 },

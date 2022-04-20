@@ -8,11 +8,14 @@ import com.chat.graduated_design.entity.contact.friendRequest;
 import com.chat.graduated_design.entity.file.FileStorage;
 import com.chat.graduated_design.entity.file.videoThumbnail;
 import com.chat.graduated_design.entity.user.User;
+import com.chat.graduated_design.entity.user.UserSure;
 import com.chat.graduated_design.message.Response;
 import com.chat.graduated_design.service.impl.*;
 import com.chat.graduated_design.util.DateUtil;
+import com.chat.graduated_design.util.MD5Util;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,8 +55,14 @@ public class AccountController {
     private fileServiceImpl fileService;
     @Autowired
     private videoThumbnailServiceImpl videoThumbnailService;
+    @Autowired
+    private MailForgetCodeImpl mail;
+
+    private String randomCode="0123456789abcdefghijklmnopqrstuvwxyz";
+
+    private Map<String,String> codeInfo=new HashMap<>();
     
-    @GetMapping("/user/active/{id}/")
+    @GetMapping("/account/user/active/{id}/")
     public String active(@PathVariable(value = "id") Integer id){
         User queryUser=userService.getById(id);
         if(queryUser==null){
@@ -66,7 +75,7 @@ public class AccountController {
     
     //登录账号的准备工作，将数据封装完毕发送给客户端
     @ResponseBody
-    @GetMapping("/prepare/{id}")
+    @GetMapping("/account/prepare/{id}")
     public Response prepare(@PathVariable("id") Integer id){
         //查询用户信息
         User user=userService.getById(id);
@@ -108,7 +117,7 @@ public class AccountController {
 
     //添加联系人信息转发
     @ResponseBody
-    @PostMapping("/addContact/{userId}")
+    @PostMapping("/account/addContact/{userId}")
     public Response addContact(@RequestBody Map<String,Object> info,
                                 @PathVariable("userId") Integer userId) throws IOException{
         Integer contactId=(Integer) info.get("id");
@@ -135,7 +144,7 @@ public class AccountController {
 
     //用户确认添加联系人
     @ResponseBody
-    @PostMapping("/{userId}/userAddContact")
+    @PostMapping("/account/{userId}/userAddContact")
     public Response userAddContact(@PathVariable("userId") Integer userId,
                                     @RequestBody Map<String,Object> contactInfo) throws IOException,ParseException{
         Integer contactId=(Integer) contactInfo.get("contactId");
@@ -174,7 +183,7 @@ public class AccountController {
     }
 
     @ResponseBody
-    @PostMapping("/contact/delete/{userId}")
+    @PostMapping("/account/contact/delete/{userId}")
     public Response deleteContact(@PathVariable("userId") Integer userId,
                                     @RequestBody Map<String,Object> contactInfo) throws IOException{
         Integer contactId=(Integer) contactInfo.get("id");
@@ -218,7 +227,7 @@ public class AccountController {
     }
 
     @ResponseBody
-    @PostMapping("/resetName/{userId}")
+    @PostMapping("/account/resetName/{userId}")
     public Response resetContactName(@PathVariable("userId") Integer userId,
                                         @RequestBody Map<String,Object> info){
         Integer contactId=(Integer) info.get("contactId");
@@ -230,7 +239,7 @@ public class AccountController {
     }
 
     @ResponseBody
-    @PostMapping("/black/{userId}")
+    @PostMapping("/account/black/{userId}")
     public Response blackContact(@PathVariable("userId") Integer userId,
                                 @RequestBody Map<String,Object> info) throws IOException{
         Integer contactId=(Integer) info.get("contactId");
@@ -249,7 +258,7 @@ public class AccountController {
     }
 
     @ResponseBody
-    @PostMapping("/white/{userId}")
+    @PostMapping("/account/white/{userId}")
     public Response whiteContact(@PathVariable("userId") Integer userId,
                                 @RequestBody Map<String,Object> info) throws IOException{
         Integer contactId=(Integer) info.get("contactId");
@@ -270,7 +279,7 @@ public class AccountController {
 
 
     @ResponseBody
-    @PostMapping("/contact/share/{userId}/{contactId}")
+    @PostMapping("/account/contact/share/{userId}/{contactId}")
     public Response shareContact(@PathVariable("userId") Integer userId,
                                 @PathVariable("contactId") Integer contactId,
                                 @RequestBody List<Integer> idList) throws IOException{
@@ -300,9 +309,44 @@ public class AccountController {
     }
 
     @ResponseBody
-    @GetMapping("/read/{userId}/{contactId}")
+    @GetMapping("/account/read/{userId}/{contactId}")
     public void read(@PathVariable("userId") Integer userId,
                     @PathVariable("contactId") Integer contactId){
         chatInfoService.setRead(userId, contactId);
     }
+
+    @ResponseBody
+    @PostMapping("/account/email/code")
+    public Response code(@RequestBody Map<String,String> data){
+        String m=data.get("mail");
+        String code="";
+        for(int i=0;i<4;i++){
+            Double d=new Double(Math.random()*randomCode.length());
+            code+=randomCode.charAt(d.intValue());
+        }
+        try{
+            mail.sendMimeMail(m,code);
+        }catch(Exception e){
+            return Response.error("发送失败");
+        }
+        codeInfo.put(m, code);
+        return Response.ok("发送成功");
+    }
+
+    @ResponseBody
+    @PostMapping("/account/email/sure")
+    public Response sure(@RequestBody UserSure infoSure){
+        String key=infoSure.getEmail()==null?infoSure.getPhone():infoSure.getEmail();
+        if(key==null||!codeInfo.get(key).equals(infoSure.getCode())) return Response.error("fail");
+        boolean flag=true;
+        try{
+            flag=userService.updatePassword(key, MD5Util.md5Encode(infoSure.getPassword()));
+        }catch(Exception e){
+            return Response.error("fail");
+        }
+        if(!flag) return Response.error("fail");
+        codeInfo.remove(key);
+        return Response.ok("success");
+    }
+
 }

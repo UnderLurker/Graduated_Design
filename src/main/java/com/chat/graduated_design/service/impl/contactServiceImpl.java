@@ -11,7 +11,6 @@ import com.chat.graduated_design.entity.user.User;
 import com.chat.graduated_design.mapper.contactMapper;
 import com.chat.graduated_design.service.contactService;
 import com.chat.graduated_design.util.DateUtil;
-import com.chat.graduated_design.util.ObjectUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -123,7 +122,7 @@ public class contactServiceImpl extends ServiceImpl<contactMapper, contact> impl
                 }
                 Integer misTiming;
                 try {
-                    misTiming=DateUtil.daysBetween(userList.get(index).getPreLoginTime(), userList.get(index).getLoginTime());
+                    misTiming=DateUtil.daysBetween(DateUtil.getCurrentTime(), userList.get(index).getLoginTime());
                 } catch (ParseException e) {
                     misTiming=null;
                 }

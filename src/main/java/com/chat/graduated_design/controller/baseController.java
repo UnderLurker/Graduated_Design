@@ -1,5 +1,6 @@
 package com.chat.graduated_design.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.chat.graduated_design.entity.file.FileStorage;
 import com.chat.graduated_design.entity.user.User;
 import com.chat.graduated_design.service.impl.fileDataServiceImpl;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -35,22 +37,37 @@ public class baseController {
         return "login";
     }
 
+    @RequestMapping("/forgetCode.html")
+    public String forgetCode (){
+        return "forgetCode";
+    }
+
     @RequestMapping("/main.html")
     public String main(Model model, HttpServletRequest request){
-        HttpSession session=request.getSession();
+        Cookie[] cookies=request.getCookies();
         String responseUrl="./image/1.jpeg";
         //看是否激活
-        User user=(User) session.getAttribute("user");
-        User queryUser=userService.getById(user.getId());
-        if(!queryUser.isActive()){
+        
+        String pwd=null;
+        Integer id=null;
+        for(Cookie cookie : cookies){
+            if(cookie.getName().equals("id")){
+                id=Integer.parseInt(cookie.getValue());
+            }
+            else if(cookie.getName().equals("pwd")){
+                pwd=cookie.getValue().split("/")[cookie.getValue().split("/").length-1];
+            }
+        }
+        if(pwd==null||id==null) return "redirect:/login.html";
+        QueryWrapper<User> query=new QueryWrapper<>();
+        query.eq("Id",id).eq("password", pwd)
+            .or()
+            .eq("Id", id).eq("face_image_uuid", pwd);
+        User person=userService.getOne(query);
+        if(person==null) return "redirect:/login.html";
+        if(!person.isActive()){
             return "redirect:/login.html";
         }
-        //查询头像路径
-        FileStorage fileStorage=fileDataService.getUserPortrait(queryUser.getId());
-        if(fileStorage!=null){
-            responseUrl="/headportrait/"+fileStorage.getUuid();
-        }
-        model.addAttribute("headportrait",responseUrl);
         return "main";
     }
 

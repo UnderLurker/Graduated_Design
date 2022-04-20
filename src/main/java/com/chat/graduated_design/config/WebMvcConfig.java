@@ -28,14 +28,16 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new mainInterceptor())
-                .addPathPatterns("/main.html")//所要拦截的路径请求
-                .excludePathPatterns("/index.html","/login.html","/register.html");//所要放行的路径 相当于SpringMVC中的mvc放行
+                .addPathPatterns("/main.html","/account/**","/changeInfo/**","/folder/**","/login/**","/register/**","/file/**","/photo/**","/search/**")//所要拦截的路径请求
+                .excludePathPatterns("/index.html","/login.html","/register.html","forgetCode.html");//所要放行的路径 相当于SpringMVC中的mvc放行
         registry.addInterceptor(new loginAndRegisterInterceptor())
                 .addPathPatterns("/login.html","register.html")
                 .excludePathPatterns("/main.html");
         registry.addInterceptor(new videoPreviewInterceptor())
                 .addPathPatterns("/video/preview/**")
                 .excludePathPatterns("");
+
+        //拦截/account/** /changeInfo/** /folder/** /login/** /register/** /file/** /photo/** /search/** 
     }
 
     @Override

@@ -41,7 +41,7 @@ public class registerController {
 
     // 邮箱注册
     @ResponseBody
-    @RequestMapping(value = "/emailRegister", method = RequestMethod.POST)
+    @RequestMapping(value = "/register/emailRegister", method = RequestMethod.POST)
     public ErrorMessage emailRegister(@RequestBody RegisterUser user) {
         User saveUser = new User();
         errorMessage.clear();
@@ -75,7 +75,7 @@ public class registerController {
 
     // 电话注册
     @ResponseBody
-    @RequestMapping(value = "/phoneRegister", method = RequestMethod.POST)
+    @RequestMapping(value = "/register/phoneRegister", method = RequestMethod.POST)
     public ErrorMessage phoneRegister(@RequestBody RegisterUser user,HttpServletRequest request) {
         User saveUser = new User();
         errorMessage.clear();
@@ -115,7 +115,7 @@ public class registerController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/faceRegister", method = RequestMethod.POST)
+    @RequestMapping(value = "/register/faceRegister", method = RequestMethod.POST)
     public ErrorMessage faceRegister(@RequestBody Map<String,Object> info) {
         errorMessage.clear();
         errorMessage.setFace("success");
