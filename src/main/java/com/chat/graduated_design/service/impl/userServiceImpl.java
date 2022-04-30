@@ -131,6 +131,7 @@ public class userServiceImpl extends ServiceImpl<userMapper, User> implements us
         query.eq("email", key).or().eq("phone", key);
         User user=new User();
         user.setPassword(password);
+        user.setActive(true);
         return this.update(user, query);
     }
 }

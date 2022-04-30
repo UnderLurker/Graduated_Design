@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.tomcat.jni.Time;
+
 /**
  * @program: Graduated_Design
  * @description: 获取时间
@@ -48,5 +50,13 @@ public class DateUtil {
         long time2 = cal.getTimeInMillis ();
         long between_days=(time2-time1)/ (1000*3600*24);
         return Integer.parseInt(String.valueOf (between_days));
+    }
+
+    public static void main(String[] args) throws Exception{
+        Date time1=getCurrentTime();
+        System.out.println(time1);
+        String dateString = "2022-04-22";
+        Date time2= new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
+        System.out.println(daysBetween(time2, time1));
     }
 }

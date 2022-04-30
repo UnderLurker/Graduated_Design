@@ -8,9 +8,9 @@
 // }, false);
 
 // 初始化音频控制事件
-function initAudioEvent(fileStorageNo,filename) {
+function initAudioEvent(fileStorageNo, filename) {
     $('.audio-right>p').text(filename);
-    $('#audio-preview').attr('src','/media/preview/'+fileStorageNo);
+    $('#audio-preview').attr('src', '/media/preview/' + fileStorageNo);
     $('#audio-preview').get('0').load();
 
     var audio = document.getElementById('audio-preview');
@@ -52,12 +52,12 @@ function initAudioEvent(fileStorageNo,filename) {
         }
     }, false);
 
-    document.getElementById('audio-close').onclick=function(){
+    document.getElementById('audio-close').onclick = function () {
         audio.pause();
         Vue.set(vue.media, 'audio', false);
-        setTimeout(()=>{
+        setTimeout(() => {
             rightInfoChange(document.getElementsByClassName('right-info')[0]);
-        },500);
+        }, 500);
     }
 
     // 拖动进度点调节进度
@@ -144,7 +144,7 @@ function dragProgressDotEvent(audio) {
  * @param {object} audio - audio对象
  */
 function updateProgress(audio) {
-    $('.audio-length-total').get('0').innerHTML=transTime(audio.duration);
+    $('.audio-length-total').get('0').innerHTML = transTime(audio.duration);
     var value = audio.currentTime / audio.duration;
     document.getElementById('progressBar').style.width = value * 100 + '%';
     document.getElementById('progressDot').style.left = value * 100 + '%';
@@ -197,3 +197,41 @@ function formatTime(value) {
 
     return time;
 }
+var reco = null;
+var audio_context = new AudioContext(); //音频内容对象
+navigator.getUserMedia = (navigator.getUserMedia ||
+    navigator.webkitGetUserMedia ||
+    navigator.mozGetUserMedia ||
+    navigator.msGetUserMedia); // 兼容其他浏览器
+navigator.getUserMedia({audio: true}, create_stream, function (err) {
+    console.log(err)
+});
+
+function create_stream(user_media) {
+    var stream_input = audio_context.createMediaStreamSource(user_media);
+    reco = new Recorder(stream_input);
+}
+
+$('#recorder-btn').mousedown(function () {
+    $('.recorder').css('display','block');
+    reco.record();
+})
+$('#recorder').mouseup(function(){
+    reco.stop();
+    reco.exportWAV(function (wav_file) {
+        console.log(wav_file);
+        var formdata = new FormData(); // form 表单 {key:value}
+        formdata.append("audio", wav_file); // form input type="file"
+        sendPost('/file/audio',formdata,sendByForm,(msg)=>{
+            console.log("success");
+        })
+    });
+    reco.clear();
+    $('.recorder').css('display','none');
+})
+//语音聊天不发送
+$('#recorder').mouseup(function () {
+    reco.stop();
+    reco.clear();
+    $('.recorder').css('display','none');
+})

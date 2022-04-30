@@ -45,7 +45,6 @@ public class baseController {
     @RequestMapping("/main.html")
     public String main(Model model, HttpServletRequest request){
         Cookie[] cookies=request.getCookies();
-        String responseUrl="./image/1.jpeg";
         //看是否激活
         
         String pwd=null;
@@ -58,16 +57,14 @@ public class baseController {
                 pwd=cookie.getValue().split("/")[cookie.getValue().split("/").length-1];
             }
         }
-        if(pwd==null||id==null) return "redirect:/login.html";
         QueryWrapper<User> query=new QueryWrapper<>();
         query.eq("Id",id).eq("password", pwd)
             .or()
             .eq("Id", id).eq("face_image_uuid", pwd);
         User person=userService.getOne(query);
-        if(person==null) return "redirect:/login.html";
-        if(!person.isActive()){
-            return "redirect:/login.html";
-        }
+        person.setPassword("");
+        request.getSession().setAttribute("user", person);
+        if(person==null||!person.isActive()) return "redirect:/login.html";
         return "main";
     }
 

@@ -781,7 +781,8 @@ let vue = new Vue({
             });
         }
     },
-    components: {},
+    components: {
+    },
 });
 
 function getCookie(name) {
@@ -836,7 +837,7 @@ function formatDateList(obj){
 }
 //向服务器请求用户信息（除密码）
 (function () {
-    axios.defaults.withCredentials = true
+    axios.defaults.withCredentials = true; //向后端请求发送cookie（使用证书）
     axios({
         url: '/account/prepare/' + getCookie('id'),
         method: 'get',

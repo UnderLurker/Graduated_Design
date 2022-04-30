@@ -3,9 +3,12 @@ package com.chat.graduated_design.interceptor;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import com.chat.graduated_design.entity.user.User;
 
 /**
  * @program: Graduated_Design
@@ -17,13 +20,21 @@ public class mainInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        // HttpSession session=request.getSession();
-        // Object user=session.getAttribute("user");
-        // if(user!=null){
-        //     return true;
-        // }
-        // response.sendRedirect("/login.html");
-        // return false;
+        Cookie[] cookies=request.getCookies();
+        Integer id=null;
+        String pwd=null;
+        for(Cookie cookie : cookies){
+            if(cookie.getName().equals("id")){
+                id=Integer.parseInt(cookie.getValue());
+            }
+            else if(cookie.getName().equals("pwd")){
+                pwd=cookie.getValue();
+            }
+        }
+        if(id==null||pwd==null){
+            response.sendRedirect("/login.html");
+            return false;
+        }
         return true;
     }
 

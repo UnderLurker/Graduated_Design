@@ -30,6 +30,8 @@ import java.util.Map;
  **/
 @Controller
 public class loginController {
+    private String domain="localhost";
+
     @Autowired
     private userServiceImpl userService;
     @Autowired
@@ -64,12 +66,11 @@ public class loginController {
             Cookie pwd=new Cookie("pwd", sessionUser.getPassword());
             Cookie id=new Cookie("id",sessionUser.getId().toString());
             pwd.setPath("/");
-            pwd.setDomain("localhost");
+            pwd.setDomain(domain);
             id.setPath("/");
-            id.setDomain("localhost");
+            id.setDomain(domain);
             response.addCookie(id);
             response.addCookie(pwd);
-            sessionUser.setPassword("");
             request.getSession().setAttribute("user", sessionUser);
             errorMessage.clear();
         }
@@ -104,12 +105,11 @@ public class loginController {
             Cookie pwd=new Cookie("pwd", sessionUser.getPassword());
             Cookie cookie=new Cookie("id",user.getId().toString());
             pwd.setPath("/");
-            pwd.setDomain("localhost");
+            pwd.setDomain(domain);
             cookie.setPath("/");
-            cookie.setDomain("localhost");
+            cookie.setDomain(domain);
             response.addCookie(cookie);
             response.addCookie(pwd);
-            sessionUser.setPassword("");
             request.getSession().setAttribute("user", sessionUser);
         }
         return errorMessage;
@@ -144,9 +144,9 @@ public class loginController {
                 Cookie pwd=new Cookie("pwd", path);
                 Cookie cookie=new Cookie("id",user.getId().toString());
                 pwd.setPath("/");
-                pwd.setDomain("localhost");
+                pwd.setDomain(domain);
                 cookie.setPath("/");
-                cookie.setDomain("localhost");
+                cookie.setDomain(domain);
                 response.addCookie(cookie);
                 response.addCookie(pwd);
                 return errorMessage;

@@ -22,6 +22,7 @@
     <script src="./js/emoji.min.js"></script>
     <script src="./js/contact.min.js"></script>
     <script src="./js/request.min.js"></script>
+    <script src="./js/recorder.min.js"></script>
     <title>首页</title>
 </head>
 
@@ -671,9 +672,9 @@
                     </div>
                 </div>
                 <!-- 语音 -->
-                <!-- <div class="input-frame-right shadow riff">
+                <div id="recorder-btn" class="input-frame-right shadow riff">
                     <ion-icon name="mic-outline"></ion-icon>
-                </div> -->
+                </div>
             </div>
             <div id="emoji">
                 <!-- 展示表情 -->
@@ -1027,6 +1028,11 @@
                 </div>
                 <input id="share-send" type="submit" value=" ">
             </form>
+        </div>
+    </div>
+    <div class="recorder">
+        <div class="ion-icon-center shadow">
+            <ion-icon name="close-outline"></ion-icon>
         </div>
     </div>
 </div>

@@ -214,6 +214,13 @@ public class fileController {
         inputStream.close();
     }
 
+
+    @PostMapping("/file/audio")
+    public Response userAudio(@RequestParam("audio") MultipartFile file){
+
+        return Response.ok("success");
+    }
+
     /**
      * 返回图片的缩略图
      * @param fileStorageNo 文件存储id

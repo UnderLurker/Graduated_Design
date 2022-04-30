@@ -3,13 +3,28 @@
 .create-chat-folder,
 .up-load,
 #share-list,
-#reset-contact-name{
+#reset-contact-name,
+.recorder{
     position: absolute;
     background-color: rgba(192, 192, 192,.5);
     width: 100vw;
     height: 100vh;
     top: 0;
     display: none;
+}
+.recorder>div{
+    font-size:5rem;
+    border-radius: 50%;
+    background-color: silver;
+    color: whitesmoke;
+    width: 5rem;
+    height: 5rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+.recorder>div{
+    transform: rotate(90deg);
 }
 .img-frame{
     box-sizing: content-box;
