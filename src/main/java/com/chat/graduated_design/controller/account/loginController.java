@@ -139,6 +139,7 @@ public class loginController {
         for(User user : list){
             String path=fileService.getPath(fileServiceImpl.FACE_PATH)+"/"+user.getFaceImageUuid();
             double res=ImageUtil.isSame(path, stream);
+            path=path.replace(" ","");
             if(res>0.72){
                 request.getSession().setAttribute("user",user);
                 Cookie pwd=new Cookie("pwd", path);
